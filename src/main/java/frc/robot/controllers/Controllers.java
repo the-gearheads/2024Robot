@@ -40,12 +40,12 @@ public class Controllers {
 
       // No filtering for now, just use the first
       foundDriveController = true;
-      driveController = new DriverController(i);
+      driverController = new XboxDriverController(i);
     
     }
   }
 
   public static double deadband(double num) {
-    return MathUtil.applyDeadband(num, Constants.CONTROLLERS.JOYSTICK_DEADBAND);
+    return MathUtil.applyDeadband(num, Constants.Controllers.JOYSTICK_DEADBAND);
   }
 }

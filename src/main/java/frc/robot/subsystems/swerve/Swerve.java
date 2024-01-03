@@ -16,13 +16,13 @@ import static frc.robot.Constants.SwerveConstants.*;
 
 public class Swerve extends SubsystemBase {
   AHRS gyro = new AHRS();
-  SwerveDriveKinematics kinematics = new SwerveDriveKinematics(kWheelPositions);
+  SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDriveOdometry odometry;
   SwerveModule[] modules = {
-    new SwerveModule(kMotorIds[0][0], kMotorIds[0][1], kWheelOffsets[0], "FL"),
-    new SwerveModule(kMotorIds[1][0], kMotorIds[1][1], kWheelOffsets[1], "FR"),
-    new SwerveModule(kMotorIds[2][0], kMotorIds[2][1], kWheelOffsets[2], "BL"),
-    new SwerveModule(kMotorIds[3][0], kMotorIds[3][1], kWheelOffsets[3], "BR")
+    new SwerveModule(MOTOR_IDS[0][0], MOTOR_IDS[0][1], WHEEL_OFFSETS[0], "FL"),
+    new SwerveModule(MOTOR_IDS[1][0], MOTOR_IDS[1][1], WHEEL_OFFSETS[1], "FR"),
+    new SwerveModule(MOTOR_IDS[2][0], MOTOR_IDS[2][1], WHEEL_OFFSETS[2], "BL"),
+    new SwerveModule(MOTOR_IDS[3][0], MOTOR_IDS[3][1], WHEEL_OFFSETS[3], "BR")
   };
 
   public Swerve() {
@@ -39,7 +39,7 @@ public class Swerve extends SubsystemBase {
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(discretized);
 
     if (SmartDashboard.getBoolean("/Swerve/desaturateWheelSpeeds", true)) {
-      SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, discretized, kMaxModuleSpeed, kMaxModuleTranslationalSpeed, kMaxModuleRotationalVelocity);
+      SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, discretized, MAX_MOD_SPEED, MAX_MOD_TRANS_SPEED, MAX_MOD_ROT_SPEED);
     }
 
     for (int i = 0; i < modules.length; i++) {

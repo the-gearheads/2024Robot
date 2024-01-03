@@ -1,3 +1,5 @@
+package frc.robot.controllers;
+
 public interface DriverController {
   public default double getTranslateXAxis() {
     return 0;

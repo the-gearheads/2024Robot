@@ -39,12 +39,12 @@ public class SwerveModule {
     steerPID = steerMotor.getPIDController();
 
     steerEncoder = steerMotor.getAbsoluteEncoder(Type.kDutyCycle);
-    steerEncoder.setPositionConversionFactor(kSteerPosFactor);
-    steerEncoder.setVelocityConversionFactor(kSteerVelFactor);
+    steerEncoder.setPositionConversionFactor(STEER_POS_FACTOR);
+    steerEncoder.setVelocityConversionFactor(STEER_VEL_FACTOR);
 
     driveEncoder = driveMotor.getEncoder();
-    driveEncoder.setPositionConversionFactor(kDrivePosFactor);
-    driveEncoder.setVelocityConversionFactor(kDriveVelFactor);
+    driveEncoder.setPositionConversionFactor(DRIVE_POS_FACTOR);
+    driveEncoder.setVelocityConversionFactor(DRIVE_VEL_FACTOR);
 
     setupStatusFrames();
 
