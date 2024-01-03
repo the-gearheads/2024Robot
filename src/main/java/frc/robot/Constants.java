@@ -23,7 +23,8 @@ public final class Constants {
 
   public static class SwerveConstants {
 
-    public static final int[][] motorIds = {
+    // drive, then turn motor ids
+    public static final int[][] kMotorIds = {
       {1, 2}, // FL
       {3, 4}, // FR
       {5, 6}, // BL
@@ -63,5 +64,9 @@ public final class Constants {
     public static final double[] kSteerPIDF = {1, 0, 0, 0}; // apparently just a P value of 1 worked for us??? i wanna test that a bit more throughly
     public static final double[] kDrivePIDF = {0.04, 0, 0, 1 / kDriveFreeSpeed};
 
+    // For desaturateWheelSpeeds
+    public static final double kMaxModuleSpeed = 1;  // m/s, placeholders
+    public static final double kMaxModuleTranslationalSpeed = 1; // m/s
+    public static final double kMaxModuleRotationalVelocity = 1; // rad/s
   }
 }
