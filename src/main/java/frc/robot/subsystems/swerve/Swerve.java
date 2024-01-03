@@ -47,6 +47,10 @@ public class Swerve extends SubsystemBase {
     }
   }
 
+  public void driveFieldRelative(ChassisSpeeds speeds) {
+    drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroRotation()));
+  }
+
   public SwerveModulePosition[] getModuleStates() {
     SwerveModulePosition[] positions = new SwerveModulePosition[4];
     for (int i = 0; i < modules.length; i++) {
