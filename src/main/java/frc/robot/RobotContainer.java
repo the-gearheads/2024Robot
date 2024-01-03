@@ -4,14 +4,12 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.swerve.Swerve;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -27,6 +25,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     updateControllers();
+    swerve.setDefaultCommand(new Teleop(swerve));
   }
 
   public void updateControllers() {

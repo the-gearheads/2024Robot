@@ -39,8 +39,10 @@ public class Controllers {
         continue;
 
       // No filtering for now, just use the first
-      foundDriveController = true;
-      driverController = new XboxDriverController(i);
+      if (!foundDriveController) {
+        foundDriveController = true;
+        driverController = new XboxDriverController(i);
+      }
     
     }
   }
