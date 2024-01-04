@@ -9,15 +9,19 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.SwerveConstants.*;
 
+import org.littletonrobotics.junction.Logger;
+
 public class Swerve extends SubsystemBase {
   AHRS gyro = new AHRS();
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDriveOdometry odometry;
+  Field2d field = new Field2d();
   SwerveModule[] modules = {
     new SwerveModule(MOTOR_IDS[0][0], MOTOR_IDS[0][1], WHEEL_OFFSETS[0], "FL"),
     new SwerveModule(MOTOR_IDS[1][0], MOTOR_IDS[1][1], WHEEL_OFFSETS[1], "FR"),
@@ -27,6 +31,7 @@ public class Swerve extends SubsystemBase {
 
   public Swerve() {
     odometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModuleStates());
+    SmartDashboard.putData("Field", field);
   }
 
   public Rotation2d getGyroRotation() {
@@ -56,12 +61,20 @@ public class Swerve extends SubsystemBase {
     for (int i = 0; i < modules.length; i++) {
       positions[i] = modules[i].getState();
     }
+    Logger.recordOutput("/Swerve/States", positions);
     return positions;
   }
 
   @Override
   public void periodic() {
     odometry.update(getGyroRotation(), getModuleStates());
+
+    Logger.recordOutput("/Swerve/Pose", getPose());
+    field.setRobotPose(getPose());
+
+    for (SwerveModule module : modules) {
+      module.periodic();
+    }
   }
 
   public Pose2d getPose() {

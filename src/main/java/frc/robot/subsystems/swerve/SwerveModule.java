@@ -15,6 +15,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import static frc.robot.Constants.SwerveConstants.*;
 
+import org.littletonrobotics.junction.Logger;
+
 public class SwerveModule {
   CANSparkMax driveMotor;
   SparkMaxPIDController drivePID;
@@ -25,7 +27,7 @@ public class SwerveModule {
 
   Rotation2d offset;
   /* Used for telemetry reasons */
-  String moduleName;
+  String modulePath;
   double targetSpeed;
   double targetAngle;
 
@@ -50,6 +52,7 @@ public class SwerveModule {
     // i think if we burnFlash we should throw in a Thread.sleep
 
     this.offset = Rotation2d.fromDegrees(offsetDegrees);
+    this.modulePath = "Swerve/" + moduleName;
   }
 
   private Rotation2d getAngle() {
@@ -77,13 +80,40 @@ public class SwerveModule {
     setSpeed(state.speedMetersPerSecond);
   }
 
+  public double getPosition() {
+    return driveEncoder.getPosition();
+  }
+
+  public double getDriveVelocity() {
+    return driveEncoder.getVelocity();
+  }
+
+  public double getSteerVelocity() {
+    return steerEncoder.getVelocity();
+  }
+
   public SwerveModulePosition getState() {
-    return new SwerveModulePosition(driveEncoder.getPosition(), getAngle());
+    return new SwerveModulePosition(getPosition(), getAngle());
   }
 
   public void resetEncoders() {
     driveEncoder.setPosition(0);
   }
+
+  public void periodic() {
+    Logger.recordOutput(modulePath + "/driveVolts", driveMotor.getAppliedOutput());
+    Logger.recordOutput(modulePath + "/steerVolts", steerMotor.getAppliedOutput());
+
+    Logger.recordOutput(modulePath + "/drivePos", getPosition());
+    Logger.recordOutput(modulePath + "/driveVel", getDriveVelocity());
+
+    Logger.recordOutput(modulePath + "/steerAngle", getAngle());
+    Logger.recordOutput(modulePath + "/steerVel", getSteerVelocity());
+
+    Logger.recordOutput(modulePath + "/targetSpeed", targetSpeed);
+    Logger.recordOutput(modulePath + "/targetAngle", targetAngle);
+  }
+  
 
   private void setupStatusFrames() {
     driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
