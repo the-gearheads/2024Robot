@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 
 import static frc.robot.Constants.SwerveConstants.*;
 
@@ -22,14 +23,24 @@ public class Swerve extends SubsystemBase {
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDriveOdometry odometry;
   Field2d field = new Field2d();
-  SwerveModule[] modules = {
-    new SwerveModule(MOTOR_IDS[0][0], MOTOR_IDS[0][1], WHEEL_OFFSETS[0], "FL"),
-    new SwerveModule(MOTOR_IDS[1][0], MOTOR_IDS[1][1], WHEEL_OFFSETS[1], "FR"),
-    new SwerveModule(MOTOR_IDS[2][0], MOTOR_IDS[2][1], WHEEL_OFFSETS[2], "BL"),
-    new SwerveModule(MOTOR_IDS[3][0], MOTOR_IDS[3][1], WHEEL_OFFSETS[3], "BR")
-  };
+  SwerveModule[] modules;
 
   public Swerve() {
+    if (Robot.isReal()) {
+      modules = new SwerveModule[]{
+        new SwerveModule(MOTOR_IDS[0][0], MOTOR_IDS[0][1], WHEEL_OFFSETS[0], "FL"),
+        new SwerveModule(MOTOR_IDS[1][0], MOTOR_IDS[1][1], WHEEL_OFFSETS[1], "FR"),
+        new SwerveModule(MOTOR_IDS[2][0], MOTOR_IDS[2][1], WHEEL_OFFSETS[2], "BL"),
+        new SwerveModule(MOTOR_IDS[3][0], MOTOR_IDS[3][1], WHEEL_OFFSETS[3], "BR")
+      };
+    } else {
+      modules = new SwerveModule[]{
+        new SwerveModuleSim(MOTOR_IDS[0][0], MOTOR_IDS[0][1], WHEEL_OFFSETS[0], "FL"),
+        new SwerveModuleSim(MOTOR_IDS[1][0], MOTOR_IDS[1][1], WHEEL_OFFSETS[1], "FR"),
+        new SwerveModuleSim(MOTOR_IDS[2][0], MOTOR_IDS[2][1], WHEEL_OFFSETS[2], "BL"),
+        new SwerveModuleSim(MOTOR_IDS[3][0], MOTOR_IDS[3][1], WHEEL_OFFSETS[3], "BR")
+      };
+    }
     odometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModuleStates());
     SmartDashboard.putData("Field", field);
   }
@@ -67,7 +78,9 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void periodic() {
-    odometry.update(getGyroRotation(), getModuleStates());
+    var t = odometry.update(getGyroRotation(), getModuleStates());
+
+    Logger.recordOutput("/Swerve/PoseT", t);
 
     Logger.recordOutput("/Swerve/Pose", getPose());
     field.setRobotPose(getPose());

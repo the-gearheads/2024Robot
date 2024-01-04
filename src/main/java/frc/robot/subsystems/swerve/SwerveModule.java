@@ -55,7 +55,7 @@ public class SwerveModule {
     this.modulePath = "Swerve/" + moduleName;
   }
 
-  private Rotation2d getAngle() {
+  protected Rotation2d getAngle() {
     return Rotation2d.fromRadians(steerEncoder.getPosition()).minus(offset);
   }
 
@@ -74,6 +74,9 @@ public class SwerveModule {
     state = new SwerveModuleState(state.speedMetersPerSecond, state.angle);
 
     state.angle = state.angle.plus(offset);
+    /* taking advantage of optimize so the modules that are rotated 180deg dont have to have their
+     * drive encoders inverted
+     */
     state = SwerveModuleState.optimize(state, getAngle());
 
     setAngle(state.angle);
