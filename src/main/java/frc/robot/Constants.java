@@ -66,5 +66,11 @@ public final class Constants {
 
   public static class Controllers {
     public static final double JOYSTICK_DEADBAND = 0.05;
+
+    public static final double BASE_TRANS_SPEED = 4;
+    public static final double BASE_ROT_SPEED = 2;
+    public static final double MOD_TRANS_SPEED_FACTOR = 5;
+    public static final double MOD_ROT_SPEED_FACTOR = 3;
+
   }
 }

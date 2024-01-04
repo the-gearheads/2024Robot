@@ -24,4 +24,9 @@ public class XboxDriverController implements DriverController {
   public double getRotateAxis() {
     return Controllers.deadband(-controller.getRightX());
   }
+
+  @Override
+  public double getSpeedModifierAxis() {
+    return Controllers.deadband(controller.getRightTriggerAxis());
+  }
 }
