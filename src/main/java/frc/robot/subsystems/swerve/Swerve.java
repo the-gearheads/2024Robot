@@ -33,17 +33,17 @@ public class Swerve extends SubsystemBase {
   public Swerve() {
     if (Robot.isReal()) {
       modules = new SwerveModule[]{
-        new SwerveModule(MOTOR_IDS[0][0], MOTOR_IDS[0][1], WHEEL_OFFSETS[0], "FL"),
-        new SwerveModule(MOTOR_IDS[1][0], MOTOR_IDS[1][1], WHEEL_OFFSETS[1], "FR"),
-        new SwerveModule(MOTOR_IDS[2][0], MOTOR_IDS[2][1], WHEEL_OFFSETS[2], "BL"),
-        new SwerveModule(MOTOR_IDS[3][0], MOTOR_IDS[3][1], WHEEL_OFFSETS[3], "BR")
+        new SwerveModule(0, "FL"),
+        new SwerveModule(1, "FR"),
+        new SwerveModule(2, "BL"),
+        new SwerveModule(3, "BR")
       };
     } else {
       modules = new SwerveModule[]{
-        new SwerveModuleSim(MOTOR_IDS[0][0], MOTOR_IDS[0][1], WHEEL_OFFSETS[0], "FL"),
-        new SwerveModuleSim(MOTOR_IDS[1][0], MOTOR_IDS[1][1], WHEEL_OFFSETS[1], "FR"),
-        new SwerveModuleSim(MOTOR_IDS[2][0], MOTOR_IDS[2][1], WHEEL_OFFSETS[2], "BL"),
-        new SwerveModuleSim(MOTOR_IDS[3][0], MOTOR_IDS[3][1], WHEEL_OFFSETS[3], "BR")
+        new SwerveModuleSim(0, "FL"),
+        new SwerveModuleSim(1, "FR"),
+        new SwerveModuleSim(2, "BL"),
+        new SwerveModuleSim(3, "BR")
       };
     }
     odometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModulePositions());
@@ -111,10 +111,11 @@ public class Swerve extends SubsystemBase {
 
   public void sysidSetVolts(Measure<Voltage> volts) {
     double v = volts.in(Volts);
+
   }
 
-  // Could use a dose of refactoring, need a way to get voltage into the motor classes, doesn't work anyways due to Advantage{Scope|Kit}/URCL incompat with wpilib 2024.1.1
-  public SysIdRoutine getRoutine() {
+  //doesn't work rn due to Advantage{Scope|Kit}/URCL incompat with sysid 2024.1.1, prolly could use an old version of sysid for now
+  public SysIdRoutine getSysIdRoutine() {
     return new SysIdRoutine(
       new SysIdRoutine.Config(
         null, null, null,

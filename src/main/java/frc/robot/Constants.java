@@ -16,6 +16,7 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final long THREAD_SLEEP_TIME = 200; // probably enough, really just only speeds up startup
   public static class SwerveConstants {
     // drive, then turn motor ids
     public static final int[][] MOTOR_IDS = {
@@ -33,7 +34,8 @@ public final class Constants {
       new Translation2d(-0.311, -0.337)
     };
 
-    public static final double[] WHEEL_OFFSETS = {270, 0, 180, 90};
+    public static final double[] WHEEL_OFFSETS = {90, 0, 0, 90}; // could be wrong, we get to find out {270, 0, 180, 90};
+    public static final boolean[] IS_INVERTED = {true, false, true, false}; // left side inverted i think
 
     public static final double WHEEL_DIAMETER = Units.inchesToMeters(3);
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
@@ -65,6 +67,13 @@ public final class Constants {
     public static final double MAX_MOD_SPEED = 1;  // m/s, placeholders
     public static final double MAX_MOD_TRANS_SPEED = 1; // m/s
     public static final double MAX_MOD_ROT_SPEED = 1; // rad/s
+  }
+
+  public static class ShooterConstants {
+    public static final int TOP_ID = 9;
+    public static final int BOTTOM_ID = 10;
+    public static final double SPEED_TOLERANCE = 150;
+    public static final double[] PIDF = {0.0004, 0, 0, 0.00015};
   }
 
   public static class Controllers {

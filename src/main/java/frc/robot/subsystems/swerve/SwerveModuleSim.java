@@ -13,8 +13,8 @@ public class SwerveModuleSim extends SwerveModule {
   double actualTargetSpeed = 0;
   double actualTargetAngle = 0;
 
-  public SwerveModuleSim(int driveMotorId, int turnMotorId, double offsetDegrees, String moduleName) {
-    super(driveMotorId, turnMotorId, offsetDegrees, moduleName);
+  public SwerveModuleSim(int id, String moduleName) {
+    super(id, moduleName);
   }
 
   @Override

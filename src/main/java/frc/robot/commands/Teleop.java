@@ -24,7 +24,7 @@ public class Teleop extends Command {
   @Override
   public void initialize() {
     hPid.enableContinuousInput(-Math.PI, Math.PI); // verify whether this should be [-pi, pi] or [0, 2pi]
-    SmartDashboard.putBoolean("/Teleop/HeadingPID", false);
+    SmartDashboard.putBoolean("Teleop/HeadingPID", false);
   }
 
   @Override
@@ -48,11 +48,11 @@ public class Teleop extends Command {
     rot += mod * MOD_ROT_SPEED_FACTOR;
 
     var speeds = new ChassisSpeeds(x, y, rot);
-    if (SmartDashboard.getBoolean("/Teleop/HeadingPID", false)) {
+    if (SmartDashboard.getBoolean("Teleop/HeadingPID", false)) {
       headingPid(rot != 0, speeds);
     }
 
-    Logger.recordOutput("/Swerve/Teleop/Speeds", speeds);
+    Logger.recordOutput("Swerve/Teleop/Speeds", speeds);
     swerve.driveFieldRelative(speeds);
   }
 

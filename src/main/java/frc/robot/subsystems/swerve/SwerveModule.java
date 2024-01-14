@@ -13,6 +13,7 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.Constants;
 import frc.robot.util.HandledSleep;
 
 import static frc.robot.Constants.SwerveConstants.*;
@@ -33,17 +34,19 @@ public class SwerveModule {
   double targetSpeed;
   double targetAngle;
 
-  public SwerveModule(int driveMotorId, int turnMotorId, double offsetDegrees, String moduleName) {
+  public SwerveModule(int id, String moduleName) {
 
-    drive = new CANSparkMax(driveMotorId, MotorType.kBrushless);
-    steer = new CANSparkMax(turnMotorId, MotorType.kBrushless);
+    drive = new CANSparkMax(MOTOR_IDS[id][0], MotorType.kBrushless);
+    steer = new CANSparkMax(MOTOR_IDS[id][1], MotorType.kBrushless);
 
     drive.restoreFactoryDefaults();
     steer.restoreFactoryDefaults();
-    HandledSleep.sleep(200);
+    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
 
     drive.setSmartCurrentLimit(DRIVE_CURRENT_LIMIT);
     steer.setSmartCurrentLimit(STEER_CURRENT_LIMIT);
+
+    drive.setInverted(IS_INVERTED[id]);
 
     drive.setIdleMode(IdleMode.kBrake);
     steer.setIdleMode(IdleMode.kBrake);
@@ -76,14 +79,14 @@ public class SwerveModule {
     drivePid.setD(DRIVE_PIDF[2]);
     drivePid.setFF(DRIVE_PIDF[3]);
 
-    HandledSleep.sleep(200);
+    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
     setupStatusFrames(); // pretty important that this doesnt get missed
-    HandledSleep.sleep(200);
+    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
 
 
     // i think if we burnFlash we should throw in a Thread.sleep
 
-    this.offset = Rotation2d.fromDegrees(offsetDegrees);
+    this.offset = Rotation2d.fromDegrees(WHEEL_OFFSETS[id]);
     this.modulePath = "Swerve/" + moduleName;
   }
 
@@ -133,6 +136,16 @@ public class SwerveModule {
 
   public SwerveModuleState getState() {
     return new SwerveModuleState(getDriveVelocity(), getAngle());
+  }
+
+  /* A horrible consequence of the fact that we abuse optimize to determine whether a motor should be inverted */
+  public void setVolts(double volts) {
+    var state = new SwerveModuleState(1, new Rotation2d(0));
+    state.angle = state.angle.plus(offset);
+    state = SwerveModuleState.optimize(state, getAngle());
+    setAngle(state.angle);
+    if(state.speedMetersPerSecond == -1) volts *= -1;
+    drivePid.setReference(volts, ControlType.kVoltage);
   }
 
   public void resetEncoders() {

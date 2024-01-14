@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -20,12 +21,16 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Swerve swerve = new Swerve();
+  private final Shooter shooter = new Shooter();
+  private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     updateControllers();
     swerve.setDefaultCommand(new Teleop(swerve));
+    sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
+    sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
   }
 
   public void updateControllers() {
