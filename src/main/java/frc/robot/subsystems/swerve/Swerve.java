@@ -109,9 +109,11 @@ public class Swerve extends SubsystemBase {
     odometry.resetPosition(getGyroRotation(), getModulePositions(), pose);
   }
 
-  public void sysidSetVolts(Measure<Voltage> volts) {
+  private void sysidSetVolts(Measure<Voltage> volts) {
     double v = volts.in(Volts);
-
+    for(var module: modules) {
+      module.setVolts(v);
+    }
   }
 
   //doesn't work rn due to Advantage{Scope|Kit}/URCL incompat with sysid 2024.1.1, prolly could use an old version of sysid for now
