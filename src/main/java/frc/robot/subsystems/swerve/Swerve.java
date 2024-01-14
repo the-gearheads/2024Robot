@@ -9,12 +9,17 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Robot;
 
 import static frc.robot.Constants.SwerveConstants.*;
+import static edu.wpi.first.units.Units.*;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -102,5 +107,24 @@ public class Swerve extends SubsystemBase {
       module.resetEncoders();
     }
     odometry.resetPosition(getGyroRotation(), getModulePositions(), pose);
+  }
+
+  public void sysidSetVolts(Measure<Voltage> volts) {
+    double v = volts.in(Volts);
+  }
+
+  // Could use a dose of refactoring, need a way to get voltage into the motor classes, doesn't work anyways due to Advantage{Scope|Kit}/URCL incompat with wpilib 2024.1.1
+  public SysIdRoutine getRoutine() {
+    return new SysIdRoutine(
+      new SysIdRoutine.Config(
+        null, null, null,
+        (state) -> Logger.recordOutput("SysIdTestState", state.toString())
+      ),
+      new Mechanism(
+        this::sysidSetVolts,
+        null,
+        this
+      )
+    );
   }
 }
