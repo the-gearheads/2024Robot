@@ -138,13 +138,8 @@ public class SwerveModule {
     return new SwerveModuleState(getDriveVelocity(), getAngle());
   }
 
-  /* A horrible consequence of the fact that we abuse optimize to determine whether a motor should be inverted */
   public void setVolts(double volts) {
-    var state = new SwerveModuleState(1, new Rotation2d(0));
-    state.angle = state.angle.plus(offset);
-    state = SwerveModuleState.optimize(state, getAngle());
-    setAngle(state.angle);
-    if(state.speedMetersPerSecond == -1) volts *= -1;
+    setAngle(new Rotation2d(0));
     drivePid.setReference(volts, ControlType.kVoltage);
   }
 
