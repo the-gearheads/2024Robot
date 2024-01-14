@@ -8,6 +8,7 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import org.littletonrobotics.urcl.URCL;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -42,6 +43,7 @@ public class Robot extends LoggedRobot {
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
 
+    Logger.registerURCL(URCL.startExternal());
     Logger.start();
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our

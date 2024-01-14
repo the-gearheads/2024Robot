@@ -41,7 +41,7 @@ public class Swerve extends SubsystemBase {
         new SwerveModuleSim(MOTOR_IDS[3][0], MOTOR_IDS[3][1], WHEEL_OFFSETS[3], "BR")
       };
     }
-    odometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModuleStates());
+    odometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModulePositions());
     SmartDashboard.putData("Field", field);
   }
 
@@ -67,18 +67,21 @@ public class Swerve extends SubsystemBase {
     drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroRotation()));
   }
 
-  public SwerveModulePosition[] getModuleStates() {
-    SwerveModulePosition[] positions = new SwerveModulePosition[4];
+  public SwerveModulePosition[] getModulePositions() {
+    SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
+    SwerveModuleState[] states = new SwerveModuleState[modules.length];
     for (int i = 0; i < modules.length; i++) {
-      positions[i] = modules[i].getState();
+      positions[i] = modules[i].getModulePosition();
+      states[i] = modules[i].getState();
     }
-    Logger.recordOutput("/Swerve/States", positions);
+    Logger.recordOutput("/Swerve/Positions", positions);
+    Logger.recordOutput("/Swerve/States", states);
     return positions;
   }
 
   @Override
   public void periodic() {
-    var t = odometry.update(getGyroRotation(), getModuleStates());
+    var t = odometry.update(getGyroRotation(), getModulePositions());
 
     Logger.recordOutput("/Swerve/PoseT", t);
 
@@ -98,6 +101,6 @@ public class Swerve extends SubsystemBase {
     for (SwerveModule module : modules) {
       module.resetEncoders();
     }
-    odometry.resetPosition(getGyroRotation(), getModuleStates(), pose);
+    odometry.resetPosition(getGyroRotation(), getModulePositions(), pose);
   }
 }

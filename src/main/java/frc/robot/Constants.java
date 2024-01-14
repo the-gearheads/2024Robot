@@ -48,7 +48,7 @@ public final class Constants {
     public static final double DRIVE_POS_FACTOR = WHEEL_CIRCUMFERENCE / DRIVE_RATIO; // rotations -> gear ratio adjusted rotations -> meters
     public static final double DRIVE_VEL_FACTOR = WHEEL_CIRCUMFERENCE / DRIVE_RATIO / 60.0; // rpm -> gear ratio adjusted rpm -> meters/min -> meters/sec 
 
-    public static final double DRIVE_FREE_RPM = 5676;
+    public static final double DRIVE_FREE_RPM = 6784;
     public static final double DRIVE_FREE_SPD = DRIVE_FREE_RPM * DRIVE_VEL_FACTOR; // Convert max neo free speed to max free wheel speed
 
     public static final double STEER_POS_FACTOR = 2 * Math.PI; // rotations -> radians
@@ -57,6 +57,9 @@ public final class Constants {
 
     public static final double[] STEER_PIDF = {1, 0, 0, 0}; // apparently just a P value of 1 worked for us??? i wanna test that a bit more throughly
     public static final double[] DRIVE_PIDF = {0.04, 0, 0, 1 / DRIVE_FREE_SPD};
+
+    public static final int DRIVE_CURRENT_LIMIT = 80;
+    public static final int STEER_CURRENT_LIMIT = 40;
 
     // For desaturateWheelSpeeds
     public static final double MAX_MOD_SPEED = 1;  // m/s, placeholders
