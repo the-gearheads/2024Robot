@@ -13,6 +13,7 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.util.HandledSleep;
 
 import static frc.robot.Constants.SwerveConstants.*;
 
@@ -36,6 +37,10 @@ public class SwerveModule {
 
     drive = new CANSparkMax(driveMotorId, MotorType.kBrushless);
     steer = new CANSparkMax(turnMotorId, MotorType.kBrushless);
+
+    drive.restoreFactoryDefaults();
+    steer.restoreFactoryDefaults();
+    HandledSleep.sleep(200);
 
     drive.setSmartCurrentLimit(DRIVE_CURRENT_LIMIT);
     steer.setSmartCurrentLimit(STEER_CURRENT_LIMIT);
@@ -71,13 +76,10 @@ public class SwerveModule {
     drivePid.setD(DRIVE_PIDF[2]);
     drivePid.setFF(DRIVE_PIDF[3]);
 
-    try {
-      Thread.sleep(200);
-      setupStatusFrames();
-      Thread.sleep(200);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+    HandledSleep.sleep(200);
+    setupStatusFrames(); // pretty important that this doesnt get missed
+    HandledSleep.sleep(200);
+
 
     // i think if we burnFlash we should throw in a Thread.sleep
 
