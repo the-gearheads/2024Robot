@@ -37,7 +37,21 @@
           "open": true
         },
         "RealOutputs": {
+          "Shooter": {
+            "Bottom": {
+              "open": true
+            },
+            "Top": {
+              "open": true
+            }
+          },
           "Swerve": {
+            "FL": {
+              "open": true
+            },
+            "Teleop": {
+              "open": true
+            },
             "open": true
           },
           "open": true
@@ -55,6 +69,9 @@
       },
       "SmartDashboard": {
         "Field": {
+          "open": true
+        },
+        "Teleop": {
           "open": true
         },
         "open": true

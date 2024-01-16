@@ -59,7 +59,7 @@ public class Swerve extends SubsystemBase {
     ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(discretized);
 
-    if (SmartDashboard.getBoolean("/Swerve/desaturateWheelSpeeds", true)) {
+    if (SmartDashboard.getBoolean("Swerve/desaturateWheelSpeeds", true)) {
       SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, discretized, MAX_MOD_SPEED, MAX_MOD_TRANS_SPEED, MAX_MOD_ROT_SPEED);
     }
 
@@ -79,18 +79,19 @@ public class Swerve extends SubsystemBase {
       positions[i] = modules[i].getModulePosition();
       states[i] = modules[i].getState();
     }
-    Logger.recordOutput("/Swerve/Positions", positions);
-    Logger.recordOutput("/Swerve/States", states);
+    Logger.recordOutput("Swerve/Positions", positions);
+    Logger.recordOutput("Swerve/States", states);
     return positions;
   }
 
   @Override
   public void periodic() {
-    var t = odometry.update(getGyroRotation(), getModulePositions());
-
-    Logger.recordOutput("/Swerve/PoseT", t);
-
-    Logger.recordOutput("/Swerve/Pose", getPose());
+    odometry.update(getGyroRotation(), getModulePositions());
+    Logger.recordOutput("Swerve/Pose", getPose());
+    /* Glass doesnt support struct fields really but they're nicer to use in AScope :( */
+    Logger.recordOutput("Swerve/PoseX", getPose().getX());
+    Logger.recordOutput("Swerve/PoseY", getPose().getY());
+    Logger.recordOutput("Swerve/PoseRotation", getPose().getRotation().getRadians());
     field.setRobotPose(getPose());
 
     for (SwerveModule module : modules) {
