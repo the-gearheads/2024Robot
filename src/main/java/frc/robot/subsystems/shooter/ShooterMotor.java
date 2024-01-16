@@ -1,10 +1,10 @@
 package frc.robot.subsystems.shooter;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.ControlType;
-import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkPIDController;
 
 import frc.robot.Constants;
 import frc.robot.util.HandledSleep;
@@ -16,15 +16,15 @@ import org.littletonrobotics.junction.Logger;
 // these configs are kinda long and we gotta do it twice so why not put it in its own file
 public class ShooterMotor {
 
-  public CANSparkMax max;
-  public SparkMaxPIDController pid;
+  public CANSparkFlex max;
+  public SparkPIDController pid;
   public RelativeEncoder enc;
 
   public double targetSpeed;
   public double targetVolts;
 
   public ShooterMotor(int id) {
-    max = new CANSparkMax(id, CANSparkMax.MotorType.kBrushless);
+    max = new CANSparkFlex(id, CANSparkFlex.MotorType.kBrushless);
     max.restoreFactoryDefaults();
     HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
 

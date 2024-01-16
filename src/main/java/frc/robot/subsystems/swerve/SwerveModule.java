@@ -1,14 +1,14 @@
 package frc.robot.subsystems.swerve;
 
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAbsoluteEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.ControlType;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
-import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
+import com.revrobotics.SparkAbsoluteEncoder;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -21,12 +21,12 @@ import static frc.robot.Constants.SwerveConstants.*;
 import org.littletonrobotics.junction.Logger;
 
 public class SwerveModule {
-  CANSparkMax drive;
-  SparkMaxPIDController drivePid;
+  CANSparkFlex drive;
+  SparkPIDController drivePid;
   RelativeEncoder driveEnc;
-  CANSparkMax steer;
-  SparkMaxPIDController steerPid;
-  SparkMaxAbsoluteEncoder steerEnc;
+  CANSparkFlex steer;
+  SparkPIDController steerPid;
+  SparkAbsoluteEncoder steerEnc;
 
   Rotation2d offset;
   /* Used for telemetry reasons */
@@ -36,8 +36,8 @@ public class SwerveModule {
 
   public SwerveModule(int id, String moduleName) {
 
-    drive = new CANSparkMax(MOTOR_IDS[id][0], MotorType.kBrushless);
-    steer = new CANSparkMax(MOTOR_IDS[id][1], MotorType.kBrushless);
+    drive = new CANSparkFlex(MOTOR_IDS[id][0], MotorType.kBrushless);
+    steer = new CANSparkFlex(MOTOR_IDS[id][1], MotorType.kBrushless);
 
     drive.restoreFactoryDefaults();
     steer.restoreFactoryDefaults();
