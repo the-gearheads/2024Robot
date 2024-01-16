@@ -1,11 +1,26 @@
 {
+  "HALProvider": {
+    "Other Devices": {
+      "SPARK MAX [9]": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/SmartDashboard/Field": "Field2d"
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/SysidRoutines": "String Chooser"
     },
     "windows": {
       "/SmartDashboard/Field": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/SysidRoutines": {
         "window": {
           "visible": true
         }
