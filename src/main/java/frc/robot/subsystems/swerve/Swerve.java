@@ -59,7 +59,7 @@ public class Swerve extends SubsystemBase {
     ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(discretized);
 
-    if (SmartDashboard.getBoolean("Swerve/desaturateWheelSpeeds", true)) {
+    if (SmartDashboard.getBoolean("Swerve/desaturateWheelSpeeds", false)) {
       SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, discretized, MAX_MOD_SPEED, MAX_MOD_TRANS_SPEED, MAX_MOD_ROT_SPEED);
     }
 

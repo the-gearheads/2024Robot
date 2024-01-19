@@ -1,6 +1,7 @@
 package frc.robot.subsystems.swerve;
 
 import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
@@ -24,7 +25,7 @@ public class SwerveModule {
   CANSparkFlex drive;
   SparkPIDController drivePid;
   RelativeEncoder driveEnc;
-  CANSparkFlex steer;
+  CANSparkMax steer;
   SparkPIDController steerPid;
   SparkAbsoluteEncoder steerEnc;
 
@@ -37,7 +38,7 @@ public class SwerveModule {
   public SwerveModule(int id, String moduleName) {
 
     drive = new CANSparkFlex(MOTOR_IDS[id][0], MotorType.kBrushless);
-    steer = new CANSparkFlex(MOTOR_IDS[id][1], MotorType.kBrushless);
+    steer = new CANSparkMax(MOTOR_IDS[id][1], MotorType.kBrushless);
 
     drive.restoreFactoryDefaults();
     steer.restoreFactoryDefaults();
@@ -66,8 +67,8 @@ public class SwerveModule {
 
     steerPid.setFeedbackDevice(steerEnc);
     steerPid.setPositionPIDWrappingEnabled(true);
-    steerPid.setPositionPIDWrappingMinInput(-Math.PI);
-    steerPid.setPositionPIDWrappingMaxInput(Math.PI);
+    steerPid.setPositionPIDWrappingMinInput(0);
+    steerPid.setPositionPIDWrappingMaxInput(2 * Math.PI);
 
     steerPid.setP(STEER_PIDF[0]);
     steerPid.setI(STEER_PIDF[1]);
@@ -105,17 +106,21 @@ public class SwerveModule {
   }
 
   public void setState(SwerveModuleState state) {
+    Logger.recordOutput(modulePath + "/DesiredSwerveStatePreOpt", state);
     /* I don't think this is needed in 2024 wpilib but it can't hurt */
     state = new SwerveModuleState(state.speedMetersPerSecond, state.angle);
+
 
     state.angle = state.angle.plus(offset);
     /* taking advantage of optimize so the modules that are rotated 180deg dont have to have their
      * drive encoders inverted
      */
-    state = SwerveModuleState.optimize(state, getAngle());
+    var newState = SwerveModuleState.optimize(state, getAngle().plus(offset));
 
-    setAngle(state.angle);
-    setSpeed(state.speedMetersPerSecond);
+    Logger.recordOutput(modulePath + "/DesiredSwerveStatePostOpt", newState);
+
+    setAngle(newState.angle);
+    setSpeed(newState.speedMetersPerSecond);
   }
 
   public double getPosition() {
@@ -159,6 +164,12 @@ public class SwerveModule {
 
     Logger.recordOutput(modulePath + "/targetSpeed", targetSpeed);
     Logger.recordOutput(modulePath + "/targetAngle", targetAngle);
+
+
+    var state = new SwerveModuleState(1, new Rotation2d(1.38));
+    state = SwerveModuleState.optimize(state, getAngle());
+    Logger.recordOutput(modulePath + "/testState", state);
+    Logger.recordOutput(modulePath + "/deltaState", state.angle.minus(getAngle()));
   }
   
 

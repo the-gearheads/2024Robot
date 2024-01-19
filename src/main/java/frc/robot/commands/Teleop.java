@@ -43,9 +43,9 @@ public class Teleop extends Command {
     y *= BASE_TRANS_SPEED;
     rot *= BASE_ROT_SPEED;
 
-    x += mod * MOD_TRANS_SPEED_FACTOR;
-    y += mod * MOD_TRANS_SPEED_FACTOR;
-    rot += mod * MOD_ROT_SPEED_FACTOR;
+    x += x * mod * MOD_TRANS_SPEED_FACTOR;
+    y += y * mod * MOD_TRANS_SPEED_FACTOR;
+    rot += rot * mod * MOD_ROT_SPEED_FACTOR;
 
     var speeds = new ChassisSpeeds(x, y, rot);
     if (SmartDashboard.getBoolean("Teleop/HeadingPID", false)) {

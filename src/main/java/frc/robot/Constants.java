@@ -35,7 +35,7 @@ public final class Constants {
     };
 
     public static final double[] WHEEL_OFFSETS = {90, 0, 0, 90}; // could be wrong, we get to find out {270, 0, 180, 90};
-    public static final boolean[] IS_INVERTED = {true, false, true, false}; // left side inverted i think
+    public static final boolean[] IS_INVERTED = {true, false, true, true}; // left side inverted i think
 
     public static final double WHEEL_DIAMETER = Units.inchesToMeters(3);
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
@@ -79,9 +79,9 @@ public final class Constants {
   public static class Controllers {
     public static final double JOYSTICK_DEADBAND = 0.05;
 
-    public static final double BASE_TRANS_SPEED = 4;
-    public static final double BASE_ROT_SPEED = 2;
-    public static final double MOD_TRANS_SPEED_FACTOR = 5;
+    public static final double BASE_TRANS_SPEED = 2;
+    public static final double BASE_ROT_SPEED = 2.5;
+    public static final double MOD_TRANS_SPEED_FACTOR = 6;
     public static final double MOD_ROT_SPEED_FACTOR = 3;
 
   }
