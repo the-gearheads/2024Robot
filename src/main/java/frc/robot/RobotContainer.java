@@ -30,6 +30,7 @@ public class RobotContainer {
     swerve.setDefaultCommand(new Teleop(swerve));
     sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
+    sysidAuto.addSysidRoutine(swerve.getSysIdRoutineSteer(), "SwerveSteer");
   }
 
   public void updateControllers() {

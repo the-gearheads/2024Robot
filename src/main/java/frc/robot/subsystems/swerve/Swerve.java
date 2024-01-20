@@ -11,12 +11,14 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
-import frc.robot.Robot;
+import frc.robot.Constants;
+import frc.robot.util.HandledSleep;
 
 import static frc.robot.Constants.SwerveConstants.*;
 import static edu.wpi.first.units.Units.*;
@@ -28,26 +30,38 @@ public class Swerve extends SubsystemBase {
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDriveOdometry odometry;
   Field2d field = new Field2d();
-  SwerveModule[] modules;
+  SwerveModule[] modules = {
+    new SwerveModule(0, "FL"),
+    new SwerveModule(1, "FR"),
+    new SwerveModule(2, "BL"),
+    new SwerveModule(3, "BR")
+  };
 
   public Swerve() {
-    if (Robot.isReal()) {
-      modules = new SwerveModule[]{
-        new SwerveModule(0, "FL"),
-        new SwerveModule(1, "FR"),
-        new SwerveModule(2, "BL"),
-        new SwerveModule(3, "BR")
-      };
-    } else {
-      modules = new SwerveModule[]{
-        new SwerveModuleSim(0, "FL"),
-        new SwerveModuleSim(1, "FR"),
-        new SwerveModuleSim(2, "BL"),
-        new SwerveModuleSim(3, "BR")
-      };
-    }
     odometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModulePositions());
     SmartDashboard.putData("Field", field);
+
+    /* Configure the motors in batch */
+    for (SwerveModule module : modules) {
+      module.factoryDefaults();
+    }
+
+    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
+
+    for (SwerveModule module : modules) {
+      module.configure();
+    }
+
+    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
+    for (SwerveModule module : modules) {
+      module.setupStatusFrames();
+    }
+    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
+
+    if(!DriverStation.isFMSAttached()) {
+      SmartDashboard.putBoolean("Swerve/manualVoltageSteer", false);
+      SmartDashboard.putBoolean("Swerve/manualVoltageDrive", false);
+    }
   }
 
   public Rotation2d getGyroRotation() {
@@ -94,6 +108,14 @@ public class Swerve extends SubsystemBase {
     Logger.recordOutput("Swerve/PoseRotation", getPose().getRotation().getRadians());
     field.setRobotPose(getPose());
 
+    if(!DriverStation.isFMSAttached()) {
+      var steer = SmartDashboard.getBoolean("Swerve/manualVoltageSteer", false);
+      var drive = SmartDashboard.getBoolean("Swerve/manualVoltageDrive", false);
+      for (SwerveModule module : modules) {
+        module.setSysidVoltageMode(drive, steer);
+      }
+    }
+
     for (SwerveModule module : modules) {
       module.periodic();
     }
@@ -113,11 +135,17 @@ public class Swerve extends SubsystemBase {
   private void sysidSetVolts(Measure<Voltage> volts) {
     double v = volts.in(Volts);
     for(var module: modules) {
-      module.setVolts(v);
+      module.setDriveVolts(v);
     }
   }
 
-  //doesn't work rn due to Advantage{Scope|Kit}/URCL incompat with sysid 2024.1.1, prolly could use an old version of sysid for now
+  private void sysidSetVoltsSteer(Measure<Voltage> volts) {
+    double v = volts.in(Volts);
+    for(var module: modules) {
+      module.setSteerVolts(v);
+    }
+  }
+
   public SysIdRoutine getSysIdRoutine() {
     return new SysIdRoutine(
       new SysIdRoutine.Config(
@@ -126,6 +154,20 @@ public class Swerve extends SubsystemBase {
       ),
       new Mechanism(
         this::sysidSetVolts,
+        null,
+        this
+      )
+    );
+  }
+
+    public SysIdRoutine getSysIdRoutineSteer() {
+    return new SysIdRoutine(
+      new SysIdRoutine.Config(
+        null, null, null,
+        (state) -> Logger.recordOutput("SysIdTestState", state.toString())
+      ),
+      new Mechanism(
+        this::sysidSetVoltsSteer,
         null,
         this
       )

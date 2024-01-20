@@ -6,7 +6,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.controller.PIDController;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
 
 import frc.robot.Constants;
 import frc.robot.util.HandledSleep;
@@ -19,13 +18,12 @@ import org.littletonrobotics.junction.Logger;
 public class ShooterMotor {
 
   public CANSparkFlex flex;
-  public SparkPIDController pid;
   public RelativeEncoder enc;
 
   public double targetSpeed;
   public double targetVolts;
 
-  PIDController pidC = new PIDController(PID[0], PID[1], PID[2]);
+  PIDController pid = new PIDController(PID[0], PID[1], PID[2]);
 
   public ShooterMotor(int id) {
     flex = new CANSparkFlex(id, CANSparkFlex.MotorType.kBrushless);
@@ -36,7 +34,6 @@ public class ShooterMotor {
     flex.setInverted(true);
     flex.setIdleMode(IdleMode.kCoast);
 
-    pid = flex.getPIDController();
     enc = flex.getEncoder();
   }
 
@@ -47,7 +44,7 @@ public class ShooterMotor {
       flex.setVoltage(0);
       return;
     }
-    flex.setVoltage(FEEDFORWARD.calculate(speed) + pidC.calculate(enc.getVelocity(), speed));
+    flex.setVoltage(FEEDFORWARD.calculate(speed) + pid.calculate(enc.getVelocity(), speed));
   }
 
   public double getVolts() {

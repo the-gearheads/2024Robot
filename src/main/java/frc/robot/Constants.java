@@ -58,8 +58,11 @@ public final class Constants {
     public static final double STEER_VEL_FACTOR = 2 * Math.PI * 60; // rpm -> rad/sec
 
 
-    public static final double[] STEER_PIDF = {1, 0, 0, 0}; // apparently just a P value of 1 worked for us??? i wanna test that a bit more throughly
-    public static final double[] DRIVE_PIDF = {0.04, 0, 0, 1 / DRIVE_FREE_SPD};
+    public static final double[] STEER_PID = {1, 0, 0, 0}; // apparently just a P value of 1 worked for us??? i wanna test that a bit more throughly
+    public static final double[] DRIVE_PID = {0.04, 0, 0, 1 / DRIVE_FREE_SPD};
+    public static final SimpleMotorFeedforward DRIVE_FEEDFORWARD = new SimpleMotorFeedforward(0.25521, 2.0821, 0.10605);
+    public static final SimpleMotorFeedforward STEER_FEEDFORWARD = new SimpleMotorFeedforward(0, 0, 0); // no feedforward for steer (for now)
+
 
     public static final int DRIVE_CURRENT_LIMIT = 80;
     public static final int STEER_CURRENT_LIMIT = 40;

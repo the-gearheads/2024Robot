@@ -1,201 +1,99 @@
 package frc.robot.subsystems.swerve;
 
-import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkAbsoluteEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.robot.Constants;
-import frc.robot.util.HandledSleep;
+import frc.robot.Robot;
+import frc.robot.subsystems.swerve.motors.DriveMotor;
+import frc.robot.subsystems.swerve.motors.DriveMotorSim;
+import frc.robot.subsystems.swerve.motors.SteerMotor;
+import frc.robot.subsystems.swerve.motors.SteerMotorSim;
 
 import static frc.robot.Constants.SwerveConstants.*;
 
 import org.littletonrobotics.junction.Logger;
 
 public class SwerveModule {
-  CANSparkFlex drive;
-  SparkPIDController drivePid;
-  RelativeEncoder driveEnc;
-  CANSparkMax steer;
-  SparkPIDController steerPid;
-  SparkAbsoluteEncoder steerEnc;
-
+  public DriveMotor drive;
+  public SteerMotor steer;
   Rotation2d offset;
-  /* Used for telemetry reasons */
+
   String modulePath;
-  double targetSpeed;
-  double targetAngle;
 
   public SwerveModule(int id, String moduleName) {
 
-    drive = new CANSparkFlex(MOTOR_IDS[id][0], MotorType.kBrushless);
-    steer = new CANSparkMax(MOTOR_IDS[id][1], MotorType.kBrushless);
-
-    drive.restoreFactoryDefaults();
-    steer.restoreFactoryDefaults();
-    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
-
-    drive.setSmartCurrentLimit(DRIVE_CURRENT_LIMIT);
-    steer.setSmartCurrentLimit(STEER_CURRENT_LIMIT);
-
-    drive.setInverted(IS_INVERTED[id]);
-
-    drive.setIdleMode(IdleMode.kBrake);
-    steer.setIdleMode(IdleMode.kBrake);
-    
-    drivePid = drive.getPIDController();
-    steerPid = steer.getPIDController();
-
-    steerEnc = steer.getAbsoluteEncoder(Type.kDutyCycle);
-    steerEnc.setPositionConversionFactor(STEER_POS_FACTOR);
-    steerEnc.setVelocityConversionFactor(STEER_VEL_FACTOR);
-    
-    steerEnc.setInverted(true);
-
-    driveEnc = drive.getEncoder();
-    driveEnc.setPositionConversionFactor(DRIVE_POS_FACTOR);
-    driveEnc.setVelocityConversionFactor(DRIVE_VEL_FACTOR);
-
-    steerPid.setFeedbackDevice(steerEnc);
-    steerPid.setPositionPIDWrappingEnabled(true);
-    steerPid.setPositionPIDWrappingMinInput(0);
-    steerPid.setPositionPIDWrappingMaxInput(2 * Math.PI);
-
-    steerPid.setP(STEER_PIDF[0]);
-    steerPid.setI(STEER_PIDF[1]);
-    steerPid.setD(STEER_PIDF[2]);
-    steerPid.setFF(STEER_PIDF[3]);
-
-    drivePid.setP(DRIVE_PIDF[0]);
-    drivePid.setI(DRIVE_PIDF[1]);
-    drivePid.setD(DRIVE_PIDF[2]);
-    drivePid.setFF(DRIVE_PIDF[3]);
-
-    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
-    setupStatusFrames(); // pretty important that this doesnt get missed
-    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
-
-
-    // i think if we burnFlash we should throw in a Thread.sleep
-
-    this.offset = Rotation2d.fromDegrees(WHEEL_OFFSETS[id]);
     this.modulePath = "Swerve/" + moduleName;
-  }
-
-  protected Rotation2d getAngle() {
-    return Rotation2d.fromRadians(steerEnc.getPosition()).minus(offset);
-  }
-
-  public void setAngle(Rotation2d angle) {
-    targetAngle = angle.getRadians();
-    steerPid.setReference(angle.getRadians(), ControlType.kPosition);
-  }
-
-  public void setSpeed(double speed) {
-    targetSpeed = speed;
-    drivePid.setReference(speed, ControlType.kVelocity);
+    this.offset = Rotation2d.fromDegrees(WHEEL_OFFSETS[id]);
+    if (Robot.isReal()) {
+      drive = new DriveMotor(MOTOR_IDS[id][0], id, modulePath);
+      steer = new SteerMotor(MOTOR_IDS[id][1], id, offset, modulePath);
+    } else {
+      drive = new DriveMotorSim(MOTOR_IDS[id][0], id, modulePath);
+      steer = new SteerMotorSim(MOTOR_IDS[id][1], id, offset, modulePath);
+    }
   }
 
   public void setState(SwerveModuleState state) {
     Logger.recordOutput(modulePath + "/DesiredSwerveStatePreOpt", state);
-    /* I don't think this is needed in 2024 wpilib but it can't hurt */
-    state = new SwerveModuleState(state.speedMetersPerSecond, state.angle);
 
+    /* Could be wrong but i don't think we need any of the tomfoolery that was previously here */
+    state = SwerveModuleState.optimize(state, steer.getAngle());
 
-    state.angle = state.angle.plus(offset);
-    /* taking advantage of optimize so the modules that are rotated 180deg dont have to have their
-     * drive encoders inverted
-     */
-    var newState = SwerveModuleState.optimize(state, getAngle().plus(offset));
+    Logger.recordOutput(modulePath + "/DesiredSwerveStatePostOpt", state);
 
-    Logger.recordOutput(modulePath + "/DesiredSwerveStatePostOpt", newState);
-
-    setAngle(newState.angle);
-    setSpeed(newState.speedMetersPerSecond);
-  }
-
-  public double getPosition() {
-    return driveEnc.getPosition();
-  }
-
-  public double getDriveVelocity() {
-    return driveEnc.getVelocity();
-  }
-
-  public double getSteerVelocity() {
-    return steerEnc.getVelocity();
+    steer.noOffsetSetAngle(state.angle);
+    drive.setSpeed(state.speedMetersPerSecond);
   }
 
   public SwerveModulePosition getModulePosition() {
-    return new SwerveModulePosition(getPosition(), getAngle());
+    return new SwerveModulePosition(drive.getPosition(), steer.getAngle());
   }
 
   public SwerveModuleState getState() {
-    return new SwerveModuleState(getDriveVelocity(), getAngle());
+    return new SwerveModuleState(drive.getVelocity(), steer.getAngle());
   }
 
-  public void setVolts(double volts) {
-    var state = new SwerveModuleState(0, new Rotation2d());
-    state.angle = state.angle.plus(offset);
-
-    setAngle(state.angle);
+  public void setDriveVolts(double volts) {
+    steer.setAngle(new Rotation2d(0));
     drive.setVoltage(volts);
   }
 
+  public void setSteerVolts(double volts) {
+    steer.setVoltage(volts);
+    drive.setVoltage(0);
+  }
+
+  /* Makes it such that PID doesn't run and you can set the voltage in peace */
+  public void setSysidVoltageMode(boolean drive, boolean steer) {
+    this.drive.setManualVoltageOnly(drive);
+    this.steer.setManualVoltageOnly(steer);
+  }
+
   public void resetEncoders() {
-    driveEnc.setPosition(0);
+    drive.resetEncoder();
   }
 
   public void periodic() {
-    Logger.recordOutput(modulePath + "/driveVolts", drive.getAppliedOutput());
-    Logger.recordOutput(modulePath + "/steerVolts", steer.getAppliedOutput());
+    steer.periodic();
+    drive.periodic();
+    steer.log();
+    drive.log();
+  }
 
-    Logger.recordOutput(modulePath + "/drivePos", getPosition());
-    Logger.recordOutput(modulePath + "/driveVel", getDriveVelocity());
+  /* MUST CALL THESE THREE BEFORE USING */
+  public void factoryDefaults() {
+    steer.factoryDefaults();
+    drive.factoryDefaults();
+  }
 
-    Logger.recordOutput(modulePath + "/steerAngle", getAngle().getRadians());
-    Logger.recordOutput(modulePath + "/steerVel", getSteerVelocity());
+  public void configure() {
+    steer.configure();
+    drive.configure();
+  }
 
-    Logger.recordOutput(modulePath + "/targetSpeed", targetSpeed);
-    Logger.recordOutput(modulePath + "/targetAngle", targetAngle);
-
-
-    var state = new SwerveModuleState(1, new Rotation2d(1.38));
-    state = SwerveModuleState.optimize(state, getAngle());
-    Logger.recordOutput(modulePath + "/testState", state);
-    Logger.recordOutput(modulePath + "/deltaState", state.angle.minus(getAngle()));
+  public void setupStatusFrames() {
+    steer.setupStatusFrames();
+    drive.setupStatusFrames();
   }
   
-
-  private void setupStatusFrames() {
-    drive.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
-    /* Don't have an analog encoder */
-    drive.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500);
-    /* Don't have an alternate encoder */
-    drive.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
-    /* Don't have a duty cycle encoder */
-    drive.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500);
-    drive.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500);
-
-    /* Status 0 governs applied output, faults, and whether is a follower. We don't care about that super much, so we increase it */
-    steer.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-    /* We don't care about our motor position, only what the encoder reads */
-    steer.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
-    /* Don't have an analog sensor */
-    steer.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500);
-    /* Don't have an alternate encoder */
-    steer.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
-    /* We -really- care about our duty cycle encoder readings though. THE DEFAULT WAS 200MS */
-    steer.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
-    steer.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
-  }
 }
