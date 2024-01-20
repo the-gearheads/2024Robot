@@ -2,7 +2,6 @@ package frc.robot.subsystems.swerve.motors;
 
 import static frc.robot.Constants.SwerveConstants.DRIVE_FEEDFORWARD;
 import static frc.robot.Constants.SwerveConstants.DRIVE_RATIO;
-import static frc.robot.Constants.SwerveConstants.IS_INVERTED;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;

@@ -1,6 +1,7 @@
 package frc.robot.controllers;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class XboxDriverController implements DriverController {
 
@@ -28,5 +29,10 @@ public class XboxDriverController implements DriverController {
   @Override
   public double getSpeedModifierAxis() {
     return Controllers.deadband(controller.getRightTriggerAxis());
+  }
+
+  @Override
+  public Trigger getGyroZeroButton() {
+    return new Trigger(()-> controller.getLeftBumper());
   }
 }

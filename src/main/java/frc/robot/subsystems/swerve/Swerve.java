@@ -39,6 +39,7 @@ public class Swerve extends SubsystemBase {
 
   public Swerve() {
     odometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModulePositions());
+    gyro.zeroYaw();
     SmartDashboard.putData("Field", field);
 
     /* Configure the motors in batch */
@@ -62,6 +63,8 @@ public class Swerve extends SubsystemBase {
       SmartDashboard.putBoolean("Swerve/manualVoltageSteer", false);
       SmartDashboard.putBoolean("Swerve/manualVoltageDrive", false);
     }
+
+    resetPose(new Pose2d());
   }
 
   public Rotation2d getGyroRotation() {

@@ -6,41 +6,45 @@ import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class SteerMotor {
 
   CANSparkMax max;
   SparkAbsoluteEncoder encoder;
-  PIDController pid = new PIDController(STEER_PID[0], STEER_PID[1], STEER_PID[2]);
+  SparkPIDController pid;
 
   int index;
   Rotation2d offset;
   String modulePath;
+
+  double targetAngle;
 
   boolean manualVoltageOnly = false;
 
   public SteerMotor(int id, int index, Rotation2d offset, String modulePath) {
     max = new CANSparkMax(id, MotorType.kBrushless);
     encoder = max.getAbsoluteEncoder(Type.kDutyCycle);
+    pid = max.getPIDController();
     this.index = index;
     this.offset = offset;
     this.modulePath = modulePath;
-
-    pid.enableContinuousInput(0, 2 * Math.PI);
   }
   
   public void noOffsetSetAngle(Rotation2d angle) {
-    pid.setSetpoint(angle.getRadians());
+    if(manualVoltageOnly) return;
+    pid.setReference(angle.getRadians(), ControlType.kPosition);
   }
 
   public void setAngle(Rotation2d angle) {
+    targetAngle = angle.getRadians();
     noOffsetSetAngle(angle.plus(offset));
   }
 
@@ -53,10 +57,6 @@ public class SteerMotor {
   }
 
   public void periodic() {
-    if (manualVoltageOnly) {
-      return;
-    }
-    setVoltage(pid.calculate(encoder.getPosition()) + STEER_FEEDFORWARD.calculate(pid.getSetpoint()));
   }
 
   /* meant for sysid and stuff */
@@ -65,14 +65,14 @@ public class SteerMotor {
   }
 
   public void setVoltage(double volts) {
-    max.setVoltage(volts);
+    pid.setReference(volts, ControlType.kVoltage);
   }
 
   public void log() {
     Logger.recordOutput(modulePath + "/steerVolts", max.getAppliedOutput() * max.getBusVoltage());
     Logger.recordOutput(modulePath + "/steerAngle", getAngle().getRadians());
     Logger.recordOutput(modulePath + "/steerVel", encoder.getVelocity());
-    Logger.recordOutput(modulePath + "/targetAngle", pid.getSetpoint());
+    Logger.recordOutput(modulePath + "/targetAngle", targetAngle);
     Logger.recordOutput(modulePath + "/manualVoltageOnly", manualVoltageOnly);
   }
 
@@ -88,6 +88,17 @@ public class SteerMotor {
     encoder.setPositionConversionFactor(STEER_POS_FACTOR);
     encoder.setVelocityConversionFactor(STEER_VEL_FACTOR);
     encoder.setInverted(true);
+
+    pid.setPositionPIDWrappingEnabled(true);
+    pid.setPositionPIDWrappingMinInput(0);
+    pid.setPositionPIDWrappingMaxInput(Math.PI * 2);
+
+    pid.setP(STEER_PIDF[0]);
+    pid.setI(STEER_PIDF[1]);
+    pid.setD(STEER_PIDF[2]);
+    pid.setFF(STEER_PIDF[3]);
+
+    pid.setFeedbackDevice(encoder);
   }
 
   public void setupStatusFrames() {

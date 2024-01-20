@@ -24,6 +24,7 @@ public class Teleop extends Command {
   @Override
   public void initialize() {
     hPid.enableContinuousInput(-Math.PI, Math.PI); // verify whether this should be [-pi, pi] or [0, 2pi]
+    hPid.setSetpoint(swerve.getGyroRotation().getRadians());
     SmartDashboard.putBoolean("Teleop/HeadingPID", false);
   }
 
@@ -33,7 +34,7 @@ public class Teleop extends Command {
     double y = Controllers.driverController.getTranslateYAxis();
     double rot = Controllers.driverController.getRotateAxis();
 
-    double mod = Math.pow(Controllers.driverController.getSpeedModifierAxis(), 3);
+    double mod = Math.abs(Math.pow(Controllers.driverController.getSpeedModifierAxis(), 2));
 
     x = Math.pow(x, 3);
     y = Math.pow(y, 3);

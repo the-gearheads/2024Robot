@@ -41,7 +41,7 @@ public class SwerveModule {
 
     Logger.recordOutput(modulePath + "/DesiredSwerveStatePostOpt", state);
 
-    steer.noOffsetSetAngle(state.angle);
+    steer.setAngle(state.angle);
     drive.setSpeed(state.speedMetersPerSecond);
   }
 

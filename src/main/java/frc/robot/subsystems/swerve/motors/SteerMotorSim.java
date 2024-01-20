@@ -13,7 +13,7 @@ public class SteerMotorSim extends SteerMotor {
 
   @Override
   public Rotation2d getAngle() {
-    return Rotation2d.fromRadians(pid.getSetpoint());
+    return Rotation2d.fromRadians(targetAngle);
   }
 
   @Override

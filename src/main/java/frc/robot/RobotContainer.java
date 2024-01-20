@@ -8,8 +8,11 @@ import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -43,6 +46,11 @@ public class RobotContainer {
 
     // Find new controllers
     Controllers.updateActiveControllerInstance();
+
+    Controllers.driverController.getGyroZeroButton().onTrue(new InstantCommand(() -> {
+        swerve.resetPose(new Pose2d(swerve.getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+    }));
+
   }
 
   /**

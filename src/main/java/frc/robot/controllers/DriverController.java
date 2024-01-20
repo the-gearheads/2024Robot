@@ -1,5 +1,7 @@
 package frc.robot.controllers;
 
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 public interface DriverController {
   public default double getTranslateXAxis() {
     return 0;
@@ -15,5 +17,9 @@ public interface DriverController {
 
   public default double getSpeedModifierAxis() {
     return 0;
+  }
+
+  public default Trigger getGyroZeroButton() {
+    return new Trigger(() -> false);
   }
 }
