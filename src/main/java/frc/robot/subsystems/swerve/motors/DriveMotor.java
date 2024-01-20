@@ -61,11 +61,11 @@ public class DriveMotor {
   }
 
   public double getPosition() {
-    return encoder.getPosition() * DRIVE_POS_FACTOR;
+    return encoder.getPosition();
   }
 
   public double getVelocity() {
-    return encoder.getVelocity() * DRIVE_VEL_FACTOR;
+    return encoder.getVelocity();
   }
 
   public void resetEncoder() {
@@ -82,8 +82,8 @@ public class DriveMotor {
     flex.setSmartCurrentLimit(DRIVE_CURRENT_LIMIT);
     flex.setIdleMode(IdleMode.kBrake);
     flex.setInverted(IS_INVERTED[index]);
-    encoder.setPositionConversionFactor(1);
-    encoder.setVelocityConversionFactor(1);
+    encoder.setPositionConversionFactor(DRIVE_POS_FACTOR);
+    encoder.setVelocityConversionFactor(DRIVE_VEL_FACTOR);
   }
 
   /* then this, surrounded by 2 delays */
