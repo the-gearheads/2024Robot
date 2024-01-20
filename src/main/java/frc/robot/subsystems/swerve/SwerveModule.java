@@ -144,8 +144,11 @@ public class SwerveModule {
   }
 
   public void setVolts(double volts) {
-    setAngle(new Rotation2d(0));
-    drivePid.setReference(volts, ControlType.kVoltage);
+    var state = new SwerveModuleState(0, new Rotation2d());
+    state.angle = state.angle.plus(offset);
+
+    setAngle(state.angle);
+    drive.setVoltage(volts);
   }
 
   public void resetEncoders() {

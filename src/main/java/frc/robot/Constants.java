@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -70,10 +71,11 @@ public final class Constants {
   }
 
   public static class ShooterConstants {
-    public static final int TOP_ID = 9;
-    public static final int BOTTOM_ID = 10;
+    public static final int TOP_ID = 15;
+    public static final int BOTTOM_ID = 16;
     public static final double SPEED_TOLERANCE = 150;
-    public static final double[] PIDF = {0.0004, 0, 0, 0.00015};
+    public static final double[] PID = {0.0021693, 0, 0};
+    public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.045537, 0.0017932, 0.0001929);
   }
 
   public static class Controllers {

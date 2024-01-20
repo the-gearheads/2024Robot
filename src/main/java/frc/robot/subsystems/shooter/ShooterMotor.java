@@ -1,8 +1,10 @@
 package frc.robot.subsystems.shooter;
 
 import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
+
+import edu.wpi.first.math.controller.PIDController;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
@@ -16,38 +18,40 @@ import org.littletonrobotics.junction.Logger;
 // these configs are kinda long and we gotta do it twice so why not put it in its own file
 public class ShooterMotor {
 
-  public CANSparkFlex max;
+  public CANSparkFlex flex;
   public SparkPIDController pid;
   public RelativeEncoder enc;
 
   public double targetSpeed;
   public double targetVolts;
 
+  PIDController pidC = new PIDController(PID[0], PID[1], PID[2]);
+
   public ShooterMotor(int id) {
-    max = new CANSparkFlex(id, CANSparkFlex.MotorType.kBrushless);
-    max.restoreFactoryDefaults();
+    flex = new CANSparkFlex(id, CANSparkFlex.MotorType.kBrushless);
+    flex.restoreFactoryDefaults();
     HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
 
-    max.setSmartCurrentLimit(70);
-    max.setInverted(true);
-    max.setIdleMode(IdleMode.kCoast);
+    flex.setSmartCurrentLimit(50);
+    flex.setInverted(true);
+    flex.setIdleMode(IdleMode.kCoast);
 
-    pid = max.getPIDController();
-    enc = max.getEncoder();
-
-    pid.setP(PIDF[0]);
-    pid.setI(PIDF[1]);
-    pid.setD(PIDF[2]);
-    pid.setFF(PIDF[3]);
+    pid = flex.getPIDController();
+    enc = flex.getEncoder();
   }
 
   public void setSpeed(double speed) {
     targetSpeed = speed;
-    pid.setReference(speed, ControlType.kVelocity);
+    if(speed == 0) {
+      // Want to coast to a stop rather than brake
+      flex.setVoltage(0);
+      return;
+    }
+    flex.setVoltage(FEEDFORWARD.calculate(speed) + pidC.calculate(enc.getVelocity(), speed));
   }
 
   public double getVolts() {
-    return max.getAppliedOutput() * max.getBusVoltage();
+    return flex.getAppliedOutput() * flex.getBusVoltage();
   }
 
   public double getVelocity() {
@@ -60,7 +64,7 @@ public class ShooterMotor {
 
   public void setVolts(double volts) {
     targetVolts = volts; // tbh idk if they really differ
-    pid.setReference(volts, ControlType.kVoltage);
+    flex.setVoltage(volts);
   }
 
   public void log(String name) {
