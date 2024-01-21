@@ -2,6 +2,7 @@ package frc.robot.util;
 
 import edu.wpi.first.math.controller.BangBangController;
 
+/* BangBang except it actually will also go into the reverse direction too */
 public class BetterBangBang extends BangBangController {
   @Override
   public double calculate(double measurement) {
