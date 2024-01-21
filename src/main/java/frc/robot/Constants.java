@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
@@ -80,6 +82,11 @@ public final class Constants {
     public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.045537, 0.0017932, 0.0001929);
   }
 
+  public static class AutoConstants {
+    public static final PathConstraints PATHFIND_CONSTRAINTS = new PathConstraints(
+            3.0, 4.0,
+            Units.degreesToRadians(540), Units.degreesToRadians(720));
+  }
   public static class Controllers {
     public static final double JOYSTICK_DEADBAND = 0.05;
 

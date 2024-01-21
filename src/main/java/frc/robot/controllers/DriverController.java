@@ -22,4 +22,8 @@ public interface DriverController {
   public default Trigger getGyroZeroButton() {
     return new Trigger(() -> false);
   }
+
+  public default Trigger getPatthfindButton() {
+    return new Trigger(() -> false);
+  }
 }

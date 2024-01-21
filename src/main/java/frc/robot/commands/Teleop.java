@@ -1,13 +1,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.util.BetterBangBang;
+import frc.robot.util.CustomProxy;
+
 import static frc.robot.Constants.Controllers.*;
 
 import org.littletonrobotics.junction.Logger;
@@ -23,9 +29,10 @@ public class Teleop extends Command {
 
   @Override
   public void initialize() {
-    hPid.enableContinuousInput(-Math.PI, Math.PI); // verify whether this should be [-pi, pi] or [0, 2pi]
-    hPid.setSetpoint(swerve.getGyroRotation().getRadians());
+    headingController.setSetpoint(swerve.getGyroRotation().getRadians());
     SmartDashboard.putBoolean("Teleop/HeadingPID", false);
+    SmartDashboard.putData("Swerve/headingcontroller", headingController);
+
   }
 
   @Override
@@ -33,6 +40,8 @@ public class Teleop extends Command {
     double x = Controllers.driverController.getTranslateXAxis();
     double y = Controllers.driverController.getTranslateYAxis();
     double rot = Controllers.driverController.getRotateAxis();
+
+    var attemptingToRotate = MathUtil.applyDeadband(rot, 0.02) != 0; 
 
     double mod = Math.abs(Math.pow(Controllers.driverController.getSpeedModifierAxis(), 2));
 
@@ -50,11 +59,15 @@ public class Teleop extends Command {
 
     var speeds = new ChassisSpeeds(x, y, rot);
     if (SmartDashboard.getBoolean("Teleop/HeadingPID", false)) {
-      headingPid(rot != 0, speeds);
+      headingPid(attemptingToRotate, speeds);
     }
 
     Logger.recordOutput("Swerve/Teleop/Speeds", speeds);
     swerve.driveFieldRelative(speeds);
+
+    if(Controllers.driverController.getPatthfindButton().getAsBoolean()) {
+      swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(0.3, 0.3), swerve.getPose().getRotation()))).schedule();
+    }
   }
 
   @Override
@@ -62,19 +75,18 @@ public class Teleop extends Command {
 
   }
 
-  private PIDController hPid = new PIDController(5, 0, 0);
   private double touchedRotateAt = Timer.getFPGATimestamp();
+  private BetterBangBang headingController = new BetterBangBang();
   private void headingPid(boolean attemptingToRotate, ChassisSpeeds speeds) {
+    headingController.setTolerance(0.06);
     touchedRotateAt = attemptingToRotate ? Timer.getFPGATimestamp() : touchedRotateAt;
     double timeSinceLastRotate = Timer.getFPGATimestamp() - touchedRotateAt;
-    if (attemptingToRotate && timeSinceLastRotate > 0.1) {
-      hPid.setSetpoint(swerve.getGyroRotation().getRadians());
+    if (!attemptingToRotate && timeSinceLastRotate > 0.15) {
+      double rot = headingController.calculate(swerve.getGyroRotation().getRadians());
+      
+      speeds.omegaRadiansPerSecond += rot;
     } else {
-        double rot = hPid.calculate(swerve.getGyroRotation().getRadians());
-        rot = MathUtil.clamp(rot, -2.5, 2.5);
-        rot = MathUtil.applyDeadband(rot, 0.1);
-        speeds.omegaRadiansPerSecond += rot;
+      headingController.setSetpoint(swerve.getGyroRotation().getRadians());
     }
   }
-
 }

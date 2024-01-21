@@ -1,7 +1,9 @@
 package frc.robot.controllers;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.swerve.Swerve;
 
 public class XboxDriverController implements DriverController {
 
@@ -23,6 +25,7 @@ public class XboxDriverController implements DriverController {
 
   @Override
   public double getRotateAxis() {
+    controller.setRumble(RumbleType.kBothRumble, Math.abs(controller.getRightX()));
     return Controllers.deadband(-controller.getRightX());
   }
 
@@ -34,5 +37,10 @@ public class XboxDriverController implements DriverController {
   @Override
   public Trigger getGyroZeroButton() {
     return new Trigger(()-> controller.getLeftBumper());
+  }
+
+  @Override
+  public Trigger getPatthfindButton() {
+    return new Trigger(() -> controller.getXButton());
   }
 }

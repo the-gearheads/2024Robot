@@ -1,19 +1,29 @@
 package frc.robot.subsystems.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.proto.Kinematics;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
@@ -64,14 +74,50 @@ public class Swerve extends SubsystemBase {
       SmartDashboard.putBoolean("Swerve/manualVoltageDrive", false);
     }
 
-    resetPose(new Pose2d());
+    resetPose(new Pose2d(new Translation2d(2, 2), new Rotation2d()));
+
+    AutoBuilder.configureHolonomic(
+        this::getPose, // Robot pose supplier
+        this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+        this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+                MAX_MOD_SPEED, // Max module speed, in m/s
+                WHEEL_POSITIONS[0].getX(), // Drive base radius in meters. Distance from robot center to furthest module.
+                new ReplanningConfig() // Default path replanning config. See the API for the options here
+        ),
+        () -> {
+            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // This will flip the path being followed to the red side of the field.
+            // THE ORIGIN WILL REMAIN ON THE BLUE S
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+            }
+            return false;
+        },
+        this // Reference to this subsystem to set requirements
+    );
   }
 
   public Rotation2d getGyroRotation() {
     /* gyro's inverted i believe */
-    return Rotation2d.fromRadians(-gyro.getRotation2d().getRadians());
+    return Rotation2d.fromRadians(gyro.getRotation2d().getRadians());
   }
 
+  public Command pathFindTo(Pose2d targetPose) {
+    // Since AutoBuilder is configured, we can use it to build pathfinding commands
+    Command pathfindingCommand = AutoBuilder.pathfindToPose(
+            targetPose,
+            Constants.AutoConstants.PATHFIND_CONSTRAINTS,
+            0.0, // Goal end velocity in meters/sec
+            0.0 // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
+    );
+    return pathfindingCommand;
+
+  }
   public void drive(ChassisSpeeds speeds) {
     ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(discretized);
@@ -86,21 +132,30 @@ public class Swerve extends SubsystemBase {
   }
 
   public void driveFieldRelative(ChassisSpeeds speeds) {
-    drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroRotation()));
+    drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation()));
   }
 
   public SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
-    SwerveModuleState[] states = new SwerveModuleState[modules.length];
     for (int i = 0; i < modules.length; i++) {
       positions[i] = modules[i].getModulePosition();
-      states[i] = modules[i].getState();
     }
     Logger.recordOutput("Swerve/Positions", positions);
-    Logger.recordOutput("Swerve/States", states);
     return positions;
   }
 
+  public SwerveModuleState[] getModuleStates() {
+    SwerveModuleState[] states = new SwerveModuleState[modules.length];
+    for (int i = 0; i < modules.length; i++) {
+      states[i] = modules[i].getState();
+    }
+    Logger.recordOutput("Swerve/States", states);
+    return states;
+  }
+
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+    return kinematics.toChassisSpeeds(getModuleStates());
+  }
   @Override
   public void periodic() {
     odometry.update(getGyroRotation(), getModulePositions());
