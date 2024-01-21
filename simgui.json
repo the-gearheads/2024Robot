@@ -16,6 +16,11 @@
       "/SmartDashboard/SysidRoutines": "String Chooser"
     },
     "windows": {
+      "/SmartDashboard/Auto Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
         "window": {
           "visible": true
