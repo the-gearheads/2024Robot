@@ -26,4 +26,8 @@ public interface DriverController {
   public default Trigger getPatthfindButton() {
     return new Trigger(() -> false);
   }
+
+  public default Trigger getResetPoseButton() {
+    return new Trigger(() -> false);
+  }
 }

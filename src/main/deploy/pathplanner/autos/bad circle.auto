@@ -16,12 +16,6 @@
           "data": {
             "pathName": "NewPath"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "NewPath.1"
-          }
         }
       ]
     }

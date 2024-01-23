@@ -45,6 +45,14 @@ public class SwerveModule {
     drive.setSpeed(state.speedMetersPerSecond);
   }
 
+  /* setState except the speed is interpretedd as voltage */
+  public void setStateVoltage(SwerveModuleState state) {
+    state = SwerveModuleState.optimize(state, steer.getAngle());
+
+    steer.setAngle(state.angle);
+    drive.setVoltage(state.speedMetersPerSecond);
+  }
+
   public SwerveModulePosition getModulePosition() {
     return new SwerveModulePosition(drive.getPosition(), steer.getAngle());
   }
@@ -54,7 +62,7 @@ public class SwerveModule {
   }
 
   public void setDriveVolts(double volts) {
-    steer.setAngle(new Rotation2d(0));
+    // steer.setAngle(new Rotation2d(0));
     drive.setVoltage(volts);
   }
 

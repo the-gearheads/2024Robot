@@ -42,8 +42,8 @@ public class Teleop extends Command {
 
     double mod = Math.abs(Math.pow(Controllers.driverController.getSpeedModifierAxis(), 2));
 
-    x = Math.pow(x, 3);
-    y = Math.pow(y, 3);
+    // x = Math.pow(x, 3);
+    // y = Math.pow(y, 3);
     rot = Math.pow(rot, 3);
 
     x *= BASE_TRANS_SPEED;

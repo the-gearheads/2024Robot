@@ -13,6 +13,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -61,6 +62,10 @@ public class RobotContainer {
 
     Controllers.driverController.getGyroZeroButton().onTrue(new InstantCommand(() -> {
         swerve.resetPose(new Pose2d(swerve.getPose().getTranslation(), Rotation2d.fromDegrees(0)));
+    }));
+
+    Controllers.driverController.getResetPoseButton().onTrue(new InstantCommand(() -> {
+        swerve.resetPose(new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(0)));
     }));
   }
 

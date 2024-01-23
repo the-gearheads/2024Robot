@@ -132,6 +132,7 @@ public class Swerve extends SubsystemBase {
   }
 
   public SwerveModulePosition[] getModulePositions() {
+    getModuleStates();
     SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
     for (int i = 0; i < modules.length; i++) {
       positions[i] = modules[i].getModulePosition();
@@ -188,8 +189,11 @@ public class Swerve extends SubsystemBase {
 
   private void sysidSetVolts(Measure<Voltage> volts) {
     double v = volts.in(Volts);
-    for(var module: modules) {
-      module.setDriveVolts(v);
+    // var states = kinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 1));
+    for (int i = 0; i < modules.length; i++) {
+      modules[i].setDriveVolts(v);
+      // states[i].speedMetersPerSecond = v;
+      // modules[i].setStateVoltage(states[i]);
     }
   }
 

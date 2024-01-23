@@ -38,6 +38,11 @@ public class XboxDriverController implements DriverController {
     return new Trigger(()-> controller.getLeftBumper());
   }
 
+    @Override
+  public Trigger getResetPoseButton() {
+    return new Trigger(()-> controller.getRightBumper());
+  }
+
   @Override
   public Trigger getPatthfindButton() {
     return new Trigger(() -> controller.getXButton());
