@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Constants;
+import frc.robot.subsystems.swerve.gyro.Gyro;
 import frc.robot.util.HandledSleep;
 
 import static frc.robot.Constants.SwerveConstants.*;
@@ -32,7 +33,7 @@ import static edu.wpi.first.units.Units.*;
 import org.littletonrobotics.junction.Logger;
 
 public class Swerve extends SubsystemBase {
-  AHRS gyro = new AHRS();
+  Gyro gyro;
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDriveOdometry odometry;
   Field2d field = new Field2d();
@@ -43,7 +44,8 @@ public class Swerve extends SubsystemBase {
     new SwerveModule(3, "BR")
   };
 
-  public Swerve() {
+  public Swerve(Gyro gyro) {
+    this.gyro = gyro;
     odometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModulePositions());
     gyro.zeroYaw();
     SmartDashboard.putData("Field", field);
