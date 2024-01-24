@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
+import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.swerve.Swerve;
 
 
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Swerve swerve = new Swerve();
+  public final Leds leds = new Leds();
   // private final Shooter shooter = new Shooter();
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private SendableChooser<Command> autoChooser;

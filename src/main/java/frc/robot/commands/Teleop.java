@@ -40,7 +40,8 @@ public class Teleop extends Command {
 
     var attemptingToRotate = MathUtil.applyDeadband(rot, 0.02) != 0; 
 
-    double mod = Math.abs(Math.pow(Controllers.driverController.getSpeedModifierAxis(), 2));
+    double speedMod = Math.abs(Math.pow(Controllers.driverController.getSpeedModifierAxis(), 2));
+    double slowMod = Math.abs(Math.pow(Controllers.driverController.getSlowModifierAxis(), 2));
 
     // x = Math.pow(x, 3);
     // y = Math.pow(y, 3);
@@ -50,9 +51,14 @@ public class Teleop extends Command {
     y *= BASE_TRANS_SPEED;
     rot *= BASE_ROT_SPEED;
 
-    x += x * mod * MOD_TRANS_SPEED_FACTOR;
-    y += y * mod * MOD_TRANS_SPEED_FACTOR;
-    rot += rot * mod * MOD_ROT_SPEED_FACTOR;
+    x   += x   * speedMod * MOD_TRANS_SPEED_FACTOR;
+    y   += y   * speedMod * MOD_TRANS_SPEED_FACTOR;
+    rot += rot * speedMod * MOD_ROT_SPEED_FACTOR;
+
+    x   -= x   * slowMod * MOD_TRANS_SPEED_FACTOR;
+    y   -= y   * slowMod * MOD_TRANS_SPEED_FACTOR;
+    rot -= rot * slowMod * MOD_ROT_SPEED_FACTOR;
+
 
     var speeds = new ChassisSpeeds(x, y, rot);
     if (SmartDashboard.getBoolean("Teleop/HeadingPID", false)) {
