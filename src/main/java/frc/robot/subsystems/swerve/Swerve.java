@@ -6,6 +6,8 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.hal.SimDouble;
+import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -14,9 +16,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Constants;
-import frc.robot.subsystems.swerve.gyro.Gyro;
 import frc.robot.util.HandledSleep;
 
 import static frc.robot.Constants.SwerveConstants.*;
@@ -33,10 +36,15 @@ import static edu.wpi.first.units.Units.*;
 import org.littletonrobotics.junction.Logger;
 
 public class Swerve extends SubsystemBase {
-  Gyro gyro;
+  AHRS gyro = new AHRS(SPI.Port.kMXP);
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDriveOdometry odometry;
   Field2d field = new Field2d();
+
+  int simGyro = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
+  SimDouble simGyroAngle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(simGyro, "Yaw"));
+  double rotSpdSetpoint = 0;
+  
   SwerveModule[] modules = {
     new SwerveModule(0, "FL"),
     new SwerveModule(1, "FR"),
@@ -44,8 +52,7 @@ public class Swerve extends SubsystemBase {
     new SwerveModule(3, "BR")
   };
 
-  public Swerve(Gyro gyro) {
-    this.gyro = gyro;
+  public Swerve() {
     odometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModulePositions());
     gyro.zeroYaw();
     SmartDashboard.putData("Field", field);
@@ -105,6 +112,12 @@ public class Swerve extends SubsystemBase {
     return Rotation2d.fromRadians(gyro.getRotation2d().getRadians());
   }
 
+  @Override
+  public void simulationPeriodic() {
+    var degreesPerSecond = Units.radiansToDegrees(rotSpdSetpoint);
+    simGyroAngle.set(simGyroAngle.get() - (degreesPerSecond * 0.02));
+  }
+
   public Command pathFindTo(Pose2d targetPose) {
     // Since AutoBuilder is configured, we can use it to build pathfinding commands
     Command pathfindingCommand = AutoBuilder.pathfindToPose(
@@ -118,6 +131,7 @@ public class Swerve extends SubsystemBase {
   }
   public void drive(ChassisSpeeds speeds) {
     ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
+    rotSpdSetpoint = discretized.omegaRadiansPerSecond;
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(discretized);
 
     if (SmartDashboard.getBoolean("Swerve/desaturateWheelSpeeds", false)) {

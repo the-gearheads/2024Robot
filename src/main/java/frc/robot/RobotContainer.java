@@ -7,7 +7,6 @@ package frc.robot;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.swerve.Swerve;
-import frc.robot.subsystems.swerve.gyro.Gyro;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -29,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Swerve swerve = new Swerve(new Gyro(SPI.Port.kMXP));
+  private final Swerve swerve = new Swerve();
   // private final Shooter shooter = new Shooter();
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private SendableChooser<Command> autoChooser;
