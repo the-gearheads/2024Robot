@@ -19,6 +19,10 @@ public interface DriverController {
     return 0;
   }
 
+  public default double getSlowModifierAxis() {
+    return 0;
+  }
+
   public default Trigger getGyroZeroButton() {
     return new Trigger(() -> false);
   }

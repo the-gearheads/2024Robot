@@ -10,10 +10,13 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.urcl.URCL;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.leds.LedState;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -25,6 +28,10 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+
+    /* Globals :( */
+    public static double matchTime = -1;
+    private static double matchTimeStart = 0;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -66,6 +73,10 @@ public class Robot extends LoggedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     m_robotContainer.updateControllers();
+
+    if (DriverStation.isEStopped()) {
+      m_robotContainer.leds.setState(LedState.HOT_PINK);
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -78,6 +89,7 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    matchTime = -1;
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -99,11 +111,17 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    matchTimeStart = Timer.getFPGATimestamp();
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    matchTime = 135 - (Timer.getFPGATimestamp() - matchTimeStart);
+    matchTime = matchTime < 0 ? 0 : matchTime;
+    Logger.recordOutput("TeleopMatchTime", matchTime);
+  }
 
   @Override
   public void testInit() {

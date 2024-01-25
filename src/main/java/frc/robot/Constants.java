@@ -96,4 +96,10 @@ public final class Constants {
     public static final double MOD_ROT_SPEED_FACTOR = 3;
 
   }
+
+  public static class Leds {
+    public static final int PORT = 9;
+    /* Rough estimate, refine later */
+    public static final int LENGTH = 260;
+  }
 }
