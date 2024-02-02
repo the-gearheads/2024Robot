@@ -13,6 +13,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -20,6 +21,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -45,7 +48,7 @@ public class RobotContainer {
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutineSteer(), "SwerveSteer");
 
-    // NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
+    // NamedCommands.registerC  ommand("autoBalance", swerve.autoBalanceCommand());
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -69,6 +72,12 @@ public class RobotContainer {
     Controllers.driverController.getResetPoseButton().onTrue(new InstantCommand(() -> {
         swerve.resetPose(new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(0)));
     }));
+
+    Controllers.driverController.getPatthfindButton().onTrue(new ProxyCommand(()->{
+      // return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(0.3, 0.3), swerve.getPose().getRotation())));
+      return new WaitCommand(2).andThen(new InstantCommand(() -> {System.out.println("Gaming");}, swerve));
+    }));
+
   }
 
   /**

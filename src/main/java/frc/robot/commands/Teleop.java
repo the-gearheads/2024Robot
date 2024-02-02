@@ -75,7 +75,7 @@ public class Teleop extends Command {
 
   @Override
   public void end(boolean interrupted) {
-
+    swerve.drive(new ChassisSpeeds(0, 0, 0));
   }
 
   private double touchedRotateAt = Timer.getFPGATimestamp();
