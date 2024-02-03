@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,7 +42,6 @@ public class Teleop extends Command {
     var attemptingToRotate = MathUtil.applyDeadband(rot, 0.02) != 0; 
 
     double speedMod = Math.abs(Math.pow(Controllers.driverController.getSpeedModifierAxis(), 2));
-    double slowMod = Math.abs(Math.pow(Controllers.driverController.getSlowModifierAxis(), 2));
 
     // x = Math.pow(x, 3);
     // y = Math.pow(y, 3);
@@ -55,22 +55,15 @@ public class Teleop extends Command {
     y   += y   * speedMod * MOD_TRANS_SPEED_FACTOR;
     rot += rot * speedMod * MOD_ROT_SPEED_FACTOR;
 
-    x   -= x   * slowMod * MOD_TRANS_SPEED_FACTOR;
-    y   -= y   * slowMod * MOD_TRANS_SPEED_FACTOR;
-    rot -= rot * slowMod * MOD_ROT_SPEED_FACTOR;
-
-
     var speeds = new ChassisSpeeds(x, y, rot);
     if (SmartDashboard.getBoolean("Teleop/HeadingPID", false)) {
       headingPid(attemptingToRotate, speeds);
     }
 
     Logger.recordOutput("Swerve/Teleop/Speeds", speeds);
+
     swerve.driveFieldRelative(speeds);
 
-    if(Controllers.driverController.getPatthfindButton().getAsBoolean()) {
-      swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(0.3, 0.3), swerve.getPose().getRotation()))).schedule();
-    }
   }
 
   @Override

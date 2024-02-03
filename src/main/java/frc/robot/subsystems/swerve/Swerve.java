@@ -21,9 +21,11 @@ import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
@@ -31,6 +33,9 @@ import frc.robot.Constants;
 import frc.robot.util.HandledSleep;
 
 import static frc.robot.Constants.SwerveConstants.*;
+
+import java.sql.Driver;
+
 import static edu.wpi.first.units.Units.*;
 
 import org.littletonrobotics.junction.Logger;
@@ -126,8 +131,7 @@ public class Swerve extends SubsystemBase {
             0.0, // Goal end velocity in meters/sec
             0.0 // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
     );
-    return pathfindingCommand;
-
+    return pathfindingCommand.withTimeout(5);
   }
   public void drive(ChassisSpeeds speeds) {
     ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
@@ -144,7 +148,11 @@ public class Swerve extends SubsystemBase {
   }
 
   public void driveFieldRelative(ChassisSpeeds speeds) {
-    drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation()));
+    var rot = getPose().getRotation();
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      rot = rot.rotateBy(Rotation2d.fromDegrees(180));
+    }
+    drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rot));
   }
 
   public SwerveModulePosition[] getModulePositions() {

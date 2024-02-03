@@ -82,6 +82,14 @@ public final class Constants {
     public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.045537, 0.0017932, 0.0001929);
   }
 
+  public static class ArmConstants {
+    public static final int MAIN_ARM_ID = 48;
+    public static final int FOLLOWER_ARM_ID = 49;
+    public static final double MAX_ANGLE = 80;
+    public static final double MIN_ANGLE = 10;
+    public static final double ARM_POS_FACTOR = 1;
+  }
+
   public static class AutoConstants {
     public static final PathConstraints PATHFIND_CONSTRAINTS = new PathConstraints(
             3.0, 4.0,

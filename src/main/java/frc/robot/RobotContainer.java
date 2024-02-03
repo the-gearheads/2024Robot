@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.swerve.Swerve;
 
@@ -34,7 +35,8 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Swerve swerve = new Swerve();
   public final Leds leds = new Leds();
-  // private final Shooter shooter = new Shooter();
+  // private final Shooter shooter = new Shooter()
+  public final Arm arm = new Arm();
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private SendableChooser<Command> autoChooser;
 
@@ -47,8 +49,9 @@ public class RobotContainer {
     // sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutineSteer(), "SwerveSteer");
+    sysidAuto.addSysidRoutine(arm.getSysIdRoutine(), "Arm");
 
-    // NamedCommands.registerC  ommand("autoBalance", swerve.autoBalanceCommand());
+    // NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -74,8 +77,8 @@ public class RobotContainer {
     }));
 
     Controllers.driverController.getPatthfindButton().onTrue(new ProxyCommand(()->{
-      // return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(0.3, 0.3), swerve.getPose().getRotation())));
-      return new WaitCommand(2).andThen(new InstantCommand(() -> {System.out.println("Gaming");}, swerve));
+      return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(1, 1), swerve.getPose().getRotation()))); // MUST be at least 6 bc of size of blocks in minecraft
+      // return new WaitCommand(2).andThen(new InstantCommand(() -> {System.out.println("Gaming");}, swerve));
     }));
 
   }
