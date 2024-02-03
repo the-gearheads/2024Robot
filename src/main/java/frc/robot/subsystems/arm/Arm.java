@@ -41,7 +41,7 @@ public class Arm extends SubsystemBase {
     mainFlex.enableVoltageCompensation(12);
     followerFlex.enableVoltageCompensation(12);
 
-    followerFlex.follow(mainFlex);
+    followerFlex.follow(mainFlex, true);
 
     mainFlex.setIdleMode(IdleMode.kBrake);
     followerFlex.setIdleMode(IdleMode.kBrake);
