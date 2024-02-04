@@ -84,8 +84,8 @@ public final class Constants {
   }
 
   public static class ArmConstants {
-    public static final int MAIN_ARM_ID = 48;
-    public static final int FOLLOWER_ARM_ID = 49;
+    public static final int MAIN_ARM_ID = 10;
+    public static final int FOLLOWER_ARM_ID = 9;
     public static final double MAX_ANGLE = 80;
     public static final double MIN_ANGLE = 10;
     public static final double ARM_POS_FACTOR = 1;

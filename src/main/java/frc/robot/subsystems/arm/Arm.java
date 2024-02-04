@@ -52,7 +52,10 @@ public class Arm extends SubsystemBase {
 
     if(!DriverStation.isFMSAttached()) {
       SmartDashboard.putBoolean("Arm/manualVoltageOnly", false);
+    
     }
+    // hi gavin and or michael if you're reading this i'm sorry for the mess i made in the arm subsystem i'm trying to fix it now i promise i'll do better next time i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry
+    SmartDashboard.putNumber("Arm/manualVoltage", 0);
 
   }
 
@@ -73,6 +76,7 @@ public class Arm extends SubsystemBase {
       return; // bruh moment
     }
 
+    output = SmartDashboard.getNumber("Arm/manualVoltage", 0);
     mainFlex.setVoltage(output);
   }
 
