@@ -4,18 +4,21 @@ import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
@@ -35,6 +38,7 @@ import frc.robot.util.HandledSleep;
 import static frc.robot.Constants.SwerveConstants.*;
 
 import java.sql.Driver;
+import java.util.ArrayList;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -85,6 +89,38 @@ public class Swerve extends SubsystemBase {
     }
 
     resetPose(new Pose2d(new Translation2d(2, 2), new Rotation2d()));
+
+
+    // Logging callback for current robot pose
+    PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
+      // Do whatever you want with the pose here
+      Logger.recordOutput("Swerve/Pathplanner/CurrentPose", pose);
+      field.getObject("Pathplanner current pose").setPose(pose);
+    });
+
+    // Logging callback for target robot pose
+    PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
+      // Do whatever you want with the pose here
+      Logger.recordOutput("Swerve/Pathplanner/TargetPose", pose);
+      field.getObject("Pathplanner target pose").setPose(pose);
+    });
+
+    // Logging callback for the active path, this is sent as a list of poses
+    PathPlannerLogging.setLogActivePathCallback((poses) -> {
+      // Do whatever you want with the poses here
+      ArrayList<Trajectory.State> states = new ArrayList<>();
+      double t = 0;
+      Pose2d lastPose = poses.get(0);
+      for(var pose: poses.subList(1, poses.size())) {
+        Pose2d delta = new Pose2d(pose.getTranslation().minus(lastPose.getTranslation()), pose.getRotation().minus(lastPose.getRotation()));
+        double curvature = delta.getRotation().getRadians() / delta.getTranslation().getNorm();
+        states.add(new Trajectory.State(t, delta.getX(), delta.getY(), pose,curvature));
+        t += 0.02;
+      }
+      Trajectory traj = new Trajectory(states);
+      Logger.recordOutput("Swerve/Pathplanner/ActivePath", traj);
+      field.getObject("Pathplanner path").setPoses(poses);
+    });
 
     AutoBuilder.configureHolonomic(
         this::getPose, // Robot pose supplier
