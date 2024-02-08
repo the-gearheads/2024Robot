@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.BetterBangBang;
 
 import static frc.robot.Constants.Controllers.*;
@@ -61,7 +62,6 @@ public class Teleop extends Command {
     }
 
     Logger.recordOutput("Swerve/Teleop/Speeds", speeds);
-
     swerve.driveFieldRelative(speeds);
 
   }

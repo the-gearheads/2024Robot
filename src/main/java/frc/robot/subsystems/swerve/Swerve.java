@@ -9,6 +9,8 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -25,6 +27,7 @@ import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,21 +36,27 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Constants;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.HandledSleep;
 
 import static frc.robot.Constants.SwerveConstants.*;
 
 import java.sql.Driver;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static edu.wpi.first.units.Units.*;
 
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.proto.Photon;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 public class Swerve extends SubsystemBase {
   AHRS gyro = new AHRS(SPI.Port.kMXP);
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
-  SwerveDriveOdometry odometry;
+  SwerveDrivePoseEstimator m_PoseEstimator;
+  Vision vision;
   Field2d field = new Field2d();
 
   int simGyro = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
@@ -62,7 +71,6 @@ public class Swerve extends SubsystemBase {
   };
 
   public Swerve() {
-    odometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModulePositions());
     gyro.zeroYaw();
     SmartDashboard.putData("Field", field);
 
@@ -89,7 +97,7 @@ public class Swerve extends SubsystemBase {
     }
 
     resetPose(new Pose2d(new Translation2d(2, 2), new Rotation2d()));
-
+    m_PoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), getPose());
 
     // Logging callback for current robot pose
     PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
@@ -215,7 +223,16 @@ public class Swerve extends SubsystemBase {
   }
   @Override
   public void periodic() {
-    odometry.update(getGyroRotation(), getModulePositions());
+    m_PoseEstimator.update(getGyroRotation(), getModulePositions());
+    Optional<EstimatedRobotPose> leftVision = vision.getGlobalPoseFromLeft();
+    Optional<EstimatedRobotPose> rightVision = vision.getGlobalPoseFromLeft();
+    if (leftVision.isPresent()) {
+      m_PoseEstimator.addVisionMeasurement(leftVision.get().estimatedPose.toPose2d(), leftVision.get().timestampSeconds);
+    }
+    if (rightVision.isPresent()) {
+      m_PoseEstimator.addVisionMeasurement(rightVision.get().estimatedPose.toPose2d(), rightVision.get().timestampSeconds);
+    }
+
     Logger.recordOutput("Swerve/Pose", getPose());
     /* Glass doesnt support struct fields really but they're nicer to use in AScope :( */
     Logger.recordOutput("Swerve/PoseX", getPose().getX());
@@ -237,14 +254,14 @@ public class Swerve extends SubsystemBase {
   }
 
   public Pose2d getPose() {
-    return odometry.getPoseMeters();
+    return m_PoseEstimator.getEstimatedPosition();
   }
   
   public void resetPose(Pose2d pose) {
     for (SwerveModule module : modules) {
       module.resetEncoders();
     }
-    odometry.resetPosition(getGyroRotation(), getModulePositions(), pose);
+    m_PoseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);
   }
 
   private void sysidSetVolts(Measure<Voltage> volts) {
