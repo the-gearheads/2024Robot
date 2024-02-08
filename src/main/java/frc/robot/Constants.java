@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.util.PIDConstants;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Transform3d;
