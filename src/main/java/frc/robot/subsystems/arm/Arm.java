@@ -60,6 +60,9 @@ public class Arm extends SubsystemBase {
   }
 
   public void periodic() {
+
+    log();
+
     double ff = feedforward.calculate(pid.getSetpoint(), 0);
     double output = pid.calculate(enc.getPosition(), pid.getSetpoint()) + ff;
 
