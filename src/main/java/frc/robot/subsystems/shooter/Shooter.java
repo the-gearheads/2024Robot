@@ -4,6 +4,7 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.ShooterNTControl;
+import frc.robot.subsystems.FlywheelMotor;
 
 import static frc.robot.Constants.ShooterConstants.*;
 import static edu.wpi.first.units.Units.*;
@@ -12,8 +13,8 @@ import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 
-  protected ShooterMotor topMotor = new ShooterMotor(TOP_ID);
-  protected ShooterMotor bottomMotor = new ShooterMotor(BOTTOM_ID);
+  protected FlywheelMotor topMotor = new FlywheelMotor("Shooter/Top", TOP_ID, PID, FEEDFORWARD);
+  protected FlywheelMotor bottomMotor = new FlywheelMotor("Shooter/Bottom", BOTTOM_ID, PID, FEEDFORWARD);
 
   public Shooter() {
     setDefaultCommand(new ShooterNTControl(this));
@@ -21,8 +22,10 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    topMotor.log("Top");
-    bottomMotor.log("Bottom");
+    topMotor.periodic();
+    bottomMotor.periodic();
+    topMotor.log();
+    bottomMotor.log();
     Logger.recordOutput("Shooter/AtSpeed", atSpeed());
   }
 

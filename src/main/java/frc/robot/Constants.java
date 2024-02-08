@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -89,11 +90,15 @@ public final class Constants {
     public static final double MAX_ANGLE = 80;
     public static final double MIN_ANGLE = 10;
     public static final double ARM_POS_FACTOR = 1;
+    public static final double ARM_ANGLE_LIVE_FF_THRESHOLD = 10; //deg
+    public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.1, 0.1, 0.1);
   }
 
   public static class FeederConstants {
     public static final int ID = 14;
     public static final double[] FEEDER_PID = {1, 0, 0}; // placeholder
+    public static final double FEEDER_SPEED = 1.57;
+    public static final SimpleMotorFeedforward FEEDER_FF = new SimpleMotorFeedforward(0.1, 0.1, 0.1); // placeholder
   }
 
   public static class AutoConstants {

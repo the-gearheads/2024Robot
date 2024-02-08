@@ -7,8 +7,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -27,7 +27,6 @@ public class Arm extends SubsystemBase {
   private CANSparkFlex mainFlex = new CANSparkFlex(MAIN_ARM_ID, MotorType.kBrushless);
   private CANSparkFlex followerFlex = new CANSparkFlex(FOLLOWER_ARM_ID, MotorType.kBrushless);
   PIDController pid = new PIDController(FOLLOWER_ARM_ID, MAIN_ARM_ID, FOLLOWER_ARM_ID);
-  ArmFeedforward feedforward = new ArmFeedforward(1, 2, 3, 4);
 
   SparkAbsoluteEncoder enc;
   public Arm() {
@@ -62,8 +61,13 @@ public class Arm extends SubsystemBase {
   public void periodic() {
 
     log();
-
-    double ff = feedforward.calculate(pid.getSetpoint(), 0);
+    double ff;
+    // experimental
+    if(Math.abs(Units.radiansToDegrees(getAngle() - pid.getSetpoint())) > ARM_ANGLE_LIVE_FF_THRESHOLD) {
+      ff = FEEDFORWARD.calculate(getAngle(), 0);
+    } else {
+      ff = FEEDFORWARD.calculate(pid.getSetpoint(), 0);
+    }
     double output = pid.calculate(enc.getPosition(), pid.getSetpoint()) + ff;
 
     // robot saving code

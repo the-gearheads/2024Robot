@@ -18,7 +18,8 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
-      "/SmartDashboard/SysidRoutines": "String Chooser"
+      "/SmartDashboard/SysidRoutines": "String Chooser",
+      "/SmartDashboard/Vision and Paths Field": "Field2d"
     },
     "windows": {
       "/SmartDashboard/Auto Chooser": {
@@ -89,6 +90,12 @@
           "open": true
         },
         "Teleop": {
+          "open": true
+        },
+        "open": true
+      },
+      "photonvision": {
+        "Left Camera": {
           "open": true
         },
         "open": true
