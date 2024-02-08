@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import frc.robot.commands.ArmNTControl;
+import frc.robot.commands.FeederNTControl;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.intake.Feeder;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.swerve.Swerve;
 
@@ -35,6 +38,7 @@ public class RobotContainer {
   public final Leds leds = new Leds();
   // private final Shooter shooter = new Shooter()
   public final Arm arm = new Arm();
+  public final Feeder feeder = new Feeder();
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private SendableChooser<Command> autoChooser;
 
@@ -44,6 +48,8 @@ public class RobotContainer {
     // Configure the trigger bindings
     updateControllers();
     swerve.setDefaultCommand(new Teleop(swerve));
+    arm.setDefaultCommand(new ArmNTControl(arm));
+    feeder.setDefaultCommand(new FeederNTControl(feeder));
     // sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutineSteer(), "SwerveSteer");

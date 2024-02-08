@@ -80,10 +80,10 @@ public class Arm extends SubsystemBase {
     }
 
     if(!DriverStation.isFMSAttached() && SmartDashboard.getBoolean("Arm/manualVoltageOnly", false)) {
+      // output = SmartDashboard.getNumber("Arm/manualVoltage", 0); // false for sysid reasons, idk how to better do this
       return; // bruh moment
     }
 
-    output = SmartDashboard.getNumber("Arm/manualVoltage", 0);
     mainFlex.setVoltage(output);
   }
 
