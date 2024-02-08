@@ -71,6 +71,7 @@ public class Swerve extends SubsystemBase {
   };
 
   public Swerve() {
+    this.vision = new Vision();
     gyro.zeroYaw();
     SmartDashboard.putData("Field", field);
 
@@ -96,8 +97,8 @@ public class Swerve extends SubsystemBase {
       SmartDashboard.putBoolean("Swerve/manualVoltageDrive", false);
     }
 
+    this.m_PoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0, 0)));
     resetPose(new Pose2d(new Translation2d(2, 2), new Rotation2d()));
-    m_PoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), getPose());
 
     // Logging callback for current robot pose
     PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
