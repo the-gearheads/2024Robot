@@ -8,6 +8,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.PIDConstants;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -92,7 +93,7 @@ public final class Constants {
   }
 
   public static class FeederConstants {
-    public static final int ID = 45; // placeholder
+    public static final int ID = 14;
     public static final double[] FEEDER_PID = {1, 0, 0}; // placeholder
   }
 
@@ -100,6 +101,14 @@ public final class Constants {
     public static final PathConstraints PATHFIND_CONSTRAINTS = new PathConstraints(
             3.0, 4.0,
             Units.degreesToRadians(540), Units.degreesToRadians(720));
+  }
+
+  public static class VisionConstants {
+    public static final String LEFT_CAM_NAME = "Left Camera";  // Placeholder
+    public static final String RIGHT_CAM_NAME = "Right Camera";  // Placeholder
+
+    public static final Transform3d LEFT_TRANSFORM = new Transform3d();  // Placeholder
+    public static final Transform3d RIGHT_TRANSFORM = new Transform3d();  // Placeholder
   }
   public static class Controllers {
     public static final double JOYSTICK_DEADBAND = 0.05;
