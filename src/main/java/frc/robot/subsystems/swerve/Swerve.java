@@ -58,6 +58,8 @@ public class Swerve extends SubsystemBase {
   SwerveDrivePoseEstimator m_PoseEstimator;
   Vision vision;
   Field2d field = new Field2d();
+  /* Want to put vision and path states on this field */
+  Field2d vpField = new Field2d();
 
   int simGyro = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
   SimDouble simGyroAngle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(simGyro, "Yaw"));
@@ -74,6 +76,7 @@ public class Swerve extends SubsystemBase {
     this.vision = new Vision();
     gyro.zeroYaw();
     SmartDashboard.putData("Field", field);
+    SmartDashboard.putData("Vision and Paths Field", vpField);
 
     /* Configure the motors in batch */
     for (SwerveModule module : modules) {
@@ -104,31 +107,38 @@ public class Swerve extends SubsystemBase {
     PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
       // Do whatever you want with the pose here
       Logger.recordOutput("Swerve/Pathplanner/CurrentPose", pose);
-      field.getObject("Pathplanner current pose").setPose(pose);
+      vpField.getObject("Pathplanner Current Pose").setPose(pose);
     });
 
     // Logging callback for target robot pose
     PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
       // Do whatever you want with the pose here
       Logger.recordOutput("Swerve/Pathplanner/TargetPose", pose);
-      field.getObject("Pathplanner target pose").setPose(pose);
+      vpField.getObject("Pathplanner Target Pose").setPose(pose);
     });
 
     // Logging callback for the active path, this is sent as a list of poses
     PathPlannerLogging.setLogActivePathCallback((poses) -> {
       // Do whatever you want with the poses here
       ArrayList<Trajectory.State> states = new ArrayList<>();
-      double t = 0;
-      Pose2d lastPose = poses.get(0);
-      for(var pose: poses.subList(1, poses.size())) {
-        Pose2d delta = new Pose2d(pose.getTranslation().minus(lastPose.getTranslation()), pose.getRotation().minus(lastPose.getRotation()));
-        double curvature = delta.getRotation().getRadians() / delta.getTranslation().getNorm();
-        states.add(new Trajectory.State(t, delta.getX(), delta.getY(), pose,curvature));
-        t += 0.02;
+      
+      /* I mean there's the edge case of there being exactly 1 state but idk why that would happen */
+      if(poses.size() != 0) {
+        Pose2d lastPose = poses.get(0);
+        double t = 0;
+        for(var pose: poses.subList(1, poses.size())) {
+          Pose2d delta = new Pose2d(pose.getTranslation().minus(lastPose.getTranslation()), pose.getRotation().minus(lastPose.getRotation()));
+          double curvature = delta.getRotation().getRadians() / delta.getTranslation().getNorm();
+          states.add(new Trajectory.State(t, delta.getX(), delta.getY(), pose,curvature));
+          t += 0.02; // not sure how the paths are spaced out so this might be wrong
+        }
+      } else {
+        /* Just make it render probably offscreen (though just doing nothing and keeping the old one there is an option now that we have our own field for it) */
+        states.add(new Trajectory.State(0, 0, 0, new Pose2d(-100, -100, new Rotation2d()), 0));
       }
       Trajectory traj = new Trajectory(states);
       Logger.recordOutput("Swerve/Pathplanner/ActivePath", traj);
-      field.getObject("Pathplanner path").setPoses(poses);
+      vpField.getObject("Pathplanner Path").setPoses(poses);
     });
 
     AutoBuilder.configureHolonomic(
