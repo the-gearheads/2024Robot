@@ -241,6 +241,10 @@ public class Swerve extends SubsystemBase {
     Logger.recordOutput("Swerve/PoseX", getPose().getX());
     Logger.recordOutput("Swerve/PoseY", getPose().getY());
     Logger.recordOutput("Swerve/PoseRotation", getPose().getRotation().getRadians());
+    Logger.recordOutput("Swerve/CurrentSpeeds", getRobotRelativeSpeeds());
+    Logger.recordOutput("Swerve/CurrentSpeedsX", getRobotRelativeSpeeds().vxMetersPerSecond);
+    Logger.recordOutput("Swerve/CurrentSpeedsY", getRobotRelativeSpeeds().vyMetersPerSecond);
+    Logger.recordOutput("Swerve/CurrentSpeedsRot", getRobotRelativeSpeeds().omegaRadiansPerSecond);
     field.setRobotPose(getPose());
 
     if(!DriverStation.isFMSAttached()) {
@@ -298,7 +302,7 @@ public class Swerve extends SubsystemBase {
     );
   }
 
-    public SysIdRoutine getSysIdRoutineSteer() {
+  public SysIdRoutine getSysIdRoutineSteer() {
     return new SysIdRoutine(
       new SysIdRoutine.Config(
         null, null, null,
@@ -306,6 +310,24 @@ public class Swerve extends SubsystemBase {
       ),
       new Mechanism(
         this::sysidSetVoltsSteer,
+        null,
+        this
+      )
+    );
+  }
+
+  /* Not really volts */
+  public SysIdRoutine getSysIdRoutineAngular() {
+    return new SysIdRoutine(
+      new SysIdRoutine.Config(
+        Volts.of(0.5).per(Seconds.of(1)), Volts.of(3.5), null,
+        (state) -> Logger.recordOutput("SysIdTestState", state.toString())
+      ),
+      new Mechanism(
+        (Measure<Voltage> v) -> {
+          double pwr = v.in(Volts);
+          drive(new ChassisSpeeds(0, 0, pwr));
+        },
         null,
         this
       )

@@ -61,6 +61,7 @@ public class RobotContainer {
     // sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutineSteer(), "SwerveSteer");
+    sysidAuto.addSysidRoutine(swerve.getSysIdRoutineAngular(), "SwerveAngular");
     sysidAuto.addSysidRoutine(arm.getSysIdRoutine(), "Arm");
     sysidAuto.addSysidRoutine(intake.getSysIdRoutine(), "Intake");
     sysidAuto.addSysidRoutine(feeder.getSysIdRoutine(), "Feeder");
