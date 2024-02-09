@@ -108,7 +108,7 @@ public class RobotContainer {
    */ 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    // return sysidAuto.get();
-    return autoChooser.getSelected();
+    return sysidAuto.get();
+    // return autoChooser.getSelected();
   }
 }

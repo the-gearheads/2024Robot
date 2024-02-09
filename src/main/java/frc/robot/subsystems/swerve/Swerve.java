@@ -9,6 +9,7 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -157,6 +158,8 @@ public class Swerve extends SubsystemBase {
         },
         this // Reference to this subsystem to set requirements
     );
+
+    SmartDashboard.putData("Swerve/PoseRotPID", headingController);
   }
 
   public Rotation2d getGyroRotation() {
@@ -181,26 +184,53 @@ public class Swerve extends SubsystemBase {
     );
     return pathfindingCommand.withTimeout(5);
   }
-  public void drive(ChassisSpeeds speeds) {
+
+  PIDController headingController = new PIDController(5, 0, 0.5);
+
+  public void drive(ChassisSpeeds speeds, Double alignToAngle) {
+
+    // always calculating so that the pid controller can calculate the derivative
+    double commandedRot = headingController.calculate(getPose().getRotation().getRadians());
+
+    headingController.enableContinuousInput(0, 2 * Math.PI);
+    headingController.setTolerance(0.1);
+
+    if(alignToAngle != null) {
+      headingController.setSetpoint(alignToAngle);
+      if(!headingController.atSetpoint()) {
+        speeds.omegaRadiansPerSecond = commandedRot;
+      }
+    }
+
     ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
     rotSpdSetpoint = discretized.omegaRadiansPerSecond;
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(discretized);
-
     if (SmartDashboard.getBoolean("Swerve/desaturateWheelSpeeds", false)) {
       SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, discretized, MAX_MOD_SPEED, MAX_MOD_TRANS_SPEED, MAX_MOD_ROT_SPEED);
     }
+
+    Logger.recordOutput("Swerve/Speeds", speeds);
+    Logger.recordOutput("Swerve/DiscretizedSpeeds", discretized);
 
     for (int i = 0; i < modules.length; i++) {
       modules[i].setState(moduleStates[i]);
     }
   }
 
-  public void driveFieldRelative(ChassisSpeeds speeds) {
+  public void drive(ChassisSpeeds speeds) {
+    drive(speeds, null);
+  }
+
+  public void driveFieldRelative(ChassisSpeeds speeds, Double alignToAngle) {
     var rot = getPose().getRotation();
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
       rot = rot.rotateBy(Rotation2d.fromDegrees(180));
     }
-    drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rot));
+    drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rot), alignToAngle);
+  }
+
+  public void driveFieldRelative(ChassisSpeeds speeds) {
+    driveFieldRelative(speeds, null);
   }
 
   public SwerveModulePosition[] getModulePositions() {
@@ -243,9 +273,7 @@ public class Swerve extends SubsystemBase {
     Logger.recordOutput("Swerve/PoseY", getPose().getY());
     Logger.recordOutput("Swerve/PoseRotation", getPose().getRotation().getRadians());
     Logger.recordOutput("Swerve/CurrentSpeeds", getRobotRelativeSpeeds());
-    Logger.recordOutput("Swerve/CurrentSpeedsX", getRobotRelativeSpeeds().vxMetersPerSecond);
-    Logger.recordOutput("Swerve/CurrentSpeedsY", getRobotRelativeSpeeds().vyMetersPerSecond);
-    Logger.recordOutput("Swerve/CurrentSpeedsRot", getRobotRelativeSpeeds().omegaRadiansPerSecond);
+    Logger.recordOutput("Swerve/GyroAngle", -Units.degreesToRadians(gyro.getYaw()));
     field.setRobotPose(getPose());
 
     if(!DriverStation.isFMSAttached()) {

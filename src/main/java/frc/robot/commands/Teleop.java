@@ -57,20 +57,16 @@ public class Teleop extends Command {
 
     var speeds = new ChassisSpeeds(x, y, rot);
 
-    /* Might be a bit cursed but this is about all thats needed to force the heading pid to run */
-    if(Controllers.driverController.getAlignToSpeakerBtn().getAsBoolean()) {
-      headingController.setSetpoint(ShooterCalculations.getYawToSpeaker(swerve.getPose().getTranslation()).getRadians());
-      speeds.omegaRadiansPerSecond = 0;
-      attemptingToRotate = false;
-      touchedRotateAt = 0;
-    }
+    var forcedAngle = Controllers.driverController.getAlignToSpeakerBtn().getAsBoolean() ?
+                      ShooterCalculations.getYawToSpeaker(swerve.getPose().getTranslation()).getRadians() : null;
+    if(forcedAngle != null) headingController.setSetpoint(forcedAngle.doubleValue());
 
     if (SmartDashboard.getBoolean("Teleop/HeadingPID", true)) {
       headingPid(attemptingToRotate, speeds);
     }
 
     Logger.recordOutput("Swerve/Teleop/Speeds", speeds);
-    swerve.driveFieldRelative(speeds);
+    swerve.driveFieldRelative(speeds, forcedAngle);
 
   }
 

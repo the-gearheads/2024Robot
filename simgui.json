@@ -19,6 +19,7 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Swerve/PoseRotPID": "PIDController",
       "/SmartDashboard/SysidRoutines": "String Chooser",
       "/SmartDashboard/Vision and Paths Field": "Field2d"
     },
