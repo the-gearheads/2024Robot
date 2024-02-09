@@ -8,14 +8,20 @@ import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.util.HandledSleep;
 
 import static frc.robot.Constants.ArmConstants.*;
@@ -27,6 +33,13 @@ public class Arm extends SubsystemBase {
   private CANSparkFlex mainFlex = new CANSparkFlex(MAIN_ARM_ID, MotorType.kBrushless);
   private CANSparkFlex followerFlex = new CANSparkFlex(FOLLOWER_ARM_ID, MotorType.kBrushless);
   PIDController pid = new PIDController(FOLLOWER_ARM_ID, MAIN_ARM_ID, FOLLOWER_ARM_ID);
+
+  double simAngle = 0.79;
+  Mechanism2d mech = new Mechanism2d(1, 1);
+  // cad guesstimates cause ascope wants these in meters
+  MechanismRoot2d root = mech.getRoot("Shooter", 0.1032, 0.1379);
+  MechanismLigament2d armMech = root.append(new MechanismLigament2d("Arm", 0.6660, 45));
+  MechanismLigament2d floorMech = root.append(new MechanismLigament2d("Floor", 0.7557, 0));
 
   SparkAbsoluteEncoder enc;
   public Arm() {
@@ -56,26 +69,28 @@ public class Arm extends SubsystemBase {
     // hi gavin and or michael if you're reading this i'm sorry for the mess i made in the arm subsystem i'm trying to fix it now i promise i'll do better next time i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry
     SmartDashboard.putNumber("Arm/manualVoltage", 0);
 
+    armMech.setColor(new Color8Bit(255, 255, 0));
+    floorMech.setColor(new Color8Bit(255, 128, 128));
   }
 
   public void periodic() {
 
     log();
     double ff;
-    // experimental
-    if(Math.abs(Units.radiansToDegrees(getAngle() - pid.getSetpoint())) > ARM_ANGLE_LIVE_FF_THRESHOLD) {
-      ff = FEEDFORWARD.calculate(getAngle(), 0);
+    // experimental https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b
+    if(Math.abs(Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint())) > ARM_ANGLE_LIVE_FF_THRESHOLD) {
+      ff = FEEDFORWARD.calculate(getAngle().getRadians(), 0);
     } else {
       ff = FEEDFORWARD.calculate(pid.getSetpoint(), 0);
     }
     double output = pid.calculate(enc.getPosition(), pid.getSetpoint()) + ff;
 
     // robot saving code
-    if(output > 0 && getAngle() > MAX_ANGLE) {
+    if(output > 0 && getAngle().getDegrees() > MAX_ANGLE) {
       output = 0;
     }
 
-    if(output < 0 && getAngle() < MIN_ANGLE) {
+    if(output < 0 && getAngle().getDegrees() < MIN_ANGLE) {
       output = 0;
     }
 
@@ -88,15 +103,18 @@ public class Arm extends SubsystemBase {
   }
 
   private void log() {
-    Logger.recordOutput("Arm/Position", getAngle());
+    Logger.recordOutput("Arm/Position", getAngle().getRadians());
     Logger.recordOutput("Arm/Velocity", getVelocity());
     Logger.recordOutput("Arm/Voltage", mainFlex.getAppliedOutput() * mainFlex.getBusVoltage());
     Logger.recordOutput("Arm/Setpoint", pid.getSetpoint());
-    Logger.recordOutput("Arm/OutOfRange", getAngle() > MAX_ANGLE || getAngle() < MIN_ANGLE);
+    Logger.recordOutput("Arm/OutOfRange", getAngle().getDegrees() > MAX_ANGLE || getAngle().getDegrees() < MIN_ANGLE);
+    armMech.setAngle(getAngle().getDegrees());
+    Logger.recordOutput("Arm/Mechanism2d", mech);
   }
 
-  public double getAngle() {
-    return enc.getPosition();
+  public Rotation2d getAngle() {
+    if(Robot.isSimulation()) return new Rotation2d(simAngle);
+    return new Rotation2d(enc.getPosition());
   }
 
   public double getVelocity() {
@@ -104,7 +122,8 @@ public class Arm extends SubsystemBase {
   }
 
   public void setAngle(double angleRad) {
-    MathUtil.clamp(angleRad, MIN_ANGLE, MAX_ANGLE);
+    angleRad = MathUtil.clamp(angleRad, Units.degreesToRadians(MIN_ANGLE), Units.degreesToRadians(MAX_ANGLE));
+    if(Robot.isSimulation()) simAngle = angleRad;
     pid.setSetpoint(angleRad);
   }
 

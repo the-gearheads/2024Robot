@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.arm.Arm;
@@ -16,12 +17,12 @@ public class ArmNTControl extends Command {
 
   @Override
   public void initialize() {
-    SmartDashboard.putNumber("Arm/manualAngle", arm.getAngle());
+    SmartDashboard.putNumber("Arm/manualAngle", arm.getAngle().getDegrees());
   }
 
   @Override
   public void execute() {
-    arm.setAngle(SmartDashboard.getNumber("Arm/manualAngle", arm.getAngle()));
+    arm.setAngle(Units.degreesToRadians(SmartDashboard.getNumber("Arm/manualAngle", arm.getAngle().getDegrees())));
   }
 
   @Override

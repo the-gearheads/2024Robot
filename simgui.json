@@ -15,6 +15,7 @@
   },
   "NTProvider": {
     "types": {
+      "/AdvantageKit/RealOutputs/Arm/Mechanism2d": "Mechanism2d",
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
@@ -22,6 +23,11 @@
       "/SmartDashboard/Vision and Paths Field": "Field2d"
     },
     "windows": {
+      "/AdvantageKit/RealOutputs/Arm/Mechanism2d": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Auto Chooser": {
         "window": {
           "visible": true
@@ -51,10 +57,12 @@
         "DriverStation": {
           "Joystick0": {
             "open": true
-          },
-          "open": true
+          }
         },
         "RealOutputs": {
+          "Arm": {
+            "open": true
+          },
           "Shooter": {
             "Bottom": {
               "open": true
@@ -69,24 +77,16 @@
             },
             "Teleop": {
               "open": true
-            },
-            "open": true
-          },
-          "open": true
+            }
+          }
         },
-        "SystemStats": {
-          "open": true
-        },
-        "open": true
-      },
-      "FMSInfo": {
         "open": true
       },
       "Shuffleboard": {
         "open": true
       },
       "SmartDashboard": {
-        "Field": {
+        "Arm": {
           "open": true
         },
         "Teleop": {
@@ -97,8 +97,7 @@
       "photonvision": {
         "Left Camera": {
           "open": true
-        },
-        "open": true
+        }
       }
     }
   },

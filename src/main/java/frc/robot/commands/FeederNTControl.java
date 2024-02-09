@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.intake.Feeder;
+import frc.robot.subsystems.feeder.Feeder;
 
 /* this really coulda been like two lines but now its a command */
 public class FeederNTControl extends Command {
