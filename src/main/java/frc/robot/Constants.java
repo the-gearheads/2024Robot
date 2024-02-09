@@ -96,9 +96,16 @@ public final class Constants {
 
   public static class FeederConstants {
     public static final int ID = 14;
-    public static final double[] FEEDER_PID = {1, 0, 0}; // placeholder
-    public static final double FEEDER_SPEED = 1.57;
-    public static final SimpleMotorFeedforward FEEDER_FF = new SimpleMotorFeedforward(0.1, 0.1, 0.1); // placeholder
+    public static final double[] PID = {1, 0, 0}; // placeholder
+    public static final double SPEED = 1.57;
+    public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.1, 0.1, 0.1); // placeholder
+  }
+
+  public static class IntakeConstants {
+    public static final int ID = 15;
+    public static final double[] PID = {1, 0, 0}; // placeholder
+    public static final double SPEED = 1.57;
+    public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.1, 0.1, 0.1); // placeholder
   }
 
   public static class AutoConstants {

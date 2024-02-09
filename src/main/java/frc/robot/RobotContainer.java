@@ -9,7 +9,8 @@ import frc.robot.commands.FeederNTControl;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.intake.Feeder;
+import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.swerve.Swerve;
 
@@ -39,6 +40,7 @@ public class RobotContainer {
   // private final Shooter shooter = new Shooter()
   public final Arm arm = new Arm();
   public final Feeder feeder = new Feeder();
+  public final Intake intake = new Intake();
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private SendableChooser<Command> autoChooser;
 
@@ -54,6 +56,8 @@ public class RobotContainer {
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutineSteer(), "SwerveSteer");
     sysidAuto.addSysidRoutine(arm.getSysIdRoutine(), "Arm");
+    sysidAuto.addSysidRoutine(intake.getSysIdRoutine(), "Intake");
+    sysidAuto.addSysidRoutine(feeder.getSysIdRoutine(), "Feeder");
 
     // NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
 

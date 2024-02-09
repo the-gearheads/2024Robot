@@ -10,6 +10,8 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.urcl.URCL;
 
+import com.revrobotics.CANSparkLowLevel;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
@@ -96,6 +98,7 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    CANSparkLowLevel.enableExternalUSBControl(false);
   }
 
   /** This function is called periodically during autonomous. */
@@ -113,6 +116,7 @@ public class Robot extends LoggedRobot {
     }
 
     matchTimeStart = Timer.getFPGATimestamp();
+    CANSparkLowLevel.enableExternalUSBControl(false);
   }
 
   /** This function is called periodically during operator control. */
@@ -127,6 +131,7 @@ public class Robot extends LoggedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    CANSparkLowLevel.enableExternalUSBControl(true);
   }
 
   /** This function is called periodically during test mode. */
