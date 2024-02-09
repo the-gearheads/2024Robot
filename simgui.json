@@ -60,9 +60,6 @@
           }
         },
         "RealOutputs": {
-          "Arm": {
-            "open": true
-          },
           "Shooter": {
             "Bottom": {
               "open": true
@@ -72,13 +69,12 @@
             }
           },
           "Swerve": {
-            "FL": {
-              "open": true
-            },
             "Teleop": {
               "open": true
-            }
-          }
+            },
+            "open": true
+          },
+          "open": true
         },
         "open": true
       },
@@ -87,6 +83,9 @@
       },
       "SmartDashboard": {
         "Arm": {
+          "open": true
+        },
+        "Swerve": {
           "open": true
         },
         "Teleop": {

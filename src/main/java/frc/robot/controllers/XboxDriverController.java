@@ -52,4 +52,9 @@ public class XboxDriverController implements DriverController {
   public Trigger getPatthfindButton() {
     return new Trigger(() -> controller.getXButton());
   }
+
+  @Override
+  public Trigger getAlignToSpeakerBtn() {
+    return new Trigger(() -> controller.getYButton());
+  }
 }

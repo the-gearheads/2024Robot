@@ -4,10 +4,10 @@
 
 package frc.robot;
 
-import frc.robot.commands.ArmNTControl;
 import frc.robot.commands.FeederNTControl;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
+import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
@@ -15,15 +15,19 @@ import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.swerve.Swerve;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.GeometryUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 
@@ -50,7 +54,9 @@ public class RobotContainer {
     // Configure the trigger bindings
     updateControllers();
     swerve.setDefaultCommand(new Teleop(swerve));
-    arm.setDefaultCommand(new ArmNTControl(arm));
+    arm.setDefaultCommand(Commands.run(()->{
+     arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
+    }, arm));
     feeder.setDefaultCommand(new FeederNTControl(feeder));
     // sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
@@ -77,16 +83,19 @@ public class RobotContainer {
     Controllers.updateActiveControllerInstance();
 
     Controllers.driverController.getGyroZeroButton().onTrue(new InstantCommand(() -> {
-        swerve.resetPose(new Pose2d(swerve.getPose().getTranslation(), Rotation2d.fromDegrees(0)));
+      Rotation2d rot = new Rotation2d(0);
+      if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) rot = new Rotation2d(Math.PI);
+      swerve.resetPose(new Pose2d(swerve.getPose().getTranslation(), rot));
     }));
 
     Controllers.driverController.getResetPoseButton().onTrue(new InstantCommand(() -> {
-        swerve.resetPose(new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(0)));
+        Pose2d pose = new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(0));
+        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) pose = GeometryUtil.flipFieldPose(pose);
+        swerve.resetPose(pose);
     }));
 
     Controllers.driverController.getPatthfindButton().onTrue(new ProxyCommand(()->{
       return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(1, 1), swerve.getPose().getRotation()))); // MUST be at least 6 bc of size of blocks in minecraft
-      // return new WaitCommand(2).andThen(new InstantCommand(() -> {System.out.println("Gaming");}, swerve));
     }));
 
   }
