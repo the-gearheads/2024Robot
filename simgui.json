@@ -60,6 +60,9 @@
           }
         },
         "RealOutputs": {
+          "Calculations": {
+            "open": true
+          },
           "Shooter": {
             "Bottom": {
               "open": true
@@ -88,7 +91,7 @@
         "Swerve": {
           "open": true
         },
-        "Teleop": {
+        "SysidRoutines": {
           "open": true
         },
         "open": true

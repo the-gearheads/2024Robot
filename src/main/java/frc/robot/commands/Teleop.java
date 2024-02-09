@@ -26,7 +26,7 @@ public class Teleop extends Command {
   @Override
   public void initialize() {
     headingController.setSetpoint(swerve.getGyroRotation().getRadians());
-    SmartDashboard.putBoolean("Teleop/HeadingPID", false);
+    SmartDashboard.putBoolean("Teleop/HeadingPID", true);
     SmartDashboard.putData("Swerve/headingcontroller", headingController);
 
   }
@@ -65,7 +65,7 @@ public class Teleop extends Command {
       touchedRotateAt = 0;
     }
 
-    if (SmartDashboard.getBoolean("Teleop/HeadingPID", false)) {
+    if (SmartDashboard.getBoolean("Teleop/HeadingPID", true)) {
       headingPid(attemptingToRotate, speeds);
     }
 

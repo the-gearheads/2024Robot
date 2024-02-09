@@ -166,7 +166,8 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    var degreesPerSecond = Units.radiansToDegrees(rotSpdSetpoint);
+    // var degreesPerSecond = Units.radiansToDegrees(rotSpdSetpoint);
+    var degreesPerSecond = Units.radiansToDegrees(getRobotRelativeSpeeds().omegaRadiansPerSecond);
     simGyroAngle.set(simGyroAngle.get() - (degreesPerSecond * 0.02));
   }
 
