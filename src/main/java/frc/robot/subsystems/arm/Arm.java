@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -34,10 +35,11 @@ public class Arm extends SubsystemBase {
   PIDController pid = new PIDController(FOLLOWER_ARM_ID, MAIN_ARM_ID, FOLLOWER_ARM_ID);
 
   double simAngle = 0.79;
-  Mechanism2d mech = new Mechanism2d(10, 10);
-  MechanismRoot2d root = mech.getRoot("Shooter", 1, 1);
-  MechanismLigament2d armMech = root.append(new MechanismLigament2d("Arm", 8, 45));
-  MechanismLigament2d floorMech = root.append(new MechanismLigament2d("Floor", 8, 0));
+  Mechanism2d mech = new Mechanism2d(1, 1);
+  // cad guesstimates cause ascope wants these in meters
+  MechanismRoot2d root = mech.getRoot("Shooter", 0.1032, 0.1379);
+  MechanismLigament2d armMech = root.append(new MechanismLigament2d("Arm", 0.6660, 45));
+  MechanismLigament2d floorMech = root.append(new MechanismLigament2d("Floor", 0.7557, 0));
 
   SparkAbsoluteEncoder enc;
   public Arm() {
@@ -66,6 +68,9 @@ public class Arm extends SubsystemBase {
     }
     // hi gavin and or michael if you're reading this i'm sorry for the mess i made in the arm subsystem i'm trying to fix it now i promise i'll do better next time i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry
     SmartDashboard.putNumber("Arm/manualVoltage", 0);
+
+    armMech.setColor(new Color8Bit(255, 255, 0));
+    floorMech.setColor(new Color8Bit(255, 128, 128));
   }
 
   public void periodic() {
