@@ -77,8 +77,8 @@ public final class Constants {
   }
 
   public static class ShooterConstants {
-    public static final int TOP_ID = 15;
-    public static final int BOTTOM_ID = 16;
+    public static final int TOP_ID = 11;
+    public static final int BOTTOM_ID = 12;
     public static final double SPEED_TOLERANCE = 150;
     public static final double[] PID = {0.0021693, 0, 0};
     public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.045537, 0.0017932, 0.0001929);
@@ -102,7 +102,7 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
-    public static final int ID = 15;
+    public static final int ID = 13;
     public static final double[] PID = {1, 0, 0}; // placeholder
     public static final double SPEED = 1.57;
     public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.1, 0.1, 0.1); // placeholder
