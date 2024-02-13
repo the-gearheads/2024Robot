@@ -34,6 +34,14 @@ public class Shooter extends SubsystemBase {
     bottomMotor.setSpeed(speed);
   }
 
+  public void setTopSpeed(double speed) {
+    topMotor.setSpeed(speed);
+  }
+  
+  public void setBottomSpeed(double speed) {
+    bottomMotor.setSpeed(speed);
+  }
+
   Debouncer speedDebouncer = new Debouncer(0.1);
   public boolean atSpeed() {
     boolean speedWithinTolerance = Math.abs(topMotor.getVelocity() - topMotor.getVelocitySetpoint()) < SPEED_TOLERANCE &&
@@ -52,4 +60,5 @@ public class Shooter extends SubsystemBase {
       )
     );
   }
+
 }

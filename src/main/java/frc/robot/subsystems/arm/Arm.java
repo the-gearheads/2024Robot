@@ -104,6 +104,7 @@ public class Arm extends SubsystemBase {
 
   private void log() {
     Logger.recordOutput("Arm/Position", getAngle().getRadians());
+    Logger.recordOutput("Arm/PositionDeg", getAngle().getDegrees());
     Logger.recordOutput("Arm/Velocity", getVelocity());
     Logger.recordOutput("Arm/Voltage", mainFlex.getAppliedOutput() * mainFlex.getBusVoltage());
     Logger.recordOutput("Arm/Setpoint", pid.getSetpoint());
@@ -133,7 +134,7 @@ public class Arm extends SubsystemBase {
 
   public SysIdRoutine getSysIdRoutine() {
     return new SysIdRoutine(
-      new SysIdRoutine.Config(null, null, null, 
+      new SysIdRoutine.Config(Volts.of(0.8).per(Seconds.of(1)), Volts.of(6), null, 
           (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
       new SysIdRoutine.Mechanism(
         this::setVoltage,

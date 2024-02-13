@@ -44,6 +44,8 @@ public class FlywheelMotor {
     flex.setInverted(inverted);
     flex.setIdleMode(IdleMode.kCoast);
 
+    // we're just not gonna set the position or velocity conversion factors because they default to rot(/min)
+
     enc = flex.getEncoder();
 
     SmartDashboard.putBoolean(name + "/manualVoltageOnly", false);
