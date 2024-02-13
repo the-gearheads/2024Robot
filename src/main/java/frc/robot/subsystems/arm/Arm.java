@@ -32,7 +32,7 @@ import org.littletonrobotics.junction.Logger;
 public class Arm extends SubsystemBase {
   private CANSparkFlex mainFlex = new CANSparkFlex(MAIN_ARM_ID, MotorType.kBrushless);
   private CANSparkFlex followerFlex = new CANSparkFlex(FOLLOWER_ARM_ID, MotorType.kBrushless);
-  PIDController pid = new PIDController(FOLLOWER_ARM_ID, MAIN_ARM_ID, FOLLOWER_ARM_ID);
+  PIDController pid = new PIDController(PID[0], PID[1], PID[2]);
 
   double simAngle = 0.79;
   Mechanism2d mech = new Mechanism2d(1, 1);

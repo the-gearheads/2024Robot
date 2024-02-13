@@ -25,10 +25,10 @@ public final class Constants {
   public static class SwerveConstants {
     // drive, then turn motor ids
     public static final int[][] MOTOR_IDS = {
-      {1, 2}, // FL
-      {3, 4}, // FR
-      {5, 6}, // BL
-      {7, 8}  // BR
+      {6, 26}, // FL
+      {8, 28}, // FR
+      {2, 22}, // BL
+      {4, 24}  // BR
     };
 
     // Again, FL, FR, BL, BR
@@ -91,21 +91,22 @@ public final class Constants {
     public static final double MIN_ANGLE = 10;
     public static final double ARM_POS_FACTOR = 1;
     public static final double ARM_ANGLE_LIVE_FF_THRESHOLD = 10; //deg
-    public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.1, 0.1, 0.1);
+    public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0, 0, 0);
+    public static final double[] PID = {0, 0, 0}; // placeholder
   }
 
   public static class FeederConstants {
-    public static final int ID = 14;
-    public static final double[] PID = {1, 0, 0}; // placeholder
+    public static final int ID = 30;
+    public static final double[] PID = {0, 0, 0}; // placeholder
     public static final double SPEED = 1.57;
-    public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.1, 0.1, 0.1); // placeholder
+    public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0, 0, 0); // placeholder
   }
 
   public static class IntakeConstants {
-    public static final int ID = 13;
-    public static final double[] PID = {1, 0, 0}; // placeholder
-    public static final double SPEED = 1.57;
-    public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.1, 0.1, 0.1); // placeholder
+    public static final int ID = 14;
+    public static final double[] PID = {0.0018087, 0, 0}; // placeholder
+    public static final double SPEED = 4750;
+    public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.26764, 0.0018386, 0.00010506); // placeholder
   }
 
   public static class AutoConstants {

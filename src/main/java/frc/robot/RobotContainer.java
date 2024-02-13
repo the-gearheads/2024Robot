@@ -99,6 +99,12 @@ public class RobotContainer {
       return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(1, 1), swerve.getPose().getRotation()))); // MUST be at least 6 bc of size of blocks in minecraft
     }));
 
+    Controllers.driverController.getIntake().whileTrue(Commands.startEnd(
+      intake::run,
+      intake::stop,
+      intake
+    ));
+
   }
 
   /**
