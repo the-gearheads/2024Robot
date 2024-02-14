@@ -38,7 +38,9 @@ public class Arm extends SubsystemBase {
   private CANSparkFlex followerFlex = new CANSparkFlex(FOLLOWER_ARM_ID, MotorType.kBrushless);
   ProfiledPIDController pid = new ProfiledPIDController(PID[0], PID[1], PID[2], ARM_CONSTRAINTS, 0.02);
 
-  SingleJointedArmSim armSim = new SingleJointedArmSim(LinearSystemId.createSingleJointedArmSystem(null, MAIN_ARM_ID, FOLLOWER_ARM_ID), DCMotor.getNeoVortex(2), 125.0, ARM_LENGTH, MIN_ANGLE-0.2, MAX_ANGLE+0.2, true, 0.79);
+  SingleJointedArmSim armSim = new SingleJointedArmSim(LinearSystemId.identifyPositionSystem(FEEDFORWARD.kv, FEEDFORWARD.ka),
+                                                       DCMotor.getNeoVortex(2), ARM_MOTOR_GEARING,
+                                                       ARM_LENGTH, MIN_ANGLE-0.1, MAX_ANGLE+0.1, false, 0.79);
   Mechanism2d mech = new Mechanism2d(1, 1);
   // cad guesstimates cause ascope wants these in meters
   MechanismRoot2d root = mech.getRoot("Shooter", 0.1032, 0.1379);
@@ -67,7 +69,7 @@ public class Arm extends SubsystemBase {
     mainFlex.setIdleMode(IdleMode.kBrake);
     followerFlex.setIdleMode(IdleMode.kBrake);
 
-    this.enc = mainFlex.getAbsoluteEncoder(Type.kDutyCycle);
+    enc = mainFlex.getAbsoluteEncoder(Type.kDutyCycle);
     enc.setPositionConversionFactor(ARM_POS_FACTOR);
     enc.setVelocityConversionFactor(ARM_POS_FACTOR / 60.0);
 
@@ -80,7 +82,11 @@ public class Arm extends SubsystemBase {
 
     armMech.setColor(new Color8Bit(255, 255, 0));
     floorMech.setColor(new Color8Bit(255, 128, 128));
+
+    pid.reset(getAngle().getRadians());
   }
+
+  private double output = 0;
 
   @Override
   public void periodic() {
@@ -89,27 +95,30 @@ public class Arm extends SubsystemBase {
     double ff;
     // experimental https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b not sure how needed this is for a trapezoidal profile
     if(Math.abs(Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > ARM_ANGLE_LIVE_FF_THRESHOLD) {
-    // if(false) {
       ff = FEEDFORWARD.calculate(getAngle().getRadians(), pid.getSetpoint().velocity);
     } else {
       ff = FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
     }
-    double output = pid.calculate(enc.getPosition()) + ff;
+    output = pid.calculate(getAngle().getRadians()) + ff;
 
     Logger.recordOutput("Arm/attemptedOutput", output);
 
     //robot saving code
-    if(output > 0 && getAngle().getDegrees() > MAX_ANGLE) {
+    if(output > 0 && getAngle().getRadians() > MAX_ANGLE) {
       output = 0;
     }
 
-    if(output < 0 && getAngle().getDegrees() < MIN_ANGLE) {
+    if(output < 0 && getAngle().getRadians() < MIN_ANGLE) {
       output = 0;
     }
 
-    if(pid.getSetpoint().position < MIN_ANGLE || pid.getSetpoint().position > MAX_ANGLE
-        || pid.getGoal().position < MIN_ANGLE || pid.getGoal().position > MAX_ANGLE) {
+    if(pid.getSetpoint().position < MIN_ANGLE || pid.getSetpoint().position > MAX_ANGLE) {
       output = 0;
+    }
+
+    // Might as well just get as close as we can
+    if(pid.getGoal().position < MIN_ANGLE || pid.getGoal().position > MAX_ANGLE) {
+      pid.setGoal(MathUtil.clamp(pid.getGoal().position, MIN_ANGLE, MAX_ANGLE));
     }
 
     if(!DriverStation.isFMSAttached() && SmartDashboard.getBoolean("Arm/manualVoltageOnly", false)) {
@@ -128,13 +137,14 @@ public class Arm extends SubsystemBase {
     Logger.recordOutput("Arm/Position", getAngle().getRadians());
     Logger.recordOutput("Arm/PositionDeg", getAngle().getDegrees());
     Logger.recordOutput("Arm/Velocity", getVelocity());
-    Logger.recordOutput("Arm/Voltage", mainFlex.getAppliedOutput() * mainFlex.getBusVoltage());
+    Logger.recordOutput("Arm/Voltage", output);
     Logger.recordOutput("Arm/SetpointTrapezoidPosition", pid.getSetpoint().position);
     Logger.recordOutput("Arm/SetpointTrapezoidVelocity", pid.getSetpoint().velocity);
     Logger.recordOutput("Arm/GoalPosition", pid.getGoal().position);
     Logger.recordOutput("Arm/GoalVelocity", pid.getGoal().velocity);
     Logger.recordOutput("Arm/OutOfRange", getAngle().getRadians() > MAX_ANGLE || getAngle().getRadians() < MIN_ANGLE);
     Logger.recordOutput("Arm/SetpointOutOfRange", pid.getSetpoint().position < MIN_ANGLE || pid.getSetpoint().position > MAX_ANGLE);
+    Logger.recordOutput("Arm/GoalOutOfRange", pid.getGoal().position < MIN_ANGLE || pid.getGoal().position > MAX_ANGLE);
     armMech.setAngle(getAngle().getDegrees());
     Logger.recordOutput("Arm/Mechanism2d", mech);
   }
