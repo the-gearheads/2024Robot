@@ -83,7 +83,10 @@ public class Arm extends SubsystemBase {
     armMech.setColor(new Color8Bit(255, 255, 0));
     floorMech.setColor(new Color8Bit(255, 128, 128));
 
+    // update arm sim once so it doesn't start at 0
+    if(Robot.isSimulation()) armSim.update(0.02);
     pid.reset(getAngle().getRadians());
+    pid.setGoal(getAngle().getRadians());
   }
 
   private double output = 0;
@@ -155,6 +158,7 @@ public class Arm extends SubsystemBase {
   }
 
   public double getVelocity() {
+    if(Robot.isSimulation()) return armSim.getVelocityRadPerSec();
     return enc.getVelocity();
   }
 
@@ -164,6 +168,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void setVoltage(Measure<Voltage> volts) {
+    if(Robot.isSimulation()) armSim.setInputVoltage(volts.in(Volts));
     mainFlex.setVoltage(volts.in(Volts));
   }
 
