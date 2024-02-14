@@ -47,6 +47,8 @@ public class FlywheelMotor {
     // we're just not gonna set the position or velocity conversion factors because they default to rot(/min)
 
     enc = flex.getEncoder();
+    enc.setAverageDepth(1);
+    enc.setMeasurementPeriod(1);
 
     SmartDashboard.putBoolean(name + "/manualVoltageOnly", false);
   }
