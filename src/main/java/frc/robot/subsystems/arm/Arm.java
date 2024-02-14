@@ -10,10 +10,13 @@ import com.revrobotics.SparkAbsoluteEncoder.Type;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -35,11 +38,11 @@ public class Arm extends SubsystemBase {
   private CANSparkFlex followerFlex = new CANSparkFlex(FOLLOWER_ARM_ID, MotorType.kBrushless);
   ProfiledPIDController pid = new ProfiledPIDController(PID[0], PID[1], PID[2], ARM_CONSTRAINTS);
 
-  double simAngle = 0.79;
+  SingleJointedArmSim armSim = new SingleJointedArmSim(LinearSystemId.identifyPositionSystem(FEEDFORWARD.kv, FEEDFORWARD.ka), DCMotor.getNeoVortex(2), 125.0, ARM_LENGTH, MIN_ANGLE-0.2, MAX_ANGLE-0.2, true, 0.79);
   Mechanism2d mech = new Mechanism2d(1, 1);
   // cad guesstimates cause ascope wants these in meters
   MechanismRoot2d root = mech.getRoot("Shooter", 0.1032, 0.1379);
-  MechanismLigament2d armMech = root.append(new MechanismLigament2d("Arm", 0.6660, 45));
+  MechanismLigament2d armMech = root.append(new MechanismLigament2d("Arm", ARM_LENGTH, 45));
   MechanismLigament2d floorMech = root.append(new MechanismLigament2d("Floor", 0.7557, 0));
 
   SparkAbsoluteEncoder enc;
@@ -90,7 +93,7 @@ public class Arm extends SubsystemBase {
     } else {
       ff = FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
     }
-    double output = pid.calculate(enc.getPosition(), pid.getSetpoint()) + ff;
+    double output = pid.calculate(enc.getPosition()) + ff;
 
     Logger.recordOutput("Arm/attemptedOutput", output);
 
@@ -103,8 +106,8 @@ public class Arm extends SubsystemBase {
       output = 0;
     }
 
-    double spDegrees = Units.radiansToDegrees(pid.getSetpoint().position);
-    if(spDegrees < MIN_ANGLE || spDegrees > MAX_ANGLE) {
+    if(pid.getSetpoint().position < MIN_ANGLE || pid.getSetpoint().position > MAX_ANGLE
+        || pid.getGoal().position < MIN_ANGLE || pid.getGoal().position > MAX_ANGLE) {
       output = 0;
     }
 
@@ -112,6 +115,10 @@ public class Arm extends SubsystemBase {
       // output = SmartDashboard.getNumber("Arm/manualVoltage", 0); // false for sysid reasons, idk how to better do this
     }
 
+    if(Robot.isSimulation()) {
+      armSim.setInputVoltage(output);
+      armSim.update(0.02);
+    }
     mainFlex.setVoltage(output);
   }
 
@@ -124,15 +131,14 @@ public class Arm extends SubsystemBase {
     Logger.recordOutput("Arm/SetpointTrapezoidVelocity", pid.getSetpoint().velocity);
     Logger.recordOutput("Arm/GoalPosition", pid.getGoal().position);
     Logger.recordOutput("Arm/GoalVelocity", pid.getGoal().velocity);
-    Logger.recordOutput("Arm/OutOfRange", getAngle().getDegrees() > MAX_ANGLE || getAngle().getDegrees() < MIN_ANGLE);
-    double spDegrees = Units.radiansToDegrees(pid.getSetpoint().position);
-    Logger.recordOutput("Arm/SetpointOutOfRange", spDegrees < MIN_ANGLE || spDegrees > MAX_ANGLE);
+    Logger.recordOutput("Arm/OutOfRange", getAngle().getRadians() > MAX_ANGLE || getAngle().getRadians() < MIN_ANGLE);
+    Logger.recordOutput("Arm/SetpointOutOfRange", pid.getSetpoint().position < MIN_ANGLE || pid.getSetpoint().position > MAX_ANGLE);
     armMech.setAngle(getAngle().getDegrees());
     Logger.recordOutput("Arm/Mechanism2d", mech);
   }
 
   public Rotation2d getAngle() {
-    if(Robot.isSimulation()) return new Rotation2d(simAngle);
+    if(Robot.isSimulation()) return new Rotation2d(armSim.getAngleRads());
     return new Rotation2d(enc.getPosition());
   }
 
@@ -141,8 +147,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void setAngle(double angleRad) {
-    angleRad = MathUtil.clamp(angleRad, Units.degreesToRadians(MIN_ANGLE), Units.degreesToRadians(MAX_ANGLE));
-    if(Robot.isSimulation()) simAngle = angleRad;
+    angleRad = MathUtil.clamp(angleRad, MIN_ANGLE, MAX_ANGLE);
     pid.setGoal(angleRad);
   }
 

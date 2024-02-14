@@ -48,7 +48,7 @@ public class FlywheelMotor {
 
     enc = flex.getEncoder();
     enc.setAverageDepth(1);
-    enc.setMeasurementPeriod(1);
+    enc.setMeasurementPeriod(8);
 
     SmartDashboard.putBoolean(name + "/manualVoltageOnly", false);
   }

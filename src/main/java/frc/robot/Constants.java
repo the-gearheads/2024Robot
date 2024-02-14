@@ -88,16 +88,19 @@ public final class Constants {
   public static class ArmConstants {
     public static final int MAIN_ARM_ID = 10;
     public static final int FOLLOWER_ARM_ID = 9;
-    public static final double MAX_ANGLE = 110.17978;
-    public static final double MIN_ANGLE = 19.996227;
+    public static final double MAX_ANGLE_DEG = 110.17978;
+    public static final double MIN_ANGLE_DEG = 19.996227;
     public static final double ARM_POS_FACTOR = 9.0/20.0 * 2 * Math.PI; // 20:9 artio between encoder and arm, also conv to radians
     public static final double ARM_ANGLE_LIVE_FF_THRESHOLD = 10; //deg
+    public static final double ARM_LENGTH = 0.6660; // meters, sim only
     public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.2509, 0.099081, 5.5782, 0.28261);
     public static final double[] PID = {49.723, 0, 6.1742}; // placeholder
     public static final Constraints ARM_CONSTRAINTS = new Constraints(
       Units.degreesToRadians(101), // max vel, deg/s
       Units.degreesToRadians(400) // max acc, deg/s^2
     );
+    public static final double MAX_ANGLE = Units.degreesToRadians(MAX_ANGLE_DEG);
+    public static final double MIN_ANGLE = Units.degreesToRadians(MIN_ANGLE_DEG);
   }
 
   public static class FeederConstants {
