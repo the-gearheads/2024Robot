@@ -40,7 +40,7 @@ public class FlywheelMotor {
     flex.restoreFactoryDefaults();
     HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
 
-    flex.setSmartCurrentLimit(50);
+    flex.setSmartCurrentLimit(80);
     flex.setInverted(inverted);
     flex.setIdleMode(IdleMode.kCoast);
 
