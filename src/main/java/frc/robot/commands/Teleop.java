@@ -59,7 +59,7 @@ public class Teleop extends Command {
 
     var forcedAngle = Controllers.driverController.getAlignToSpeakerBtn().getAsBoolean() ?
                       ShooterCalculations.getYawToSpeaker(swerve.getPose().getTranslation()).getRadians() : null;
-    if(forcedAngle != null) headingController.setSetpoint(forcedAngle.doubleValue());
+    if(forcedAngle != null) headingController.setSetpoint(swerve.getGyroRotation().getRadians());
 
     if (SmartDashboard.getBoolean("Teleop/HeadingPID", true)) {
       headingPid(attemptingToRotate, speeds);
