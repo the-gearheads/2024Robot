@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.MathUtil;
@@ -46,12 +47,17 @@ public class Arm extends SubsystemBase {
     mainFlex.restoreFactoryDefaults();
     followerFlex.restoreFactoryDefaults();
     HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
+    setupStatusFrames();
+    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
+
+    mainFlex.setInverted(true);
+    followerFlex.setInverted(true);
 
     mainFlex.setSmartCurrentLimit(80);
     followerFlex.setSmartCurrentLimit(80);
 
-    mainFlex.enableVoltageCompensation(12);
-    followerFlex.enableVoltageCompensation(12);
+    // mainFlex.enableVoltageCompensation(12);
+    // followerFlex.enableVoltageCompensation(12);
 
     followerFlex.follow(mainFlex, true);
 
@@ -73,6 +79,7 @@ public class Arm extends SubsystemBase {
     floorMech.setColor(new Color8Bit(255, 128, 128));
   }
 
+  @Override
   public void periodic() {
 
     log();
@@ -85,6 +92,8 @@ public class Arm extends SubsystemBase {
     }
     double output = pid.calculate(enc.getPosition(), pid.getSetpoint()) + ff;
 
+    Logger.recordOutput("Arm/attemptedOutput", output);
+
     // robot saving code
     if(output > 0 && getAngle().getDegrees() > MAX_ANGLE) {
       output = 0;
@@ -94,9 +103,13 @@ public class Arm extends SubsystemBase {
       output = 0;
     }
 
+    double spDegrees = Units.radiansToDegrees(pid.getSetpoint());
+    if(spDegrees < MIN_ANGLE || spDegrees > MAX_ANGLE) {
+      output = 0;
+    }
+
     if(!DriverStation.isFMSAttached() && SmartDashboard.getBoolean("Arm/manualVoltageOnly", false)) {
       // output = SmartDashboard.getNumber("Arm/manualVoltage", 0); // false for sysid reasons, idk how to better do this
-      return; // bruh moment
     }
 
     mainFlex.setVoltage(output);
@@ -109,6 +122,8 @@ public class Arm extends SubsystemBase {
     Logger.recordOutput("Arm/Voltage", mainFlex.getAppliedOutput() * mainFlex.getBusVoltage());
     Logger.recordOutput("Arm/Setpoint", pid.getSetpoint());
     Logger.recordOutput("Arm/OutOfRange", getAngle().getDegrees() > MAX_ANGLE || getAngle().getDegrees() < MIN_ANGLE);
+    double spDegrees = Units.radiansToDegrees(pid.getSetpoint());
+    Logger.recordOutput("Arm/SetpointOutOfRange", spDegrees < MIN_ANGLE || spDegrees > MAX_ANGLE);
     armMech.setAngle(getAngle().getDegrees());
     Logger.recordOutput("Arm/Mechanism2d", mech);
   }
@@ -145,4 +160,17 @@ public class Arm extends SubsystemBase {
   }
 
   
+  public void setupStatusFrames() {
+    /* Status 0 governs applied output, faults, and whether is a follower. We don't care about that super much, so we increase it */
+    mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
+    /* We don't care about our motor position, only what the encoder reads */
+    mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
+    /* Don't have an analog sensor */
+    mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500);
+    /* Don't have an alternate encoder */
+    mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
+    /* We -really- care about our duty cycle encoder readings though. THE DEFAULT WAS 200MS */
+    mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
+    mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+  }
 }

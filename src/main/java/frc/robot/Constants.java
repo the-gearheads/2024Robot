@@ -91,8 +91,8 @@ public final class Constants {
     public static final double MIN_ANGLE = 19.996227;
     public static final double ARM_POS_FACTOR = 9.0/20.0 * 2 * Math.PI; // 20:9 artio between encoder and arm, also conv to radians
     public static final double ARM_ANGLE_LIVE_FF_THRESHOLD = 10; //deg
-    public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0, 0, 0);
-    public static final double[] PID = {0, 0, 0}; // placeholder
+    public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.19684, 0.0069965, 0.47015, 0.022602);
+    public static final double[] PID = {34.566, 0, 1.0137}; // placeholder
   }
 
   public static class FeederConstants {
