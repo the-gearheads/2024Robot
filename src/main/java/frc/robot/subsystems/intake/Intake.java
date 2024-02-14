@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.FlywheelMotor;
@@ -10,7 +11,9 @@ import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
   FlywheelMotor motor = new FlywheelMotor("Intake", ID, PID, FEEDFORWARD, false);
-  public Intake() {}
+  public Intake() {
+    SmartDashboard.putNumber("Intake/RunSpeed", SPEED);
+  }
 
   public void periodic() {
     motor.periodic();
@@ -18,7 +21,7 @@ public class Intake extends SubsystemBase {
   }
   
   public void run() {
-    motor.setSpeed(SPEED);
+    motor.setSpeed(SmartDashboard.getNumber("Intake/RunSpeed", SPEED));
   }
 
   public void stop() {

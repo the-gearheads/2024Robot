@@ -3,16 +3,16 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.shooter.Shooter;
 
-public class SetSpeed extends Command {
+public class ShooterSetSpeed extends Command {
   Shooter shooter;
   double speed;
   boolean topOnly;
 
-  public SetSpeed(Shooter shooter, double speed) {
+  public ShooterSetSpeed(Shooter shooter, double speed) {
     this(shooter, speed, false);
   }
 
-  public SetSpeed(Shooter shooter, double speed, boolean topOnly) {
+  public ShooterSetSpeed(Shooter shooter, double speed, boolean topOnly) {
     addRequirements(shooter);
     this.shooter = shooter;
     this.speed = speed;

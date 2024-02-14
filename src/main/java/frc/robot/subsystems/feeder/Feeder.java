@@ -1,5 +1,6 @@
 package frc.robot.subsystems.feeder;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.FlywheelMotor;
@@ -10,7 +11,9 @@ import org.littletonrobotics.junction.Logger;
 
 public class Feeder extends SubsystemBase {
   FlywheelMotor motor = new FlywheelMotor("Feeder", ID, PID, FEEDFORWARD);
-  public Feeder() {}
+  public Feeder() {
+    SmartDashboard.putNumber("Feeder/RunSpeed", SPEED);
+  }
 
   public void periodic() {
     motor.periodic();
@@ -18,7 +21,7 @@ public class Feeder extends SubsystemBase {
   }
   
   public void run() {
-    motor.setSpeed(SPEED);
+    motor.setSpeed(SmartDashboard.getNumber("Intake/RunSpeed", SPEED));
   }
 
   public void stop() {

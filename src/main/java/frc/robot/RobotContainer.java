@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.ArmNTControl;
 import frc.robot.commands.FeederNTControl;
+import frc.robot.commands.IntakeNTControl;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.arm.Arm;
@@ -59,6 +60,8 @@ public class RobotContainer {
     // }, arm));
     arm.setDefaultCommand(new ArmNTControl(arm));
     feeder.setDefaultCommand(new FeederNTControl(feeder));
+    intake.setDefaultCommand(new IntakeNTControl(intake));
+
     // sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutineSteer(), "SwerveSteer");
