@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -59,7 +60,7 @@ public final class Constants {
     public static final double DRIVE_FREE_SPD = DRIVE_FREE_RPM * DRIVE_VEL_FACTOR; // Convert max neo free speed to max free wheel speed
 
     public static final double STEER_POS_FACTOR = 2 * Math.PI; // rotations -> radians
-    public static final double STEER_VEL_FACTOR = 2 * Math.PI * 60; // rpm -> rad/sec
+    public static final double STEER_VEL_FACTOR = (2 * Math.PI) / 60.0; // rpm -> rad/sec
 
 
     public static final double[] STEER_PIDF = {1, 0, 0, 0}; // apparently just a P value of 1 worked for us??? i wanna test that a bit more throughly
@@ -93,6 +94,10 @@ public final class Constants {
     public static final double ARM_ANGLE_LIVE_FF_THRESHOLD = 10; //deg
     public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.19684, 0.0069965, 0.47015, 0.022602);
     public static final double[] PID = {34.566, 0, 1.0137}; // placeholder
+    public static final Constraints ARM_CONSTRAINTS = new Constraints(
+      Units.degreesToRadians(130), // max vel, deg/s
+      Units.degreesToRadians(200) // max acc, deg/s^2
+    );
   }
 
   public static class FeederConstants {

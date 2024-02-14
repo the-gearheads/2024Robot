@@ -8,7 +8,7 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
@@ -33,7 +33,7 @@ import org.littletonrobotics.junction.Logger;
 public class Arm extends SubsystemBase {
   private CANSparkFlex mainFlex = new CANSparkFlex(MAIN_ARM_ID, MotorType.kBrushless);
   private CANSparkFlex followerFlex = new CANSparkFlex(FOLLOWER_ARM_ID, MotorType.kBrushless);
-  PIDController pid = new PIDController(PID[0], PID[1], PID[2]);
+  ProfiledPIDController pid = new ProfiledPIDController(PID[0], PID[1], PID[2], ARM_CONSTRAINTS);
 
   double simAngle = 0.79;
   Mechanism2d mech = new Mechanism2d(1, 1);
@@ -66,7 +66,7 @@ public class Arm extends SubsystemBase {
 
     this.enc = mainFlex.getAbsoluteEncoder(Type.kDutyCycle);
     enc.setPositionConversionFactor(ARM_POS_FACTOR);
-    enc.setVelocityConversionFactor(ARM_POS_FACTOR * 60);
+    enc.setVelocityConversionFactor(ARM_POS_FACTOR / 60.0);
 
     if(!DriverStation.isFMSAttached()) {
       SmartDashboard.putBoolean("Arm/manualVoltageOnly", false);
@@ -84,11 +84,11 @@ public class Arm extends SubsystemBase {
 
     log();
     double ff;
-    // experimental https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b
-    if(Math.abs(Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint())) > ARM_ANGLE_LIVE_FF_THRESHOLD) {
-      ff = FEEDFORWARD.calculate(getAngle().getRadians(), 0);
+    // experimental https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b not sure how needed this is for a trapezoidal profile
+    if(Math.abs(Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > ARM_ANGLE_LIVE_FF_THRESHOLD) {
+      ff = FEEDFORWARD.calculate(getAngle().getRadians(), pid.getSetpoint().velocity);
     } else {
-      ff = FEEDFORWARD.calculate(pid.getSetpoint(), 0);
+      ff = FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
     }
     double output = pid.calculate(enc.getPosition(), pid.getSetpoint()) + ff;
 
@@ -103,7 +103,7 @@ public class Arm extends SubsystemBase {
       output = 0;
     }
 
-    double spDegrees = Units.radiansToDegrees(pid.getSetpoint());
+    double spDegrees = Units.radiansToDegrees(pid.getSetpoint().position);
     if(spDegrees < MIN_ANGLE || spDegrees > MAX_ANGLE) {
       output = 0;
     }
@@ -120,9 +120,12 @@ public class Arm extends SubsystemBase {
     Logger.recordOutput("Arm/PositionDeg", getAngle().getDegrees());
     Logger.recordOutput("Arm/Velocity", getVelocity());
     Logger.recordOutput("Arm/Voltage", mainFlex.getAppliedOutput() * mainFlex.getBusVoltage());
-    Logger.recordOutput("Arm/Setpoint", pid.getSetpoint());
+    Logger.recordOutput("Arm/SetpointTrapezoidPosition", pid.getSetpoint().position);
+    Logger.recordOutput("Arm/SetpointTrapezoidVelocity", pid.getSetpoint().velocity);
+    Logger.recordOutput("Arm/GoalPosition", pid.getGoal().position);
+    Logger.recordOutput("Arm/GoalVelocity", pid.getGoal().velocity);
     Logger.recordOutput("Arm/OutOfRange", getAngle().getDegrees() > MAX_ANGLE || getAngle().getDegrees() < MIN_ANGLE);
-    double spDegrees = Units.radiansToDegrees(pid.getSetpoint());
+    double spDegrees = Units.radiansToDegrees(pid.getSetpoint().position);
     Logger.recordOutput("Arm/SetpointOutOfRange", spDegrees < MIN_ANGLE || spDegrees > MAX_ANGLE);
     armMech.setAngle(getAngle().getDegrees());
     Logger.recordOutput("Arm/Mechanism2d", mech);
@@ -140,7 +143,7 @@ public class Arm extends SubsystemBase {
   public void setAngle(double angleRad) {
     angleRad = MathUtil.clamp(angleRad, Units.degreesToRadians(MIN_ANGLE), Units.degreesToRadians(MAX_ANGLE));
     if(Robot.isSimulation()) simAngle = angleRad;
-    pid.setSetpoint(angleRad);
+    pid.setGoal(angleRad);
   }
 
   public void setVoltage(Measure<Voltage> volts) {
