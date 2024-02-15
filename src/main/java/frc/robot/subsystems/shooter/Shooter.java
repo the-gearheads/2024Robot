@@ -18,7 +18,7 @@ public class Shooter extends SubsystemBase {
 
   protected FlywheelMotor topMotor = new FlywheelMotor("Shooter/Top", TOP_ID, PID, FEEDFORWARD);
   protected FlywheelMotor bottomMotor = new FlywheelMotor("Shooter/Bottom", BOTTOM_ID, PID, FEEDFORWARD);
-  protected CANSparkMax testspark = new CANSparkMax(0, MotorType.kBrushless)
+  protected CANSparkMax testspark = new CANSparkMax(0, MotorType.kBrushless);
 
   public Shooter() {
     setDefaultCommand(new ShooterNTControl(this));
@@ -36,6 +36,7 @@ public class Shooter extends SubsystemBase {
   public void setSpeed(double speed) {
     topMotor.setSpeed(speed);
     bottomMotor.setSpeed(speed);
+    testspark.set(3);
   }
 
   public void setTopSpeed(double speed) {
