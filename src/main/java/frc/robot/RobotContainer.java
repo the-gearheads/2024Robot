@@ -13,6 +13,7 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.leds.Leds;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -42,7 +43,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Swerve swerve = new Swerve();
   public final Leds leds = new Leds();
-  // private final Shooter shooter = new Shooter()
+  private final Shooter shooter = new Shooter();
   public final Arm arm = new Arm();
   public final Feeder feeder = new Feeder();
   public final Intake intake = new Intake();
@@ -62,7 +63,7 @@ public class RobotContainer {
     feeder.setDefaultCommand(new FeederNTControl(feeder));
     intake.setDefaultCommand(new IntakeNTControl(intake));
 
-    // sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
+    sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutineSteer(), "SwerveSteer");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutineAngular(), "SwerveAngular");

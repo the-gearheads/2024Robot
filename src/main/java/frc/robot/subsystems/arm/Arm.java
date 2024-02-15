@@ -12,7 +12,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -84,6 +83,7 @@ public class Arm extends SubsystemBase {
     floorMech.setColor(new Color8Bit(255, 128, 128));
 
     // update arm sim once so it doesn't start at 0
+    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
     if(Robot.isSimulation()) armSim.update(0.02);
     pid.reset(getAngle().getRadians());
     pid.setGoal(getAngle().getRadians());
@@ -97,11 +97,12 @@ public class Arm extends SubsystemBase {
     log();
     double ff;
     // experimental https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b not sure how needed this is for a trapezoidal profile
-    if(Math.abs(Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > ARM_ANGLE_LIVE_FF_THRESHOLD) {
-      ff = FEEDFORWARD.calculate(getAngle().getRadians(), pid.getSetpoint().velocity);
-    } else {
-      ff = FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
-    }
+    // if(Math.abs(Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > ARM_ANGLE_LIVE_FF_THRESHOLD) {
+    //   ff = FEEDFORWARD.calculate(getAngle().getRadians(), pid.getSetpoint().velocity);
+    // } else {
+    //   ff = FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
+    // }
+    ff = FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
     output = pid.calculate(getAngle().getRadians()) + ff;
 
     Logger.recordOutput("Arm/attemptedOutput", output);

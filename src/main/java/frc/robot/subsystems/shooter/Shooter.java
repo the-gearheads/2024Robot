@@ -11,10 +11,14 @@ import static edu.wpi.first.units.Units.*;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
 public class Shooter extends SubsystemBase {
 
   protected FlywheelMotor topMotor = new FlywheelMotor("Shooter/Top", TOP_ID, PID, FEEDFORWARD);
   protected FlywheelMotor bottomMotor = new FlywheelMotor("Shooter/Bottom", BOTTOM_ID, PID, FEEDFORWARD);
+  protected CANSparkMax testspark = new CANSparkMax(0, MotorType.kBrushless)
 
   public Shooter() {
     setDefaultCommand(new ShooterNTControl(this));
