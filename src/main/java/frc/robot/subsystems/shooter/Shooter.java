@@ -11,8 +11,6 @@ import static edu.wpi.first.units.Units.*;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class Shooter extends SubsystemBase {
 
