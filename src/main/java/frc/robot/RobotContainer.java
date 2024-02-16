@@ -4,11 +4,11 @@
 
 package frc.robot;
 
-import frc.robot.commands.ArmNTControl;
 import frc.robot.commands.FeederNTControl;
 import frc.robot.commands.IntakeNTControl;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
+import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
@@ -56,10 +56,10 @@ public class RobotContainer {
     // Configure the trigger bindings
     updateControllers();
     swerve.setDefaultCommand(new Teleop(swerve));
-    // arm.setDefaultCommand(Commands.run(()->{
-    //  arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
-    // }, arm));
-    arm.setDefaultCommand(new ArmNTControl(arm));
+    arm.setDefaultCommand(Commands.run(()->{
+     arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
+    }, arm));
+    // arm.setDefaultCommand(new ArmNTControl(arm));
     feeder.setDefaultCommand(new FeederNTControl(feeder));
     intake.setDefaultCommand(new IntakeNTControl(intake));
 

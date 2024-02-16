@@ -16,8 +16,8 @@ public class ShooterCalculations {
   // not quite sure whether to have separate variables for red and blue but for now this is fine
   static Translation3d speakerPosition = new Translation3d(0.173, 5.543, 2.216);
   // Distance (m) -> Angle (rad)
-  static final double[] distances = { 0.0,  2.0,  4.0};
-  static final double[] angles =    { 1.57, 0.5,  0.0};
+  static final double[] distances = { 0.0,  3.2,  4.0};
+  static final double[] angles =    { 1.2, 0.8,  0.0};
   static PolynomialSplineFunction shooterAngleFunction = new SplineInterpolator().interpolate(distances, angles);
   
   public static Rotation2d getYawToSpeaker(Translation2d robotPos) {

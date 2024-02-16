@@ -41,7 +41,7 @@ public final class Constants {
     };
 
     public static final double[] WHEEL_OFFSETS = {90, 0, 0, 90}; // could be wrong, we get to find out {270, 0, 180, 90};
-    public static final boolean[] IS_INVERTED = {true, false, true, true}; // left side inverted i think
+    public static final boolean[] IS_INVERTED = {true, false, true, false}; // left side inverted i think
 
     public static final double WHEEL_DIAMETER = 0.076;
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
@@ -94,11 +94,11 @@ public final class Constants {
     public static final double ARM_ANGLE_LIVE_FF_THRESHOLD = 10; //deg
     public static final double ARM_LENGTH = 0.6660; // meters, sim and mechanism2d only
     public static final double ARM_MOTOR_GEARING = 125; // sim only, gearing between motor and arm
-    public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.2509, 0.099081, 5.5782, 0.28261);
-    public static final double[] PID = {49.723, 0, 6.1742}; // placeholder
+    public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.19684, 0.0069965, 0.47015, 0.022602);
+    public static final double[] PID = {34.566, 0, 1.0137}; // placeholder
     public static final Constraints ARM_CONSTRAINTS = new Constraints(
       Units.degreesToRadians(101), // max vel, deg/s
-      Units.degreesToRadians(400) // max acc, deg/s^2
+      Units.degreesToRadians(400) // max acc, deg/s^2 
     );
     public static final double MAX_ANGLE = (MAX_ANGLE_DEG / 360.0) * (2 * Math.PI);
     public static final double MIN_ANGLE = (MIN_ANGLE_DEG / 360.0) * (2 * Math.PI);

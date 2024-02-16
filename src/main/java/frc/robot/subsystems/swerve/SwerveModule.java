@@ -84,8 +84,8 @@ public class SwerveModule {
   public void periodic() {
     steer.periodic();
     drive.periodic();
-    steer.log();
-    drive.log();
+    // steer.log();
+    // drive.log();
   }
 
   /* MUST CALL THESE THREE BEFORE USING */

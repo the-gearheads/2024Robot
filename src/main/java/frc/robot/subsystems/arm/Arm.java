@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -42,9 +43,9 @@ public class Arm extends SubsystemBase {
                                                        ARM_LENGTH, MIN_ANGLE-0.1, MAX_ANGLE+0.1, false, 0.79);
   Mechanism2d mech = new Mechanism2d(1, 1);
   // cad guesstimates cause ascope wants these in meters
-  MechanismRoot2d root = mech.getRoot("Shooter", 0.1032, 0.1379);
-  MechanismLigament2d armMech = root.append(new MechanismLigament2d("Arm", ARM_LENGTH, 45));
-  MechanismLigament2d floorMech = root.append(new MechanismLigament2d("Floor", 0.7557, 0));
+  MechanismRoot2d root = mech.getRoot("Shooter", 0.79, 0.1379);
+  MechanismLigament2d armMech = root.append(new MechanismLigament2d("Arm", ARM_LENGTH, 135));
+  MechanismLigament2d floorMech = root.append(new MechanismLigament2d("Floor", 0.7557, 180));
 
   SparkAbsoluteEncoder enc;
   public Arm() {
@@ -53,6 +54,10 @@ public class Arm extends SubsystemBase {
     HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
     setupStatusFrames();
     HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
+
+
+    mainFlex.getForwardLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyClosed).enableLimitSwitch(true);
+    mainFlex.getReverseLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyClosed).enableLimitSwitch(true);
 
     mainFlex.setInverted(true);
     followerFlex.setInverted(true);
@@ -74,6 +79,7 @@ public class Arm extends SubsystemBase {
 
     if(!DriverStation.isFMSAttached()) {
       SmartDashboard.putBoolean("Arm/manualVoltageOnly", false);
+      SmartDashboard.putBoolean("Arm/noVoltage", false);
     
     }
     // hi gavin and or michael if you're reading this i'm sorry for the mess i made in the arm subsystem i'm trying to fix it now i promise i'll do better next time i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry
@@ -97,12 +103,12 @@ public class Arm extends SubsystemBase {
     log();
     double ff;
     // experimental https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b not sure how needed this is for a trapezoidal profile
-    // if(Math.abs(Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > ARM_ANGLE_LIVE_FF_THRESHOLD) {
-    //   ff = FEEDFORWARD.calculate(getAngle().getRadians(), pid.getSetpoint().velocity);
-    // } else {
-    //   ff = FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
-    // }
-    ff = FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
+    if(Math.abs(Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > ARM_ANGLE_LIVE_FF_THRESHOLD) {
+      ff = FEEDFORWARD.calculate(getAngle().getRadians(), pid.getSetpoint().velocity);
+    } else {
+      ff = FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
+    }
+    // ff = FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
     output = pid.calculate(getAngle().getRadians()) + ff;
 
     Logger.recordOutput("Arm/attemptedOutput", output);
@@ -125,6 +131,8 @@ public class Arm extends SubsystemBase {
       pid.setGoal(MathUtil.clamp(pid.getGoal().position, MIN_ANGLE, MAX_ANGLE));
     }
 
+    output = Math.abs(output) > 0.02 ? output : 0;
+
     if(!DriverStation.isFMSAttached() && SmartDashboard.getBoolean("Arm/manualVoltageOnly", false)) {
       output = SmartDashboard.getNumber("Arm/manualVoltage", 0); // false for sysid reasons, idk how to better do this
     }
@@ -132,6 +140,10 @@ public class Arm extends SubsystemBase {
     if(Robot.isSimulation()) {
       armSim.setInputVoltage(MathUtil.clamp(output, -12, 12));
       armSim.update(0.02);
+    }
+
+    if(!DriverStation.isFMSAttached() && SmartDashboard.getBoolean("Arm/noVoltage", false)) {
+      return;
     }
 
     mainFlex.setVoltage(output);
@@ -149,7 +161,7 @@ public class Arm extends SubsystemBase {
     Logger.recordOutput("Arm/OutOfRange", getAngle().getRadians() > MAX_ANGLE || getAngle().getRadians() < MIN_ANGLE);
     Logger.recordOutput("Arm/SetpointOutOfRange", pid.getSetpoint().position < MIN_ANGLE || pid.getSetpoint().position > MAX_ANGLE);
     Logger.recordOutput("Arm/GoalOutOfRange", pid.getGoal().position < MIN_ANGLE || pid.getGoal().position > MAX_ANGLE);
-    armMech.setAngle(getAngle().getDegrees());
+    armMech.setAngle(90.0 + getAngle().getDegrees());
     Logger.recordOutput("Arm/Mechanism2d", mech);
   }
 
