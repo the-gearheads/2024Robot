@@ -94,7 +94,7 @@ public class Swerve extends SubsystemBase {
     }
 
     this.m_PoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0, 0)));
-    resetPose(new Pose2d(new Translation2d(2, 2), new Rotation2d()));
+    resetPose(new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(180)));
 
     // Logging callback for current robot pose
     PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {

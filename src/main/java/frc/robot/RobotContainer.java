@@ -4,11 +4,11 @@
 
 package frc.robot;
 
+import frc.robot.commands.ArmNTControl;
 import frc.robot.commands.FeederNTControl;
 import frc.robot.commands.IntakeNTControl;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
-import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
@@ -23,6 +23,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -56,10 +57,10 @@ public class RobotContainer {
     // Configure the trigger bindings
     updateControllers();
     swerve.setDefaultCommand(new Teleop(swerve));
-    arm.setDefaultCommand(Commands.run(()->{
-     arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
-    }, arm));
-    // arm.setDefaultCommand(new ArmNTControl(arm));
+    // arm.setDefaultCommand(Commands.run(()->{
+    //  arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
+    // }, arm));
+    arm.setDefaultCommand(new ArmNTControl(arm));
     feeder.setDefaultCommand(new FeederNTControl(feeder));
     intake.setDefaultCommand(new IntakeNTControl(intake));
 
@@ -89,13 +90,13 @@ public class RobotContainer {
     Controllers.updateActiveControllerInstance();
 
     Controllers.driverController.getGyroZeroButton().onTrue(new InstantCommand(() -> {
-      Rotation2d rot = new Rotation2d(0);
+      Rotation2d rot = new Rotation2d(180);
       if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) rot = new Rotation2d(Math.PI);
       swerve.resetPose(new Pose2d(swerve.getPose().getTranslation(), rot));
     }));
 
     Controllers.driverController.getResetPoseButton().onTrue(new InstantCommand(() -> {
-        Pose2d pose = new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(0));
+        Pose2d pose = new Pose2d(new Translation2d(Units.inchesToMeters(36.2 + (29.875 / 2)), Units.inchesToMeters(218.4)), Rotation2d.fromDegrees(180));
         if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) pose = GeometryUtil.flipFieldPose(pose);
         swerve.resetPose(pose);
     }));

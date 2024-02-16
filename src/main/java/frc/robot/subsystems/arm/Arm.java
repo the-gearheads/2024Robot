@@ -43,9 +43,9 @@ public class Arm extends SubsystemBase {
                                                        ARM_LENGTH, MIN_ANGLE-0.1, MAX_ANGLE+0.1, false, 0.79);
   Mechanism2d mech = new Mechanism2d(1, 1);
   // cad guesstimates cause ascope wants these in meters
-  MechanismRoot2d root = mech.getRoot("Shooter", 0.79, 0.1379);
-  MechanismLigament2d armMech = root.append(new MechanismLigament2d("Arm", ARM_LENGTH, 135));
-  MechanismLigament2d floorMech = root.append(new MechanismLigament2d("Floor", 0.7557, 180));
+  MechanismRoot2d root = mech.getRoot("Shooter", 0.1032, 0.1379);
+  MechanismLigament2d armMech = root.append(new MechanismLigament2d("Arm", ARM_LENGTH, 45));
+  MechanismLigament2d floorMech = root.append(new MechanismLigament2d("Floor", 0.7557, 0));
 
   SparkAbsoluteEncoder enc;
   public Arm() {
@@ -161,7 +161,7 @@ public class Arm extends SubsystemBase {
     Logger.recordOutput("Arm/OutOfRange", getAngle().getRadians() > MAX_ANGLE || getAngle().getRadians() < MIN_ANGLE);
     Logger.recordOutput("Arm/SetpointOutOfRange", pid.getSetpoint().position < MIN_ANGLE || pid.getSetpoint().position > MAX_ANGLE);
     Logger.recordOutput("Arm/GoalOutOfRange", pid.getGoal().position < MIN_ANGLE || pid.getGoal().position > MAX_ANGLE);
-    armMech.setAngle(90.0 + getAngle().getDegrees());
+    armMech.setAngle(getAngle().getDegrees());
     Logger.recordOutput("Arm/Mechanism2d", mech);
   }
 
