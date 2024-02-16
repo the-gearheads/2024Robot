@@ -1,7 +1,7 @@
 package frc.robot.controllers;
 
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+/* For any button you just need the value of, PLEASE just make it return a boolean. */
 public interface DriverController {
   public default double getTranslateXAxis() {
     return 0;
@@ -23,23 +23,23 @@ public interface DriverController {
     return 0;
   }
 
-  public default Trigger getGyroZeroButton() {
-    return new Trigger(() -> false);
+  public default boolean getGyroZeroButton() {
+    return false;
   }
 
-  public default Trigger getPatthfindButton() {
-    return new Trigger(() -> false);
+  public default boolean getPatthfindButton() {
+    return false;
   }
 
-  public default Trigger getResetPoseButton() {
-    return new Trigger(() -> false);
+  public default boolean getResetPoseButton() {
+    return false;
   }
 
-  public default Trigger getAlignToSpeakerBtn() {
-    return new Trigger(() -> false);
+  public default boolean getAlignToSpeakerBtn() {
+    return false;
   }
 
-  public default Trigger getIntake() {
-    return new Trigger(() -> false);
+  public default boolean getIntake() {
+    return false;
   }
 }

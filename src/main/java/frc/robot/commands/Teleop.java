@@ -57,7 +57,7 @@ public class Teleop extends Command {
 
     var speeds = new ChassisSpeeds(x, y, rot);
 
-    var forcedAngle = Controllers.driverController.getAlignToSpeakerBtn().getAsBoolean() ?
+    var forcedAngle = Controllers.driverController.getAlignToSpeakerBtn() ?
                       ShooterCalculations.getYawToSpeaker(swerve.getPose().getTranslation()).getRadians() : null;
     if(forcedAngle != null) headingController.setSetpoint(swerve.getGyroRotation().getRadians());
 

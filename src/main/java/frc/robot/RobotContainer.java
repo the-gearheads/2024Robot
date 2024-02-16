@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -89,23 +90,23 @@ public class RobotContainer {
     // Find new controllers
     Controllers.updateActiveControllerInstance();
 
-    Controllers.driverController.getGyroZeroButton().onTrue(new InstantCommand(() -> {
+    new Trigger(Controllers.driverController::getGyroZeroButton).onTrue(new InstantCommand(() -> {
       Rotation2d rot = new Rotation2d(180);
       if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) rot = new Rotation2d(Math.PI);
       swerve.resetPose(new Pose2d(swerve.getPose().getTranslation(), rot));
     }));
 
-    Controllers.driverController.getResetPoseButton().onTrue(new InstantCommand(() -> {
+    new Trigger(Controllers.driverController::getResetPoseButton).onTrue(new InstantCommand(() -> {
         Pose2d pose = new Pose2d(new Translation2d(Units.inchesToMeters(36.2 + (29.875 / 2)), Units.inchesToMeters(218.4)), Rotation2d.fromDegrees(180));
         if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) pose = GeometryUtil.flipFieldPose(pose);
         swerve.resetPose(pose);
     }));
 
-    Controllers.driverController.getPatthfindButton().onTrue(new ProxyCommand(()->{
+    new Trigger(Controllers.driverController::getPatthfindButton).onTrue(new ProxyCommand(()->{
       return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(1, 1), swerve.getPose().getRotation()))); // MUST be at least 6 bc of size of blocks in minecraft
     }));
 
-    Controllers.driverController.getIntake().whileTrue(Commands.startEnd(
+    new Trigger(Controllers.driverController::getIntake).whileTrue(Commands.startEnd(
       intake::run,
       intake::stop,
       intake

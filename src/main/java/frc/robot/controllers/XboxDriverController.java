@@ -2,7 +2,6 @@ package frc.robot.controllers;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class XboxDriverController implements DriverController {
 
@@ -39,27 +38,27 @@ public class XboxDriverController implements DriverController {
   }
 
   @Override
-  public Trigger getGyroZeroButton() {
-    return new Trigger(()-> controller.getLeftBumper());
-  }
-
-    @Override
-  public Trigger getResetPoseButton() {
-    return new Trigger(()-> controller.getRightBumper());
+  public boolean getGyroZeroButton() {
+    return controller.getLeftBumper();
   }
 
   @Override
-  public Trigger getPatthfindButton() {
-    return new Trigger(() -> controller.getXButton());
+  public boolean getResetPoseButton() {
+    return controller.getRightBumper();
   }
 
   @Override
-  public Trigger getAlignToSpeakerBtn() {
-    return new Trigger(() -> controller.getYButton());
+  public boolean getPatthfindButton() {
+    return controller.getXButton();
   }
 
   @Override
-  public Trigger getIntake() {
-    return new Trigger(() -> controller.getBButton());
+  public boolean getAlignToSpeakerBtn() {
+    return controller.getYButton();
+  }
+
+  @Override
+  public boolean getIntake() {
+    return controller.getBButton();
   }
 }
