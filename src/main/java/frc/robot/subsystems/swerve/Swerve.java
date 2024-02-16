@@ -39,6 +39,8 @@ import static frc.robot.Constants.SwerveConstants.*;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -46,9 +48,10 @@ import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 
 public class Swerve extends SubsystemBase {
+  static final Lock odometryLock = new ReentrantLock();
   AHRS gyro = new AHRS(SPI.Port.kMXP);
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
-  SwerveDrivePoseEstimator m_PoseEstimator;
+  SwerveDrivePoseEstimator poseEstimator;
   Vision vision;
   Field2d field = new Field2d();
   /* Want to put vision and path states on this field */
@@ -93,7 +96,9 @@ public class Swerve extends SubsystemBase {
       SmartDashboard.putBoolean("Swerve/manualVoltageDrive", false);
     }
 
-    this.m_PoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0, 0)));
+    SparkMaxOdometryThread.getInstance().start();
+
+    poseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0, 0)));
     resetPose(new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(180)));
 
     // Logging callback for current robot pose
@@ -237,7 +242,7 @@ public class Swerve extends SubsystemBase {
     getModuleStates();
     SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
     for (int i = 0; i < modules.length; i++) {
-      positions[i] = modules[i].getModulePosition();
+      positions[i] = modules[i].getCurrentModulePosition();
     }
     Logger.recordOutput("Swerve/Positions", positions);
     return positions;
@@ -246,7 +251,7 @@ public class Swerve extends SubsystemBase {
   public SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[modules.length];
     for (int i = 0; i < modules.length; i++) {
-      states[i] = modules[i].getState();
+      states[i] = modules[i].getCurrentState();
     }
     Logger.recordOutput("Swerve/States", states);
     return states;
@@ -255,16 +260,49 @@ public class Swerve extends SubsystemBase {
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
+
   @Override
   public void periodic() {
-    m_PoseEstimator.update(getGyroRotation(), getModulePositions());
+
+    for (SwerveModule module : modules) {
+      module.periodic();
+    }
+
+
+    double[] timestamps;
+    // indexed by module then time
+    SwerveModulePosition[][] modPositions = new SwerveModulePosition[modules.length][];
+    // indexed by time then module
+    SwerveModulePosition[][] reshapedPositions;
+
+    odometryLock.lock();
+    try {
+      timestamps = modules[0].getOdometryTimestamps();
+      reshapedPositions = new SwerveModulePosition[timestamps.length][];
+      
+      for (int i = 0; i < modules.length; i++) {
+        modPositions[i] = modules[i].getOdometryModPositions();
+      }
+    } finally {
+      odometryLock.unlock();
+    }
+
+    // need to reshape the array such that you index it by time then module
+    for (int time = 0; time < timestamps.length; time++) {
+      reshapedPositions[time] = new SwerveModulePosition[modules.length];
+      for (int mod = 0; mod < modules.length; mod++) {
+        reshapedPositions[time][mod] = modPositions[mod][time];
+      }
+      poseEstimator.updateWithTime(timestamps[time], getGyroRotation(), reshapedPositions[time]);
+    }
+
     Optional<EstimatedRobotPose> leftVision = vision.getGlobalPoseFromLeft();
     Optional<EstimatedRobotPose> rightVision = vision.getGlobalPoseFromLeft();
     if (leftVision.isPresent()) {
-      m_PoseEstimator.addVisionMeasurement(leftVision.get().estimatedPose.toPose2d(), leftVision.get().timestampSeconds);
+      poseEstimator.addVisionMeasurement(leftVision.get().estimatedPose.toPose2d(), leftVision.get().timestampSeconds);
     }
     if (rightVision.isPresent()) {
-      m_PoseEstimator.addVisionMeasurement(rightVision.get().estimatedPose.toPose2d(), rightVision.get().timestampSeconds);
+      poseEstimator.addVisionMeasurement(rightVision.get().estimatedPose.toPose2d(), rightVision.get().timestampSeconds);
     }
 
     Logger.recordOutput("Swerve/Pose", getPose());
@@ -283,21 +321,17 @@ public class Swerve extends SubsystemBase {
         module.setSysidVoltageMode(drive, steer);
       }
     }
-
-    for (SwerveModule module : modules) {
-      module.periodic();
-    }
   }
 
   public Pose2d getPose() {
-    return m_PoseEstimator.getEstimatedPosition();
+    return poseEstimator.getEstimatedPosition();
   }
   
   public void resetPose(Pose2d pose) {
     for (SwerveModule module : modules) {
       module.resetEncoders();
     }
-    m_PoseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);
+    poseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);
   }
 
   private void sysidSetVolts(Measure<Voltage> volts) {

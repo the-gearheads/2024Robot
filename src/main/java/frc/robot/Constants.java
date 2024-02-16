@@ -50,6 +50,8 @@ public final class Constants {
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
     public static final double DRIVE_RATIO = (45.0 * 22) / (DRIVE_PINION_TOOTH_COUNT * 15);
 
+    public static final double ODOMETRY_FREQUENCY = 250;
+
     // Throughbore encoder is directly on the output steer shaft
     public static final double STEER_RATIO = 1;
 

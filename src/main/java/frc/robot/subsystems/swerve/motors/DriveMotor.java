@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.controller.PIDController;
 
@@ -87,13 +88,14 @@ public class DriveMotor {
 
   /* then this, surrounded by 2 delays */
   public void setupStatusFrames() {
-    // flex.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
-    // /* Don't have an analog encoder */
-    // flex.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500);
-    // /* Don't have an alternate encoder */
-    // flex.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
-    // /* Don't have a duty cycle encoder */
-    // flex.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500);
-    // flex.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500);
+    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus2, (int)(1000.0 / ODOMETRY_FREQUENCY));
+    /* Don't have an analog encoder */
+    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500);
+    /* Don't have an alternate encoder */
+    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
+    /* Don't have a duty cycle encoder */
+    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500);
+    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500);
   }
 }

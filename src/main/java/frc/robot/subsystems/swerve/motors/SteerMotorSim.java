@@ -17,6 +17,11 @@ public class SteerMotorSim extends SteerMotor {
   }
 
   @Override
+  public double getAngleRadians() {
+    return targetAngle;
+  }
+
+  @Override
   public void periodic() {
   }
 

@@ -56,6 +56,10 @@ public class SteerMotor {
     return noOffsetGetAngle().minus(offset);
   }
 
+  public double getAngleRadians() {
+    return encoder.getPosition() - offset.getRadians();
+  }
+
   public void periodic() {
   }
 
@@ -111,7 +115,7 @@ public class SteerMotor {
     /* Don't have an alternate encoder */
     max.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
     /* We -really- care about our duty cycle encoder readings though. THE DEFAULT WAS 200MS */
-    max.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
+    max.setPeriodicFramePeriod(PeriodicFrame.kStatus5, (int)(1000.0 / ODOMETRY_FREQUENCY));
     max.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
   }
 }

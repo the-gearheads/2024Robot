@@ -11,6 +11,8 @@ import frc.robot.subsystems.swerve.motors.SteerMotorSim;
 
 import static frc.robot.Constants.SwerveConstants.*;
 
+import java.util.Queue;
+
 import org.littletonrobotics.junction.Logger;
 
 public class SwerveModule {
@@ -18,10 +20,13 @@ public class SwerveModule {
   public SteerMotor steer;
   Rotation2d offset;
 
+  private final Queue<Double> timestampQueue;
+  private final Queue<Double> drivePositionQueue;
+  private final Queue<Double> turnPositionQueue;
+
   String modulePath;
 
   public SwerveModule(int id, String moduleName) {
-
     this.modulePath = "Swerve/" + moduleName;
     this.offset = Rotation2d.fromDegrees(WHEEL_OFFSETS[id]);
     if (Robot.isReal()) {
@@ -31,6 +36,9 @@ public class SwerveModule {
       drive = new DriveMotorSim(MOTOR_IDS[id][0], id, modulePath);
       steer = new SteerMotorSim(MOTOR_IDS[id][1], id, offset, modulePath);
     }
+    timestampQueue = SparkMaxOdometryThread.getInstance().makeTimestampQueue();
+    drivePositionQueue = SparkMaxOdometryThread.getInstance().registerSignal(drive::getPosition);
+    turnPositionQueue = SparkMaxOdometryThread.getInstance().registerSignal(steer::getAngleRadians);
   }
 
   public void setState(SwerveModuleState state) {
@@ -53,11 +61,11 @@ public class SwerveModule {
     drive.setVoltage(state.speedMetersPerSecond);
   }
 
-  public SwerveModulePosition getModulePosition() {
+  public SwerveModulePosition getCurrentModulePosition() {
     return new SwerveModulePosition(drive.getPosition(), steer.getAngle());
   }
 
-  public SwerveModuleState getState() {
+  public SwerveModuleState getCurrentState() {
     return new SwerveModuleState(drive.getVelocity(), steer.getAngle());
   }
 
@@ -102,6 +110,46 @@ public class SwerveModule {
   public void setupStatusFrames() {
     steer.setupStatusFrames();
     drive.setupStatusFrames();
+  }
+
+  private Rotation2d[] getOdometrySteerPositions() {
+    var angles =  turnPositionQueue
+      .stream()
+      .map((Double value) -> Rotation2d.fromRadians(value))
+      .toArray(Rotation2d[]::new);
+    Logger.recordOutput(modulePath + "/odometrySteerPositions", angles);
+    turnPositionQueue.clear();
+    return angles;
+  }
+
+  private double[] getOdometryDrivePositions() {
+    var positions =  drivePositionQueue
+      .stream()
+      .mapToDouble((Double value) -> value)
+      .toArray();
+    Logger.recordOutput(modulePath + "/odometryDrivePositions", positions);
+    drivePositionQueue.clear();
+    return positions;
+  }
+
+  public double[] getOdometryTimestamps() {
+    var timestamps =  timestampQueue
+      .stream()
+      .mapToDouble((Double value) -> value)
+      .toArray();
+    Logger.recordOutput(modulePath + "/odometryTimestamps", timestamps);
+    timestampQueue.clear();
+    return timestamps;
+  }
+
+  public SwerveModulePosition[] getOdometryModPositions() {
+    var drivePositions = getOdometryDrivePositions();
+    var turnPositions = getOdometrySteerPositions();
+    var positions = new SwerveModulePosition[drivePositions.length];
+    for (int i = 0; i < drivePositions.length; i++) {
+      positions[i] = new SwerveModulePosition(drivePositions[i], turnPositions[i]);
+    }
+    return positions;
   }
   
 }
