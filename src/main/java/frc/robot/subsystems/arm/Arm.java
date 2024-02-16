@@ -94,8 +94,6 @@ public class Arm extends SubsystemBase {
     if(Robot.isSimulation()) armSim.update(0.02);
     pid.reset(getAngle().getRadians());
     pid.setGoal(getAngle().getRadians());
-
-    SmartDashboard.putBoolean("Arm/running", true);
   }
 
   private double output = 0;
@@ -104,7 +102,6 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     log();
-    if(!SmartDashboard.getBoolean("Arm/running", true)) {armSim.update(0.02); return;};
     double ff;
     // experimental https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b not sure how needed this is for a trapezoidal profile
     if(Math.abs(Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > ARM_ANGLE_LIVE_FF_THRESHOLD) {
