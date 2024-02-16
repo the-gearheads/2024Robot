@@ -119,8 +119,7 @@
         "open": true
       },
       "open": true
-    },
-    "visible": true
+    }
   },
   "Plot": {
     "Plot <0>": {
@@ -132,7 +131,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 153,
+          "height": 277,
           "series": [
             {
               "color": [
@@ -163,7 +162,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     }
   }
 }

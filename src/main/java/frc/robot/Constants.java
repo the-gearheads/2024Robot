@@ -95,6 +95,7 @@ public final class Constants {
     public static final double ARM_LENGTH = 0.6660; // meters, sim and mechanism2d only
     public static final double ARM_MOTOR_GEARING = 125; // sim only, gearing between motor and arm
     public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.19684, 0.0069965, 0.47015, 0.022602);
+    public static final ArmFeedforward SIM_FEEDFORWARD = new ArmFeedforward(0.2509, 0.099081, 5.5782, 0.28261); // both of these are wrong but this one is less wrong for the purposes of sim
     public static final double[] PID = {34.566, 0, 1.0137}; // placeholder
     public static final Constraints ARM_CONSTRAINTS = new Constraints(
       Units.degreesToRadians(101), // max vel, deg/s

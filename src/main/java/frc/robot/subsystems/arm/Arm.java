@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -16,6 +15,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.util.HandledSleep;
+import frc.robot.util.ProfiledPIDControllerCustomPeriod;
 
 import static frc.robot.Constants.ArmConstants.*;
 import static edu.wpi.first.units.Units.*;
@@ -36,9 +37,9 @@ import org.littletonrobotics.junction.Logger;
 public class Arm extends SubsystemBase {
   private CANSparkFlex mainFlex = new CANSparkFlex(MAIN_ARM_ID, MotorType.kBrushless);
   private CANSparkFlex followerFlex = new CANSparkFlex(FOLLOWER_ARM_ID, MotorType.kBrushless);
-  ProfiledPIDController pid = new ProfiledPIDController(PID[0], PID[1], PID[2], ARM_CONSTRAINTS, 0.02);
+  ProfiledPIDControllerCustomPeriod pid = new ProfiledPIDControllerCustomPeriod(PID[0], PID[1], PID[2], ARM_CONSTRAINTS, 0.02);
 
-  SingleJointedArmSim armSim = new SingleJointedArmSim(LinearSystemId.identifyPositionSystem(FEEDFORWARD.kv, FEEDFORWARD.ka),
+  SingleJointedArmSim armSim = new SingleJointedArmSim(LinearSystemId.identifyPositionSystem(SIM_FEEDFORWARD.kv, SIM_FEEDFORWARD.ka),
                                                        DCMotor.getNeoVortex(2), ARM_MOTOR_GEARING,
                                                        ARM_LENGTH, MIN_ANGLE-0.1, MAX_ANGLE+0.1, false, 0.79);
   Mechanism2d mech = new Mechanism2d(1, 1);
@@ -93,14 +94,17 @@ public class Arm extends SubsystemBase {
     if(Robot.isSimulation()) armSim.update(0.02);
     pid.reset(getAngle().getRadians());
     pid.setGoal(getAngle().getRadians());
+
+    SmartDashboard.putBoolean("Arm/running", true);
   }
 
   private double output = 0;
+  private double lastTimestamp = Timer.getFPGATimestamp();
 
   @Override
   public void periodic() {
-
     log();
+    if(!SmartDashboard.getBoolean("Arm/running", true)) {armSim.update(0.02); return;};
     double ff;
     // experimental https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b not sure how needed this is for a trapezoidal profile
     if(Math.abs(Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > ARM_ANGLE_LIVE_FF_THRESHOLD) {
@@ -108,7 +112,7 @@ public class Arm extends SubsystemBase {
     } else {
       ff = FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
     }
-    // ff = FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
+    pid.setPeriod(Math.max(Timer.getFPGATimestamp() - lastTimestamp, 0.02)); // this probably works? i dont really have a way to test it
     output = pid.calculate(getAngle().getRadians()) + ff;
 
     Logger.recordOutput("Arm/attemptedOutput", output);
