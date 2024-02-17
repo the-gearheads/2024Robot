@@ -17,7 +17,7 @@ import org.littletonrobotics.junction.Logger;
 public class Teleop extends Command {
 
   Swerve swerve;
-
+  
   public Teleop(Swerve swerve) {
     addRequirements(swerve);
     this.swerve = swerve;
@@ -28,7 +28,7 @@ public class Teleop extends Command {
     headingController.setSetpoint(swerve.getGyroRotation().getRadians());
     SmartDashboard.putBoolean("Teleop/HeadingPID", true);
     SmartDashboard.putData("Swerve/headingcontroller", headingController);
-
+    SmartDashboard.putBoolean("Swerve/FieldRelative", true);
   }
 
   @Override
@@ -66,7 +66,12 @@ public class Teleop extends Command {
     }
 
     Logger.recordOutput("Swerve/Teleop/Speeds", speeds);
-    swerve.driveFieldRelative(speeds, forcedAngle);
+    
+    if (SmartDashboard.getBoolean("Swerve/FieldRelative", true)) {
+      swerve.driveFieldRelative(speeds, forcedAngle);
+    } else {
+      swerve.drive(speeds, forcedAngle);
+    }
 
   }
 
