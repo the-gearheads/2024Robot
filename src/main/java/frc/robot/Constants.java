@@ -50,7 +50,7 @@ public final class Constants {
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
     public static final double DRIVE_RATIO = (45.0 * 22) / (DRIVE_PINION_TOOTH_COUNT * 15);
 
-    public static final double ODOMETRY_FREQUENCY = 250;
+    public static final double ODOMETRY_FREQUENCY = 100;
 
     // Throughbore encoder is directly on the output steer shaft
     public static final double STEER_RATIO = 1;
@@ -110,14 +110,16 @@ public final class Constants {
   public static class FeederConstants {
     public static final int FEEDER_ID = 13;
     public static final int HANDOFF_ID = 7;
-    public static final double[] PID = {0, 0, 0}; // placeholder
+    public static final double[] PID = {0.00038793, 0, 0}; // placeholder
+    public static final double[] HANDOFF_PID = {0.0019749, 0, 0}; // placeholder 
     public static final double SPEED = 1000.0;
-    public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0, 0, 0); // placeholder
+    public static final SimpleMotorFeedforward FEEDER_FF = new SimpleMotorFeedforward(0.065837, 0.0019032, 0.00021355); // placeholder
+    public static final SimpleMotorFeedforward HANDOFF_FF = new SimpleMotorFeedforward(0.1132, 0.0018353, 0.00013306);
   }
 
   public static class IntakeConstants {
     public static final int ID = 14;
-    public static final double[] PID = {0.0018087, 0, 0}; // placeholder
+    public static final double[] PID = {0.0018087, 0, 0};
     public static final double SPEED = 4750;
     public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.26764, 0.0018386, 0.00010506); // placeholder
   }
