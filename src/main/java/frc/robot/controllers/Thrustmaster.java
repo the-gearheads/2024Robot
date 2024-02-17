@@ -14,7 +14,8 @@ public class Thrustmaster implements OperatorController {
   public double getOverrideShooterSpeed() {
     double val = joy.getRawAxis(3);
     double range = 1.0;
-    return MathUtil.clamp(5500-((MathUtil.applyDeadband(val + range, 0.1) / (range * 2)) * 5500), 0, 5500);
+    double maxSpeed = 6000;
+    return (joy.getRawButton(11) ? -1 : 1) * MathUtil.clamp(maxSpeed-((MathUtil.applyDeadband(val + range, 0.1) / (range * 2)) * maxSpeed), 0, maxSpeed);
   }
 
   public Trigger getFeederOverride() {
@@ -23,5 +24,17 @@ public class Thrustmaster implements OperatorController {
 
   public Trigger getIntakeOverride() {
     return new Trigger(()->joy.getRawButton(2));
+  }
+
+  public Trigger getIntakeRevOverride() {
+    return new Trigger(()->joy.getRawButton(13));
+  }
+
+  public Trigger getFeederRevOverride() {
+    return new Trigger(()->joy.getRawButton(12));
+  }
+
+  public Trigger getAmpOverride() {
+    return new Trigger(()->joy.getRawButton(16));
   }
 }

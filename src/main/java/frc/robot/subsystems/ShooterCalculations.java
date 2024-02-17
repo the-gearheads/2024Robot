@@ -28,7 +28,7 @@ public class ShooterCalculations {
     }
     Rotation2d angle = new Rotation2d(Math.atan2(xyPos.getY() - robotPos.getY(), xyPos.getX() - robotPos.getX()));
 
-    if (!isRed) {
+    if (isRed) {
       angle = angle.plus(new Rotation2d(Math.PI));
     }
 
@@ -43,7 +43,9 @@ public class ShooterCalculations {
     if(isRed) {
       pos = GeometryUtil.flipFieldPosition(pos);
     }
-    return pos.getDistance(robotPos);
+    double dist = pos.getDistance(robotPos);
+    Logger.recordOutput("Calculations/DistanceToSpeaker", dist);
+    return dist;
   }
 
   /* Need to account for stage and other things in the future */

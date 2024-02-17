@@ -24,6 +24,10 @@ public class Intake extends SubsystemBase {
     motor.setSpeed(SmartDashboard.getNumber("Intake/RunSpeed", SPEED));
   }
 
+  public void runReverse() {
+    motor.setSpeed(-SmartDashboard.getNumber("Intake/RunSpeed", SPEED));
+  }
+
   public void stop() {
     motor.setSpeed(0);
   }

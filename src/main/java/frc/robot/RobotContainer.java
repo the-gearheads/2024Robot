@@ -114,10 +114,31 @@ public class RobotContainer {
       intake
     ));
 
+    Controllers.operatorController.getIntakeRevOverride().whileTrue(Commands.startEnd(
+      intake::runReverse,
+      intake::stop,
+      intake
+    ));
+
+
     Controllers.operatorController.getFeederOverride().whileTrue(Commands.startEnd(
       feeder::run,
       feeder::stop,
       feeder
+    ));
+
+    Controllers.operatorController.getFeederRevOverride().whileTrue(Commands.startEnd(
+      feeder::runReverse,
+      feeder::stop,
+      feeder
+    ));
+
+    Controllers.operatorController.getAmpOverride().whileTrue(Commands.run(
+      ()->{
+        shooter.setTopSpeed(-2000);
+        shooter.setBottomSpeed(2000);
+      },
+      shooter
     ));
   }
 

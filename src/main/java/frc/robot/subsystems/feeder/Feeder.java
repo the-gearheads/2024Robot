@@ -30,6 +30,11 @@ public class Feeder extends SubsystemBase {
     handoffMotor.setSpeed(SmartDashboard.getNumber("Feeder/RunSpeed", SPEED));
   }
 
+  public void runReverse() {
+    feederMotor.setSpeed(-SmartDashboard.getNumber("Feeder/RunSpeed", SPEED));
+    handoffMotor.setSpeed(-SmartDashboard.getNumber("Feeder/RunSpeed", SPEED));
+  }
+
   public void stop() {
     feederMotor.setSpeed(0);
     handoffMotor.setSpeed(0);

@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Constants;
+import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.HandledSleep;
 
@@ -198,7 +199,7 @@ public class Swerve extends SubsystemBase {
     double commandedRot = headingController.calculate(getPose().getRotation().getRadians());
 
     headingController.enableContinuousInput(0, 2 * Math.PI);
-    headingController.setTolerance(0.1);
+    headingController.setTolerance(0.02);
 
     if(alignToAngle != null) {
       headingController.setSetpoint(alignToAngle);
@@ -312,6 +313,8 @@ public class Swerve extends SubsystemBase {
     Logger.recordOutput("Swerve/PoseRotation", getPose().getRotation().getRadians());
     Logger.recordOutput("Swerve/CurrentSpeeds", getRobotRelativeSpeeds());
     Logger.recordOutput("Swerve/GyroAngle", -Units.degreesToRadians(gyro.getYaw()));
+    ShooterCalculations.getShooterAngle(getPose().getTranslation());
+    ShooterCalculations.getYawToSpeaker(getPose().getTranslation());
     field.setRobotPose(getPose());
 
     if(!DriverStation.isFMSAttached()) {

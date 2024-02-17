@@ -14,4 +14,16 @@ public interface OperatorController {
   public default Trigger getIntakeOverride() {
     return new Trigger(()->false);
   }
+
+  public default Trigger getIntakeRevOverride() {
+    return new Trigger(()->false);
+  }
+
+  public default Trigger getFeederRevOverride() {
+    return new Trigger(()->false);
+  }
+
+  public default Trigger getAmpOverride() {
+    return new Trigger(()->false);
+  }
 }
