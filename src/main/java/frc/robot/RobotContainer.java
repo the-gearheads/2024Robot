@@ -5,8 +5,6 @@
 package frc.robot;
 
 import frc.robot.commands.ArmNTControl;
-import frc.robot.commands.FeederNTControl;
-import frc.robot.commands.IntakeNTControl;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.arm.Arm;
@@ -61,8 +59,13 @@ public class RobotContainer {
     //  arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
     // }, arm));
     arm.setDefaultCommand(new ArmNTControl(arm));
-    feeder.setDefaultCommand(new FeederNTControl(feeder));
-    intake.setDefaultCommand(new IntakeNTControl(intake));
+
+    shooter.setDefaultCommand(Commands.run(()->{
+      shooter.setSpeed(Controllers.operatorController.getOverrideShooterSpeed());
+    }, shooter));
+
+    feeder.setDefaultCommand(Commands.run(feeder::stop, feeder));
+    intake.setDefaultCommand(Commands.run(intake::stop, intake));
 
     sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
@@ -105,12 +108,17 @@ public class RobotContainer {
       return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(1, 1), swerve.getPose().getRotation()))); // MUST be at least 6 bc of size of blocks in minecraft
     }));
 
-    Controllers.driverController.getIntake().whileTrue(Commands.startEnd(
+    Controllers.operatorController.getIntakeOverride().whileTrue(Commands.startEnd(
       intake::run,
       intake::stop,
       intake
     ));
 
+    Controllers.operatorController.getFeederOverride().whileTrue(Commands.startEnd(
+      feeder::run,
+      feeder::stop,
+      feeder
+    ));
   }
 
   /**

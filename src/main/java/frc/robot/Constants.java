@@ -109,7 +109,7 @@ public final class Constants {
     public static final int FEEDER_ID = 13;
     public static final int HANDOFF_ID = 7;
     public static final double[] PID = {0, 0, 0}; // placeholder
-    public static final double SPEED = 1.57;
+    public static final double SPEED = 1000.0;
     public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0, 0, 0); // placeholder
   }
 

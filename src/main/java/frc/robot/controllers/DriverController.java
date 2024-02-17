@@ -38,8 +38,4 @@ public interface DriverController {
   public default Trigger getAlignToSpeakerBtn() {
     return new Trigger(() -> false);
   }
-
-  public default Trigger getIntake() {
-    return new Trigger(() -> false);
-  }
 }

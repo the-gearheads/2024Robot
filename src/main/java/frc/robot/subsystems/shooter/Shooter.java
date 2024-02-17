@@ -3,7 +3,6 @@ package frc.robot.subsystems.shooter;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.ShooterNTControl;
 import frc.robot.subsystems.FlywheelMotor;
 
 import static frc.robot.Constants.ShooterConstants.*;
@@ -17,9 +16,7 @@ public class Shooter extends SubsystemBase {
   protected FlywheelMotor topMotor = new FlywheelMotor("Shooter/Top", TOP_ID, PID, FEEDFORWARD);
   protected FlywheelMotor bottomMotor = new FlywheelMotor("Shooter/Bottom", BOTTOM_ID, PID, FEEDFORWARD);
 
-  public Shooter() {
-    setDefaultCommand(new ShooterNTControl(this));
-  }
+  public Shooter() {}
 
   @Override
   public void periodic() {

@@ -11,6 +11,7 @@ public class Controllers {
   private static String[] lastControllerNames = new String[6];
 
   public static DriverController driverController;
+  public static OperatorController operatorController;
 
   /** Returns true if the connected controllers have changed since last called. */
   public static boolean didControllersChange() {
@@ -30,16 +31,24 @@ public class Controllers {
   public static void updateActiveControllerInstance() {
     // Defaults, since a NullPointerException would be far worse than any warnings
     driverController = new DriverController() {};
+    operatorController = new OperatorController() {};
 
     boolean foundDriveController = false;
+    boolean foundOperatorController = false;
 
     for (int i = 0; i < DriverStation.kJoystickPorts; i++) {
       String joyName = DriverStation.getJoystickName(i);
       if (joyName.equals(""))
         continue;
 
+
+      if (!foundOperatorController && joyName.contains("T.16000M")) {
+        foundOperatorController = true;
+        operatorController = new Thrustmaster(i);
+      }
+
       // No filtering for now, just use the first
-      if (!foundDriveController) {
+      else if (!foundDriveController) {
         foundDriveController = true;
         driverController = new XboxDriverController(i);
       }

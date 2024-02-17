@@ -57,9 +57,4 @@ public class XboxDriverController implements DriverController {
   public Trigger getAlignToSpeakerBtn() {
     return new Trigger(() -> controller.getYButton());
   }
-
-  @Override
-  public Trigger getIntake() {
-    return new Trigger(() -> controller.getBButton());
-  }
 }
