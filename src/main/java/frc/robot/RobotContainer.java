@@ -15,6 +15,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.GeometryUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -75,7 +76,21 @@ public class RobotContainer {
     sysidAuto.addSysidRoutine(intake.getSysIdRoutine(), "Intake");
     sysidAuto.addSysidRoutine(feeder.getSysIdRoutine(), "Feeder");
 
-    // NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
+    NamedCommands.registerCommand("ShooterStart", Commands.run(()->{
+      shooter.setSpeed(5500);
+    }, shooter));
+
+    NamedCommands.registerCommand("ShooterWaitForSpeed", Commands.waitUntil(shooter::atSpeed));
+
+    NamedCommands.registerCommand("ShooterStop", Commands.run(()->{
+      shooter.setSpeed(0);
+    }, shooter));
+
+    NamedCommands.registerCommand("FeederStart", Commands.run(feeder::run, feeder));
+    NamedCommands.registerCommand("FeederStop", Commands.run(feeder::stop, feeder));\
+    NamedCommands.registerCommand("IntakeStart", Commands.run(intake::run, intake));
+    NamedCommands.registerCommand("IntakeStop", Commands.run(intake::stop, intake));
+    
  
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
