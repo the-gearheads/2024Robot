@@ -87,7 +87,7 @@ public class RobotContainer {
     }, shooter));
 
     NamedCommands.registerCommand("FeederStart", Commands.run(feeder::run, feeder));
-    NamedCommands.registerCommand("FeederStop", Commands.run(feeder::stop, feeder));\
+    NamedCommands.registerCommand("FeederStop", Commands.run(feeder::stop, feeder));
     NamedCommands.registerCommand("IntakeStart", Commands.run(intake::run, intake));
     NamedCommands.registerCommand("IntakeStop", Commands.run(intake::stop, intake));
     
