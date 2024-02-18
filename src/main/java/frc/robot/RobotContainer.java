@@ -150,8 +150,8 @@ public class RobotContainer {
 
     Controllers.operatorController.getAmpOverride().whileTrue(Commands.run(
       ()->{
-        shooter.setTopSpeed(-2000);
-        shooter.setBottomSpeed(2000);
+        shooter.setTopSpeed(-4000);
+        shooter.setBottomSpeed(4000);
       },
       shooter
     ));
