@@ -2,6 +2,7 @@ package frc.robot.subsystems.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.GeometryUtil;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -328,6 +329,15 @@ public class Swerve extends SubsystemBase {
 
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
+  }
+
+  public Pose2d getPoseAllianceRelative() {
+    Pose2d pose = poseEstimator.getEstimatedPosition();
+    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+    if(isRed) {
+      return GeometryUtil.flipFieldPose(pose);
+    }
+    return pose;
   }
   
   public void resetPose(Pose2d pose) {

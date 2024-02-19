@@ -22,7 +22,7 @@ public class AutoShooter extends Command {
 
   @Override
   public void execute() {
-    Pose2d pose = swerve.getPose();
+    Pose2d pose = swerve.getPoseAllianceRelative();
     if (shooterSpin.contains(pose)) {
       shooter.setSpeed(DEFAULT_SPEED);
     } else {
