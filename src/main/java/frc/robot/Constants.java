@@ -163,7 +163,7 @@ public final class Constants {
     public static final double[] WING_X = {0, 0, 5.85, 5.85};
     public static final double[] WING_Y = {0, 8.15, 8.15, 0};
 
-    public static final double[] SHOOTER_SPIN_X = {0, 0, 6.20, 6.20};
+    public static final double[] SHOOTER_SPIN_X = {0, 0, 6.40, 6.40};
     public static final double[] SHOOTER_SPIN_Y = {0, 8.15, 8.15, 0};
 
   }

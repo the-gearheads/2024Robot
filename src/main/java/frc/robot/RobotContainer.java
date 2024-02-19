@@ -66,7 +66,7 @@ public class RobotContainer {
     }, arm));
     // arm.setDefaultCommand(new ArmNTControl(arm));
 
-    shooter.setDefaultCommand(new AutoShooter(shooter, swerve));
+    shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
 
     feeder.setDefaultCommand(Commands.run(feeder::stop, feeder));
     intake.setDefaultCommand(Commands.run(intake::stop, intake));
@@ -161,7 +161,7 @@ public class RobotContainer {
     arm.setDefaultCommand(Commands.run(()->{
      arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
     }, arm));
-    shooter.setDefaultCommand(new AutoShooter(shooter, swerve));
+    shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
     }));
 
     Controllers.operatorController.getIntakeOverride().whileTrue(Commands.startEnd(
