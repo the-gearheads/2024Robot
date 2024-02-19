@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import frc.robot.commands.ArmNTControl;
 import frc.robot.commands.AutoShooter;
+import frc.robot.commands.ShooterNTControl;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.ShooterCalculations;
@@ -140,14 +142,26 @@ public class RobotContainer {
       shooter
     ));
 
-    Controllers.operatorController.getShooterUp().whileTrue(Commands.run(()->{
+    Controllers.operatorController.getArmUp().whileTrue(Commands.run(()->{
       arm.setVoltage(armOverrideVoltage);
       arm.resetToCurrentPose();
     }));
 
-    Controllers.operatorController.getShooterDown().whileTrue(Commands.run(()->{
+    Controllers.operatorController.getArmDown().whileTrue(Commands.run(()->{
       arm.setVoltage(armOverrideVoltage.negate());
       arm.resetToCurrentPose();
+    }));
+
+    Controllers.operatorController.getArmAutosOff().onTrue(new InstantCommand(()->{
+      arm.setDefaultCommand(new ArmNTControl(arm));
+      shooter.setDefaultCommand(new ShooterNTControl(shooter));
+    }));
+
+    Controllers.operatorController.getArmAutosOn().onTrue(new InstantCommand(()->{
+    arm.setDefaultCommand(Commands.run(()->{
+     arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
+    }, arm));
+    shooter.setDefaultCommand(new AutoShooter(shooter, swerve));
     }));
 
     Controllers.operatorController.getIntakeOverride().whileTrue(Commands.startEnd(

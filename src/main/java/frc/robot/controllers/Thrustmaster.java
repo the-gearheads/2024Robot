@@ -15,16 +15,20 @@ public class Thrustmaster implements OperatorController {
     return new Trigger(()->joy.getRawButton(1));
   }
 
-  public Trigger getShooterUp() {
+  public Trigger getArmUp() {
     return new Trigger(() -> joy.getRawButton(5));
   }
   
-  public Trigger getShooterDown() {
+  public Trigger getArmDown() {
     return new Trigger(() -> joy.getRawButton(10));
   }
   
-  public Trigger getShooterAutoToggle() {
+  public Trigger getArmAutosOff() {
     return new Trigger(() -> joy.getRawButton(8));
+  }
+  
+  public Trigger getArmAutosOn() {
+    return new Trigger(() -> joy.getRawButton(7));
   }
 
   public Trigger getAmpOverride() {

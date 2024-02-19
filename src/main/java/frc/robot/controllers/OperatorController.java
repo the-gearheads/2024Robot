@@ -7,15 +7,19 @@ public interface OperatorController {
     return new Trigger(()->false);
   }
 
-  public default Trigger getShooterUp() {
+  public default Trigger getArmUp() {
     return new Trigger(()->false);
   }
   
-  public default Trigger getShooterDown() {
+  public default Trigger getArmDown() {
     return new Trigger(()->false);
   }
   
-  public default Trigger getShooterAutoToggle() {
+  public default Trigger getArmAutosOff() {
+    return new Trigger(()->false);
+  }
+
+  public default Trigger getArmAutosOn() {
     return new Trigger(()->false);
   }
 
