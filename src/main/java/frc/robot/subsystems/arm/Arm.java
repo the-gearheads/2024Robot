@@ -186,6 +186,10 @@ public class Arm extends SubsystemBase {
     mainFlex.setVoltage(volts.in(Volts));
   }
 
+  public void resetToCurrentPose() {
+    pid.reset(enc.getPosition());
+  }
+
   public SysIdRoutine getSysIdRoutine() {
     return new SysIdRoutine(
       new SysIdRoutine.Config(Volts.of(0.8).per(Seconds.of(1)), Volts.of(6), null, 

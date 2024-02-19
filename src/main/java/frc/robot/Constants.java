@@ -12,6 +12,10 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
+
+import static edu.wpi.first.units.Units.*;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -82,6 +86,8 @@ public final class Constants {
   public static class ShooterConstants {
     public static final int TOP_ID = 11;
     public static final int BOTTOM_ID = 12;
+    public static final int DEFAULT_SPEED = 6000;
+    public static final int AMP_SPEED = 4000;
     public static final double SPEED_TOLERANCE = 150;
     public static final double[] PID = {0.0021693, 0, 0};
     public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.045537, 0.0017932, 0.0001929);
@@ -105,15 +111,18 @@ public final class Constants {
     );
     public static final double MAX_ANGLE = (MAX_ANGLE_DEG / 360.0) * (2 * Math.PI);
     public static final double MIN_ANGLE = (MIN_ANGLE_DEG / 360.0) * (2 * Math.PI);
+
+    public static final Measure<Voltage> armOverrideVoltage = Volts.of(2);
   }
 
   public static class FeederConstants {
     public static final int FEEDER_ID = 13;
     public static final int HANDOFF_ID = 7;
-    public static final double[] PID = {0.00038793, 0, 0}; // placeholder
-    public static final double[] HANDOFF_PID = {0.0019749, 0, 0}; // placeholder 
+    public static final int NOTE_SWITCH_ID = 0; // placeholder
+    public static final double[] PID = {0.00038793, 0, 0};
+    public static final double[] HANDOFF_PID = {0.0019749, 0, 0}; 
     public static final double SPEED = 5000.0;
-    public static final SimpleMotorFeedforward FEEDER_FF = new SimpleMotorFeedforward(0.065837, 0.0019032, 0.00021355); // placeholder
+    public static final SimpleMotorFeedforward FEEDER_FF = new SimpleMotorFeedforward(0.065837, 0.0019032, 0.00021355); 
     public static final SimpleMotorFeedforward HANDOFF_FF = new SimpleMotorFeedforward(0.1132, 0.0018353, 0.00013306);
   }
 
@@ -147,9 +156,21 @@ public final class Constants {
 
   }
 
+  public static class FieldConstants {
+    public static final double[] STAGE_X = {2.95, 5.98, 5.80};
+    public static final double[] STAGE_Y = {4.09, 5.88, 2.50};
+
+    public static final double[] WING_X = {0, 0, 5.85, 5.85};
+    public static final double[] WING_Y = {0, 8.15, 8.15, 0};
+
+    public static final double[] SHOOTER_SPIN_X = {0, 0, 6.20, 6.20};
+    public static final double[] SHOOTER_SPIN_Y = {0, 8.15, 8.15, 0};
+
+  }
   public static class Leds {
     public static final int PORT = 9;
     /* Rough estimate, refine later */
     public static final int LENGTH = 260;
   }
+  
 }

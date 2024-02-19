@@ -2,8 +2,10 @@ package frc.robot.subsystems.feeder;
 
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.FlywheelMotor;
 
@@ -14,6 +16,8 @@ import org.littletonrobotics.junction.Logger;
 public class Feeder extends SubsystemBase {
   FlywheelMotor feederMotor = new FlywheelMotor("Feeder", FEEDER_ID, PID, FEEDER_FF);
   FlywheelMotor handoffMotor = new FlywheelMotor("Handoff", HANDOFF_ID, PID, FEEDER_FF);
+  Trigger noteInPlaceSwitch = new Trigger(new DigitalInput(NOTE_SWITCH_ID)::get);
+
   public Feeder() {
     SmartDashboard.putNumber("Feeder/RunSpeed", SPEED);
   }
@@ -38,6 +42,10 @@ public class Feeder extends SubsystemBase {
   public void stop() {
     feederMotor.setSpeed(0);
     handoffMotor.setSpeed(0);
+  }
+
+  public Trigger getNoteSwitch() {
+    return noteInPlaceSwitch;
   }
 
   public SysIdRoutine getSysIdRoutine() {

@@ -4,15 +4,20 @@
 
 package frc.robot;
 
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.ArmNTControl;
+import frc.robot.commands.AutoShooter;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
+import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
+
+import static frc.robot.Constants.ArmConstants.armOverrideVoltage;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -23,6 +28,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -56,14 +63,12 @@ public class RobotContainer {
     // Configure the trigger bindings
     updateControllers();
     swerve.setDefaultCommand(new Teleop(swerve));
-    // arm.setDefaultCommand(Commands.run(()->{
-    //  arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
-    // }, arm));
-    arm.setDefaultCommand(new ArmNTControl(arm));
+    arm.setDefaultCommand(Commands.run(()->{
+     arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
+    }, arm));
+    // arm.setDefaultCommand(new ArmNTControl(arm));
 
-    shooter.setDefaultCommand(Commands.run(()->{
-      shooter.setSpeed(Controllers.operatorController.getOverrideShooterSpeed());
-    }, shooter));
+    shooter.setDefaultCommand(new AutoShooter(shooter, swerve));
 
     feeder.setDefaultCommand(Commands.run(feeder::stop, feeder));
     intake.setDefaultCommand(Commands.run(intake::stop, intake));
@@ -77,7 +82,7 @@ public class RobotContainer {
     sysidAuto.addSysidRoutine(feeder.getSysIdRoutine(), "Feeder");
 
     NamedCommands.registerCommand("ShooterStart", Commands.run(()->{
-      shooter.setSpeed(5500);
+      shooter.setSpeed(Constants.ShooterConstants.DEFAULT_SPEED);
     }, shooter));
 
     NamedCommands.registerCommand("ShooterWaitForSpeed", Commands.waitUntil(shooter::atSpeed));
@@ -123,6 +128,32 @@ public class RobotContainer {
       return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(1, 1), swerve.getPose().getRotation()))); // MUST be at least 6 bc of size of blocks in minecraft
     }));
 
+    Controllers.operatorController.getIntakeNote().whileTrue(
+      Commands.runOnce(feeder::run).andThen(Commands.runOnce(intake::run)).until(feeder.getNoteSwitch()::getAsBoolean)
+    );
+
+    Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {
+       shooter.setSpeed(Constants.ShooterConstants.DEFAULT_SPEED);
+      },
+      shooter
+    ));
+
+    Controllers.operatorController.getShooterRevOverride().whileTrue(Commands.run(() -> {
+       shooter.setSpeed(-Constants.ShooterConstants.DEFAULT_SPEED);
+      },
+      shooter
+    ));
+
+    Controllers.operatorController.getShooterUp().whileTrue(Commands.run(()->{
+      arm.setVoltage(armOverrideVoltage);
+      arm.resetToCurrentPose();
+    }));
+
+    Controllers.operatorController.getShooterDown().whileTrue(Commands.run(()->{
+      arm.setVoltage(armOverrideVoltage.negate());
+      arm.resetToCurrentPose();
+    }));
+
     Controllers.operatorController.getIntakeOverride().whileTrue(Commands.startEnd(
       intake::run,
       intake::stop,
@@ -150,8 +181,8 @@ public class RobotContainer {
 
     Controllers.operatorController.getAmpOverride().whileTrue(Commands.run(
       ()->{
-        shooter.setTopSpeed(-4000);
-        shooter.setBottomSpeed(4000);
+        shooter.setTopSpeed(-Constants.ShooterConstants.AMP_SPEED);
+        shooter.setBottomSpeed(Constants.ShooterConstants.AMP_SPEED);
       },
       shooter
     ));
