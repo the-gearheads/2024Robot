@@ -17,6 +17,7 @@ public class AutoShooter extends Command {
   public AutoShooter(Shooter shooter, Swerve swerve) {
     this.shooter = shooter;
     this.swerve = swerve;
+    addRequirements(shooter);
   }
 
   @Override

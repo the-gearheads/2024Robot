@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.ArmNTControl;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
@@ -28,8 +26,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
