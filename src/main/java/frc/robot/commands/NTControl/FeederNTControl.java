@@ -1,27 +1,27 @@
-package frc.robot.commands;
+package frc.robot.commands.NTControl;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.feeder.Feeder;
 
 /* this really coulda been like two lines but now its a command */
-public class IntakeNTControl extends Command {
+public class FeederNTControl extends Command {
 
-  Intake feeder;
+  Feeder feeder;
 
-  public IntakeNTControl(Intake intake) {
-    this.feeder = intake;
-    addRequirements(intake);
+  public FeederNTControl(Feeder feeder) {
+    this.feeder = feeder;
+    addRequirements(feeder);
   }
 
   @Override
   public void initialize() {
-    SmartDashboard.putBoolean("Intake/manualRun", false);
+    SmartDashboard.putBoolean("Feeder/manualRun", false);
   }
 
   @Override
   public void execute() {
-    if(SmartDashboard.getBoolean("Intake/manualRun", false)) {
+    if(SmartDashboard.getBoolean("Feeder/manualRun", false)) {
       feeder.run();
     } else {
       feeder.stop();

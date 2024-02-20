@@ -80,6 +80,9 @@
           "Calculations": {
             "open": true
           },
+          "Feeder": {
+            "open": true
+          },
           "LoggedRobot": {
             "open": true
           },

@@ -4,10 +4,12 @@
 
 package frc.robot;
 
-import frc.robot.commands.ArmNTControl;
 import frc.robot.commands.AutoShooter;
-import frc.robot.commands.ShooterNTControl;
+import frc.robot.commands.IntakeNote;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.Teleop;
+import frc.robot.commands.NTControl.ArmNTControl;
+import frc.robot.commands.NTControl.ShooterNTControl;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.arm.Arm;
@@ -18,7 +20,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
 import static frc.robot.Constants.ArmConstants.armOverrideVoltage;
-import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -38,7 +39,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -84,9 +84,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("ShooterStart", Commands.run(()->{
       shooter.setSpeed(Constants.ShooterConstants.DEFAULT_SPEED);
     }, shooter));
-
+    
     NamedCommands.registerCommand("ShooterWaitForSpeed", Commands.waitUntil(shooter::atSpeed));
-
     NamedCommands.registerCommand("ShooterStop", Commands.run(()->{
       shooter.setSpeed(0);
     }, shooter));
@@ -95,8 +94,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("FeederStop", Commands.run(feeder::stop, feeder));
     NamedCommands.registerCommand("IntakeStart", Commands.run(intake::run, intake));
     NamedCommands.registerCommand("IntakeStop", Commands.run(intake::stop, intake));
-    
- 
+
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake));
+    NamedCommands.registerCommand("ShootWhenReady", new Shoot(shooter, feeder));
+
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -128,16 +129,10 @@ public class RobotContainer {
       return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(1, 1), swerve.getPose().getRotation()))); // MUST be at least 6 bc of size of blocks in minecraft
     }));
 
-    Controllers.driverController.getShootButton().whileTrue(Commands.waitUntil(() -> {
-        return swerve.atSpeakerYaw() && shooter.atSpeed();
-      })
-      .alongWith(new InstantCommand(() -> shooter.setSpeed(DEFAULT_SPEED), shooter))
-      .andThen(new InstantCommand(() -> feeder.run(), feeder))
-      .andThen(new WaitCommand(0.2))
-    );
+    Controllers.driverController.getShootButton().whileTrue(new Shoot(shooter, feeder));
 
     Controllers.operatorController.getIntakeNote().whileTrue(
-      Commands.runOnce(feeder::run).andThen(Commands.runOnce(intake::run)).until(feeder.getNoteSwitch()::getAsBoolean)
+      new IntakeNote(feeder, intake)
     );
 
     Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {

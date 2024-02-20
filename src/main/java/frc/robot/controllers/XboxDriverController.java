@@ -60,6 +60,6 @@ public class XboxDriverController implements DriverController {
 
   @Override
   public Trigger getShootButton() {
-    return new Trigger(() -> controller.getRightBumper());
+    return new Trigger(() -> controller.getAButton());
   }
 }
