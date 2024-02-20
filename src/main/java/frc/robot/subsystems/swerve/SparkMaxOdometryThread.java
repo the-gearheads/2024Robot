@@ -16,10 +16,10 @@ package frc.robot.subsystems.swerve;
 import edu.wpi.first.wpilibj.Notifier;
 import frc.robot.Constants.SwerveConstants;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -56,7 +56,7 @@ public class SparkMaxOdometryThread {
   }
 
   public Queue<Double> registerSignal(DoubleSupplier signal) {
-    Queue<Double> queue = new ArrayDeque<>(100);
+    Queue<Double> queue = new ArrayBlockingQueue<>(100);
     Swerve.odometryLock.lock();
     try {
       signals.add(signal);
@@ -68,7 +68,7 @@ public class SparkMaxOdometryThread {
   }
 
   public Queue<Double> makeTimestampQueue() {
-    Queue<Double> queue = new ArrayDeque<>(100);
+    Queue<Double> queue = new ArrayBlockingQueue<>(100);
     Swerve.odometryLock.lock();
     try {
       timestampQueues.add(queue);
