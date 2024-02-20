@@ -6,14 +6,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.swerve.Swerve;
 
 public class Shoot extends Command {
   Shooter shooter;
   Feeder feeder;
+  Swerve swerve;
 
-  public Shoot(Shooter shooter, Feeder feeder) {
+  public Shoot(Shooter shooter, Feeder feeder, Swerve swerve) {
     this.shooter = shooter;
     this.feeder = feeder;
+    this.swerve = swerve;
     addRequirements(feeder, shooter);
   }
 
@@ -24,7 +27,7 @@ public class Shoot extends Command {
 
   @Override
   public boolean isFinished() {
-    return shooter.atSpeed();
+    return shooter.atSpeed() && swerve.atSpeakerYaw();
   }
 
   @Override

@@ -84,7 +84,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("ShooterStart", Commands.run(()->{
       shooter.setSpeed(Constants.ShooterConstants.DEFAULT_SPEED);
     }, shooter));
-    
+
     NamedCommands.registerCommand("ShooterWaitForSpeed", Commands.waitUntil(shooter::atSpeed));
     NamedCommands.registerCommand("ShooterStop", Commands.run(()->{
       shooter.setSpeed(0);
@@ -96,7 +96,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeStop", Commands.run(intake::stop, intake));
 
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake));
-    NamedCommands.registerCommand("ShootWhenReady", new Shoot(shooter, feeder));
+    NamedCommands.registerCommand("ShootWhenReady", new Shoot(shooter, feeder, swerve));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -129,7 +129,7 @@ public class RobotContainer {
       return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(1, 1), swerve.getPose().getRotation()))); // MUST be at least 6 bc of size of blocks in minecraft
     }));
 
-    Controllers.driverController.getShootButton().whileTrue(new Shoot(shooter, feeder));
+    Controllers.driverController.getShootButton().whileTrue(new Shoot(shooter, feeder, swerve));
 
     Controllers.operatorController.getIntakeNote().whileTrue(
       new IntakeNote(feeder, intake)
