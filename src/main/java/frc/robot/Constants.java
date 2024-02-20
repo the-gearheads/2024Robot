@@ -123,7 +123,7 @@ public final class Constants {
   public static class FeederConstants {
     public static final int FEEDER_ID = 13;
     public static final int HANDOFF_ID = 7;
-    public static final int NOTE_SWITCH_ID = 0; // placeholder
+    public static final int NOTE_SWITCH_ID = 9;
     public static final double[] PID = {0.00038793, 0, 0};
     public static final double[] HANDOFF_PID = {0.0019749, 0, 0}; 
     public static final double SPEED = 5000.0;
