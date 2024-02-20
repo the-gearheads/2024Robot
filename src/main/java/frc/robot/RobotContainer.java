@@ -18,6 +18,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
 import static frc.robot.Constants.ArmConstants.armOverrideVoltage;
+import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -37,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -125,6 +127,14 @@ public class RobotContainer {
     Controllers.driverController.getPatthfindButton().onTrue(new ProxyCommand(()->{
       return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(1, 1), swerve.getPose().getRotation()))); // MUST be at least 6 bc of size of blocks in minecraft
     }));
+
+    Controllers.driverController.getShootButton().whileTrue(Commands.waitUntil(() -> {
+        return swerve.atSpeakerYaw() && shooter.atSpeed();
+      })
+      .alongWith(new InstantCommand(() -> shooter.setSpeed(DEFAULT_SPEED), shooter))
+      .andThen(new InstantCommand(() -> feeder.run(), feeder))
+      .andThen(new WaitCommand(0.2))
+    );
 
     Controllers.operatorController.getIntakeNote().whileTrue(
       Commands.runOnce(feeder::run).andThen(Commands.runOnce(intake::run)).until(feeder.getNoteSwitch()::getAsBoolean)

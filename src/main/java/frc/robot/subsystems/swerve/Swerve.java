@@ -314,6 +314,7 @@ public class Swerve extends SubsystemBase {
     Logger.recordOutput("Swerve/PoseRotation", getPose().getRotation().getRadians());
     Logger.recordOutput("Swerve/CurrentSpeeds", getRobotRelativeSpeeds());
     Logger.recordOutput("Swerve/GyroAngle", -Units.degreesToRadians(gyro.getYaw()));
+    Logger.recordOutput("Swerve/atSpeakerYaw", atSpeakerYaw());
     ShooterCalculations.getShooterAngle(getPose().getTranslation());
     ShooterCalculations.getYawToSpeaker(getPose().getTranslation());
     field.setRobotPose(getPose());
@@ -329,6 +330,11 @@ public class Swerve extends SubsystemBase {
 
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
+  }
+
+  public boolean atSpeakerYaw() {
+    var difference = Math.abs(ShooterCalculations.getYawToSpeaker(getPose().getTranslation()).minus(getPose().getRotation()).getRadians());
+    return difference < FACING_SPEAKER_TOLERANCE;
   }
 
   public Pose2d getPoseAllianceRelative() {

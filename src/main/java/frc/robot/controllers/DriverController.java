@@ -42,4 +42,8 @@ public interface DriverController {
   public default Trigger getRobotRelativeToggleBtn() {
     return new Trigger(() -> false);
   }
+
+  public default Trigger getShootButton() {
+    return new Trigger(() -> false);
+  }
 }

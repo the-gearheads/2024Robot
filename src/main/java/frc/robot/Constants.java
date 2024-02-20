@@ -81,6 +81,8 @@ public final class Constants {
     public static final double MAX_MOD_SPEED = 1;  // m/s, placeholders
     public static final double MAX_MOD_TRANS_SPEED = 1; // m/s
     public static final double MAX_MOD_ROT_SPEED = 1; // rad/s
+
+    public static final double FACING_SPEAKER_TOLERANCE = Units.degreesToRadians(1);
   }
 
   public static class ShooterConstants {

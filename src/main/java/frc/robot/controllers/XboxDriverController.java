@@ -57,4 +57,9 @@ public class XboxDriverController implements DriverController {
   public Trigger getAlignToSpeakerBtn() {
     return new Trigger(() -> controller.getYButton());
   }
+
+  @Override
+  public Trigger getShootButton() {
+    return new Trigger(() -> controller.getRightBumper());
+  }
 }

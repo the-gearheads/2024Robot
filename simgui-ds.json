@@ -1,9 +1,4 @@
 {
-  "Joysticks": {
-    "window": {
-      "visible": false
-    }
-  },
   "Keyboard 0 Settings": {
     "window": {
       "visible": true
@@ -104,6 +99,10 @@
     }
   ],
   "robotJoysticks": [
+    {
+      "guid": "030000004c050000e60c000000000000",
+      "useGamepad": true
+    },
     {
       "guid": "Keyboard0"
     }
