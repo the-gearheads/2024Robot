@@ -12,13 +12,13 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
+import static frc.robot.Constants.ArmConstants.*;
+
 public class ShooterCalculations {
   // not quite sure whether to have separate variables for red and blue but for now this is fine
   static Translation3d speakerPosition = new Translation3d(0.173, 5.543, 2.216);
   // Distance (m) -> Angle (rad)
-  static final double[] distances = { 0.0,  3.2,  4.0};
-  static final double[] angles =    { 1.2, 0.8,  0.0};
-  static PolynomialSplineFunction shooterAngleFunction = new SplineInterpolator().interpolate(distances, angles);
+  static PolynomialSplineFunction shooterAngleFunction = new SplineInterpolator().interpolate(SPLINE_DISTANCES, SPLINE_ANGLES);
   
   public static Rotation2d getYawToSpeaker(Translation2d robotPos) {
     Translation2d xyPos = speakerPosition.toTranslation2d();
@@ -51,12 +51,12 @@ public class ShooterCalculations {
   /* Need to account for stage and other things in the future */
   public static double getShooterAngle(Translation2d robotPos) {
     double distance = getDistanceToSpeaker(robotPos);
-    if(distance > distances[distances.length - 1]) {
-      return angles[angles.length - 1];
+    if(distance > SPLINE_DISTANCES[SPLINE_DISTANCES.length - 1]) {
+      return SPLINE_ANGLES[SPLINE_ANGLES.length - 1];
     }
 
-    if(distance < distances[0]) {
-      return angles[0];
+    if(distance < SPLINE_DISTANCES[0]) {
+      return SPLINE_ANGLES[0];
     }
 
     double angle = shooterAngleFunction.value(distance);

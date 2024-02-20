@@ -106,13 +106,16 @@ public final class Constants {
     public static final double ARM_MOTOR_GEARING = 125; // sim only, gearing between motor and arm
     public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.19684, 0.0069965, 0.47015, 0.022602);
     public static final ArmFeedforward SIM_FEEDFORWARD = new ArmFeedforward(0.2509, 0.099081, 5.5782, 0.28261); // both of these are wrong but this one is less wrong for the purposes of sim
-    public static final double[] PID = {34.566, 0, 1.0137}; // placeholder
+    public static final double[] PID = {34.566, 0, 1.0137};
     public static final Constraints ARM_CONSTRAINTS = new Constraints(
       Units.degreesToRadians(101), // max vel, deg/s
       Units.degreesToRadians(400) // max acc, deg/s^2 
     );
     public static final double MAX_ANGLE = (MAX_ANGLE_DEG / 360.0) * (2 * Math.PI);
     public static final double MIN_ANGLE = (MIN_ANGLE_DEG / 360.0) * (2 * Math.PI);
+
+    public static final double[] SPLINE_DISTANCES = {0.0, 2.2,  6.0}; // placeholders 
+    public static final double[] SPLINE_ANGLES = {0.96, 0.8, 0.0};
 
     public static final Measure<Voltage> armOverrideVoltage = Volts.of(2);
   }
@@ -132,7 +135,7 @@ public final class Constants {
     public static final int ID = 14;
     public static final double[] PID = {0.0018087, 0, 0};
     public static final double SPEED = 4750;
-    public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.26764, 0.0018386, 0.00010506); // placeholder
+    public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.26764, 0.0018386, 0.00010506);
   }
 
   public static class AutoConstants {
