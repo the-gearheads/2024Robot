@@ -115,8 +115,8 @@ public final class Constants {
     public static final double MAX_ANGLE = (MAX_ANGLE_DEG / 360.0) * (2 * Math.PI);
     public static final double MIN_ANGLE = (MIN_ANGLE_DEG / 360.0) * (2 * Math.PI);
 
-    public static final double[] SPLINE_DISTANCES = {0.0, 2.2,  6.0}; // placeholders 
-    public static final double[] SPLINE_ANGLES = {0.96, 0.8, 0.0};
+    public static final double[] SPLINE_DISTANCES = { 0.00,  2.20,  6.00 }; // placeholders 
+    public static final double[] SPLINE_ANGLES =    { 0.96,  0.80,  0.00 };
 
     public static final Measure<Voltage> armOverrideVoltage = Volts.of(2);
   }
