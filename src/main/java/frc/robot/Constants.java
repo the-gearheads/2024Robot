@@ -100,6 +100,7 @@ public final class Constants {
     public static final int FOLLOWER_ARM_ID = 9;
     public static final double MAX_ANGLE_DEG = 110.17978;
     public static final double MIN_ANGLE_DEG = 19.996227;
+    public static final double ARM_OFFSET = 0.16789;
     public static final double ARM_POS_FACTOR = 9.0/20.0 * 2 * Math.PI; // 20:9 artio between encoder and arm, also conv to radians
     public static final double ARM_ANGLE_LIVE_FF_THRESHOLD = 10; //deg
     public static final double ARM_LENGTH = 0.6660; // meters, sim and mechanism2d only

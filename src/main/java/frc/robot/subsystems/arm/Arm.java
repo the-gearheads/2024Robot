@@ -2,10 +2,8 @@ package frc.robot.subsystems.arm;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
-import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -15,6 +13,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
@@ -48,7 +47,7 @@ public class Arm extends SubsystemBase {
   MechanismLigament2d armMech = root.append(new MechanismLigament2d("Arm", ARM_LENGTH, 45));
   MechanismLigament2d floorMech = root.append(new MechanismLigament2d("Floor", 0.7557, 0));
 
-  SparkAbsoluteEncoder enc;
+  DutyCycleEncoder enc = new DutyCycleEncoder(0);
   public Arm() {
     mainFlex.restoreFactoryDefaults();
     followerFlex.restoreFactoryDefaults();
@@ -74,9 +73,8 @@ public class Arm extends SubsystemBase {
     mainFlex.setIdleMode(IdleMode.kBrake);
     followerFlex.setIdleMode(IdleMode.kBrake);
 
-    enc = mainFlex.getAbsoluteEncoder(Type.kDutyCycle);
-    enc.setPositionConversionFactor(ARM_POS_FACTOR);
-    enc.setVelocityConversionFactor(ARM_POS_FACTOR / 60.0);
+    enc.setPositionOffset(0);
+    enc.setDistancePerRotation(1);
 
     if(!DriverStation.isFMSAttached()) {
       SmartDashboard.putBoolean("Arm/manualVoltageOnly", false);
@@ -98,6 +96,7 @@ public class Arm extends SubsystemBase {
 
   private double output = 0;
   private double lastTimestamp = Timer.getFPGATimestamp();
+  public boolean runPid = true;
 
   @Override
   public void periodic() {
@@ -138,6 +137,11 @@ public class Arm extends SubsystemBase {
       output = SmartDashboard.getNumber("Arm/manualVoltage", 0); // false for sysid reasons, idk how to better do this
     }
 
+    if (!runPid) {
+      runPid = true;
+      return; 
+    };
+
     if(Robot.isSimulation()) {
       armSim.setInputVoltage(MathUtil.clamp(output, -12, 12));
       armSim.update(0.02);
@@ -146,7 +150,7 @@ public class Arm extends SubsystemBase {
     if(!DriverStation.isFMSAttached() && SmartDashboard.getBoolean("Arm/noVoltage", false)) {
       return;
     }
-
+    
     mainFlex.setVoltage(output);
   }
 
@@ -162,18 +166,20 @@ public class Arm extends SubsystemBase {
     Logger.recordOutput("Arm/OutOfRange", getAngle().getRadians() > MAX_ANGLE || getAngle().getRadians() < MIN_ANGLE);
     Logger.recordOutput("Arm/SetpointOutOfRange", pid.getSetpoint().position < MIN_ANGLE || pid.getSetpoint().position > MAX_ANGLE);
     Logger.recordOutput("Arm/GoalOutOfRange", pid.getGoal().position < MIN_ANGLE || pid.getGoal().position > MAX_ANGLE);
+    Logger.recordOutput("Arm/EncConnected", enc.isConnected());
     armMech.setAngle(getAngle().getDegrees());
     Logger.recordOutput("Arm/Mechanism2d", mech);
   }
 
   public Rotation2d getAngle() {
     if(Robot.isSimulation()) return new Rotation2d(armSim.getAngleRads());
-    return new Rotation2d(enc.getPosition());
+    return new Rotation2d((1-enc.getAbsolutePosition()-ARM_OFFSET)*ARM_POS_FACTOR);
   }
 
   public double getVelocity() {
     if(Robot.isSimulation()) return armSim.getVelocityRadPerSec();
-    return enc.getVelocity();
+    // return enc.getVelocity();
+    return 0;
   }
 
   public void setAngle(double angleRad) {
@@ -187,7 +193,8 @@ public class Arm extends SubsystemBase {
   }
 
   public void resetToCurrentPose() {
-    pid.reset(enc.getPosition());
+    pid.setGoal(getAngle().getRadians());
+    pid.reset(getAngle().getRadians());
   }
 
   public SysIdRoutine getSysIdRoutine() {
@@ -204,7 +211,6 @@ public class Arm extends SubsystemBase {
 
   
   public void setupStatusFrames() {
-    /* Status 0 governs applied output, faults, and whether is a follower. We don't care about that super much, so we increase it */
     mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
     /* We don't care about our motor position, only what the encoder reads */
     mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
@@ -212,8 +218,5 @@ public class Arm extends SubsystemBase {
     mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500);
     /* Don't have an alternate encoder */
     mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
-    /* We -really- care about our duty cycle encoder readings though. THE DEFAULT WAS 200MS */
-    mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
-    mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
   }
 }

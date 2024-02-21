@@ -8,8 +8,6 @@ import frc.robot.commands.AutoShooter;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.Teleop;
-import frc.robot.commands.NTControl.ArmNTControl;
-import frc.robot.commands.NTControl.ShooterNTControl;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.arm.Arm;
@@ -120,7 +118,7 @@ public class RobotContainer {
     }));
 
     Controllers.driverController.getResetPoseButton().onTrue(new InstantCommand(() -> {
-        Pose2d pose = new Pose2d(new Translation2d(Units.inchesToMeters(36.2 + (29.875 / 2)), Units.inchesToMeters(218.4)), Rotation2d.fromDegrees(180));
+        Pose2d pose = new Pose2d(new Translation2d(Units.inchesToMeters(36.2 + (29.875 / 2.0)), Units.inchesToMeters(218.4)), Rotation2d.fromDegrees(180));
         if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) pose = GeometryUtil.flipFieldPose(pose);
         swerve.resetPose(pose);
     }));
@@ -149,17 +147,22 @@ public class RobotContainer {
 
     Controllers.operatorController.getArmUp().whileTrue(Commands.run(()->{
       arm.setVoltage(armOverrideVoltage);
+      arm.runPid = false;
       arm.resetToCurrentPose();
     }));
 
     Controllers.operatorController.getArmDown().whileTrue(Commands.run(()->{
       arm.setVoltage(armOverrideVoltage.negate());
+      arm.runPid = false;
       arm.resetToCurrentPose();
     }));
 
     Controllers.operatorController.getArmAutosOff().onTrue(new InstantCommand(()->{
-      arm.setDefaultCommand(new ArmNTControl(arm));
-      shooter.setDefaultCommand(new ShooterNTControl(shooter));
+      arm.setDefaultCommand(Commands.run(()->{}, arm));
+      shooter.setDefaultCommand(Commands.run(()->{shooter.setSpeed(0);}, shooter));
+      Commands.run(()->{}, shooter).schedule();
+      Commands.run(()->{}, arm).schedule();
+      shooter.setSpeed(0);
     }));
 
     Controllers.operatorController.getArmAutosOn().onTrue(new InstantCommand(()->{
