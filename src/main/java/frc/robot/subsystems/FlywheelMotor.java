@@ -17,7 +17,7 @@ import frc.robot.util.HandledSleep;
 
 import static edu.wpi.first.units.Units.*;
 
-import org.littletonrobotics.junction.Logger;
+import frc.robot.util.Logger;
 
 // these configs are kinda long and we gotta do it twice so why not put it in its own file
 public class FlywheelMotor {

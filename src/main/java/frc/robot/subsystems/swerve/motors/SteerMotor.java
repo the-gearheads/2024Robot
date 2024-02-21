@@ -2,7 +2,7 @@ package frc.robot.subsystems.swerve.motors;
 
 import static frc.robot.Constants.SwerveConstants.*;
 
-import org.littletonrobotics.junction.Logger;
+import frc.robot.util.Logger;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;

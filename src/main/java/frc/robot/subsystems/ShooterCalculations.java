@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
-import org.littletonrobotics.junction.Logger;
+import frc.robot.util.Logger;
 
 import com.pathplanner.lib.util.GeometryUtil;
 

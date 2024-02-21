@@ -13,7 +13,7 @@ import static frc.robot.Constants.SwerveConstants.*;
 
 import java.util.Queue;
 
-import org.littletonrobotics.junction.Logger;
+import frc.robot.util.Logger;
 
 public class SwerveModule {
   public DriveMotor drive;

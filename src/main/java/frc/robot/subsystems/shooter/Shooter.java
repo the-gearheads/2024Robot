@@ -8,7 +8,7 @@ import frc.robot.subsystems.FlywheelMotor;
 import static frc.robot.Constants.ShooterConstants.*;
 import static edu.wpi.first.units.Units.*;
 
-import org.littletonrobotics.junction.Logger;
+import frc.robot.util.Logger;
 
 
 public class Shooter extends SubsystemBase {

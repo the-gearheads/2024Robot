@@ -31,7 +31,7 @@ import frc.robot.util.ProfiledPIDControllerCustomPeriod;
 import static frc.robot.Constants.ArmConstants.*;
 import static edu.wpi.first.units.Units.*;
 
-import org.littletonrobotics.junction.Logger;
+import frc.robot.util.Logger;
 
 public class Arm extends SubsystemBase {
   private CANSparkFlex mainFlex = new CANSparkFlex(MAIN_ARM_ID, MotorType.kBrushless);

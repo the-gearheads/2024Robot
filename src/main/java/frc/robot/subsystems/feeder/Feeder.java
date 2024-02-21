@@ -11,7 +11,7 @@ import frc.robot.subsystems.FlywheelMotor;
 
 import static frc.robot.Constants.FeederConstants.*;
 
-import org.littletonrobotics.junction.Logger;
+import frc.robot.util.Logger;
 
 public class Feeder extends SubsystemBase {
   FlywheelMotor feederMotor = new FlywheelMotor("Feeder", FEEDER_ID, PID, FEEDER_FF);

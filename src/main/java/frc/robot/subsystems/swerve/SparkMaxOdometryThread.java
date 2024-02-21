@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.function.DoubleSupplier;
-import org.littletonrobotics.junction.Logger;
+import frc.robot.util.Logger;
 
 /**
  * Provides an interface for asynchronously reading high-frequency measurements to a set of queues.

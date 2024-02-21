@@ -46,7 +46,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static edu.wpi.first.units.Units.*;
 
-import org.littletonrobotics.junction.Logger;
+import frc.robot.util.Logger;
 import org.photonvision.EstimatedRobotPose;
 
 public class Swerve extends SubsystemBase {

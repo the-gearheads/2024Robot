@@ -12,7 +12,7 @@ import frc.robot.util.BetterBangBang;
 
 import static frc.robot.Constants.Controllers.*;
 
-import org.littletonrobotics.junction.Logger;
+import frc.robot.util.Logger;
 
 public class Teleop extends Command {
 

@@ -7,7 +7,7 @@ import frc.robot.subsystems.FlywheelMotor;
 
 import static frc.robot.Constants.IntakeConstants.*;
 
-import org.littletonrobotics.junction.Logger;
+import frc.robot.util.Logger;
 
 public class Intake extends SubsystemBase {
   FlywheelMotor motor = new FlywheelMotor("Intake", ID, PID, FEEDFORWARD, false);

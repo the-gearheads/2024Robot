@@ -4,21 +4,22 @@
 
 package frc.robot;
 
-import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.urcl.URCL;
 
 import com.revrobotics.CANSparkLowLevel;
 
+import edu.wpi.first.util.datalog.StringLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.leds.LedState;
+import frc.robot.util.Logger;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -26,14 +27,16 @@ import frc.robot.subsystems.leds.LedState;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends LoggedRobot {
+public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
 
-    /* Globals :( */
-    public static double matchTime = -1;
-    private static double matchTimeStart = 0;
+  /* Globals :( */
+  public static double matchTime = -1;
+  private static double matchTimeStart = 0;
+
+  public static PowerDistribution powerDist;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -43,17 +46,19 @@ public class Robot extends LoggedRobot {
   /* Dead code warnings */
   @SuppressWarnings("all")
   public void robotInit() {
-    Logger.recordMetadata("Build Date", BuildConstants.BUILD_DATE);
-    Logger.recordMetadata("Git SHA", BuildConstants.GIT_SHA);
-    Logger.recordMetadata("Git Branch", BuildConstants.GIT_BRANCH);
-    Logger.recordMetadata("Git Dirty", BuildConstants.DIRTY == 1 ? "true" : "false");
+    DataLogManager.start();
+    var log = DataLogManager.getLog();
+    var buildDate = new StringLogEntry(log, "/BuildConsts/Build Date");
+    var gitSHA = new StringLogEntry(log, "/BuildConsts/Git SHA");
+    var gitBranch = new StringLogEntry(log, "/BuildConsts/Git Branch");
+    var gitDirty = new StringLogEntry(log, "/BuildConsts/Git Dirty");
+    buildDate.append(BuildConstants.BUILD_DATE);
+    gitSHA.append(BuildConstants.GIT_SHA);
+    gitBranch.append(BuildConstants.GIT_BRANCH);
+    gitDirty.append(BuildConstants.DIRTY == 1 ? "true" : "false");
+    powerDist = new PowerDistribution(1, ModuleType.kRev); // No power distribution logging for now
 
-    Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-    Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-    new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
-
-    Logger.registerURCL(URCL.startExternal());
-    Logger.start();
+    URCL.start();
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
