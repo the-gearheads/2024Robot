@@ -73,6 +73,7 @@ public class Arm extends SubsystemBase {
     mainFlex.setIdleMode(IdleMode.kBrake);
     followerFlex.setIdleMode(IdleMode.kBrake);
 
+    // We're doing this ourselves (DutyCycleEncoder doesn't have an invert mode)
     enc.setPositionOffset(0);
     enc.setDistancePerRotation(1);
 

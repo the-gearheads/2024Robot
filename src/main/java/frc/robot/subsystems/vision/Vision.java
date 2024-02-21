@@ -29,7 +29,9 @@ public class Vision extends SubsystemBase {
   public Vision() {
     cameraLeft = new PhotonCamera(LEFT_CAM_NAME);
     cameraRight = new PhotonCamera(RIGHT_CAM_NAME);
-    
+    // might want to remove this before comp
+    DisablePhotonVersionCheck.disablePhotonVersionCheck();
+
     try {
       field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
     } catch (IOException e) {
