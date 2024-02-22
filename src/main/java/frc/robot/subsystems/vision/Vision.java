@@ -19,16 +19,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.VisionConstants.*;
 
 public class Vision extends SubsystemBase {
-  private PhotonCamera cameraLeft;
+  private PhotonCamera cameraFront;
   private PhotonCamera cameraRight;
   private AprilTagFieldLayout field;
   private PoseStrategy strategy;
-  private PhotonPoseEstimator leftEstimator;
+  private PhotonPoseEstimator frontEstimator;
   private PhotonPoseEstimator rightEstimator;
 
   public Vision() {
-    cameraLeft = new PhotonCamera(LEFT_CAM_NAME);
-    cameraRight = new PhotonCamera(RIGHT_CAM_NAME);
+    cameraFront = new PhotonCamera(FRONT_CAM_NAME);
+    // cameraRight = new PhotonCamera(RIGHT_CAM_NAME);
     // might want to remove this before comp
     PhotonCamera.setVersionCheckEnabled(false);
 
@@ -40,11 +40,11 @@ public class Vision extends SubsystemBase {
     }
     strategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
-    leftEstimator = new PhotonPoseEstimator(field, strategy, cameraLeft, LEFT_TRANSFORM);
-    rightEstimator = new PhotonPoseEstimator(field, strategy, cameraRight, RIGHT_TRANSFORM);
+    frontEstimator = new PhotonPoseEstimator(field, strategy, cameraFront, FRONT_CAM_TRANSFORM);
+    // rightEstimator = new PhotonPoseEstimator(field, strategy, cameraRight, RIGHT_TRANSFORM);
   }
 
-  public Optional<EstimatedRobotPose> getGlobalPoseFromLeft() {return leftEstimator.update();}
+  public Optional<EstimatedRobotPose> getGlobalPoseFromLeft() {return frontEstimator.update();}
   public Optional<EstimatedRobotPose> getGlobalPoseFromRight() {return rightEstimator.update();}
 
 }

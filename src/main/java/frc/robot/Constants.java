@@ -8,8 +8,10 @@ import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
@@ -146,10 +148,10 @@ public final class Constants {
   }
 
   public static class VisionConstants {
-    public static final String LEFT_CAM_NAME = "Left Camera";  // Placeholder
+    public static final String FRONT_CAM_NAME = "FRONT_SPINEL";  // Placeholder
     public static final String RIGHT_CAM_NAME = "Right Camera";  // Placeholder
 
-    public static final Transform3d LEFT_TRANSFORM = new Transform3d();  // Placeholder
+    public static final Transform3d FRONT_CAM_TRANSFORM = new Transform3d(new Translation3d(-0.15, 0.41, 0.14), new Rotation3d(0, 21, 7));  // Placeholder
     public static final Transform3d RIGHT_TRANSFORM = new Transform3d();  // Placeholder
   }
   public static class Controllers {
