@@ -7,8 +7,7 @@ package frc.robot.subsystems.vision;
 import java.io.IOException;
 import java.util.Optional;
 
-import javax.swing.text.html.Option;
-
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -46,7 +45,14 @@ public class Vision extends SubsystemBase {
     // rightEstimator = new PhotonPoseEstimator(field, strategy, cameraRight, RIGHT_TRANSFORM);
   }
 
-  public Optional<EstimatedRobotPose> getGlobalPoseFromLeft() {return frontEstimator.update();}
+  public Optional<EstimatedRobotPose> getGlobalPoseFromLeft() {
+    Logger.recordOutput("/Vision/refPose", frontEstimator.getReferencePose());
+    var updated = frontEstimator.update();
+    if(updated.isPresent()) {
+      Logger.recordOutput("/Vision/estPose", updated.get().estimatedPose);
+    }
+    return updated;
+  }
   public Optional<EstimatedRobotPose> getGlobalPoseFromRight() {return Optional.empty();}
 
 }

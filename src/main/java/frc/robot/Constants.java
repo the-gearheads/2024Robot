@@ -151,8 +151,11 @@ public final class Constants {
     public static final String FRONT_CAM_NAME = "front_spinel";  // Placeholder
     public static final String RIGHT_CAM_NAME = "Right Camera";  // Placeholder
 
-    public static final Transform3d FRONT_CAM_TRANSFORM = new Transform3d(new Translation3d(-0.15, 0.41, 0.14), new Rotation3d(0, 21, 7));  // Placeholder
-    public static final Transform3d RIGHT_TRANSFORM = new Transform3d();  // Placeholder
+    public static final Transform3d FRONT_CAM_TRANSFORM = 
+      new Transform3d(new Translation3d(0.41, 0.5534, 0.22), 
+      new Rotation3d(0, Units.degreesToRadians(-21), Units.degreesToRadians(-4))
+    );  // Placeholder
+    // public static final Transform3d RIGHT_TRANSFORM = new Transform3d();  // Placeholder
   }
   public static class Controllers {
     public static final double JOYSTICK_DEADBAND = 0.05;
