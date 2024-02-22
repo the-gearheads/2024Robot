@@ -148,7 +148,7 @@ public final class Constants {
   }
 
   public static class VisionConstants {
-    public static final String FRONT_CAM_NAME = "FRONT_SPINEL";  // Placeholder
+    public static final String FRONT_CAM_NAME = "front_spinel";  // Placeholder
     public static final String RIGHT_CAM_NAME = "Right Camera";  // Placeholder
 
     public static final Transform3d FRONT_CAM_TRANSFORM = new Transform3d(new Translation3d(-0.15, 0.41, 0.14), new Rotation3d(0, 21, 7));  // Placeholder

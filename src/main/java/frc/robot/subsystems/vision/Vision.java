@@ -7,6 +7,8 @@ package frc.robot.subsystems.vision;
 import java.io.IOException;
 import java.util.Optional;
 
+import javax.swing.text.html.Option;
+
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -30,7 +32,7 @@ public class Vision extends SubsystemBase {
     cameraFront = new PhotonCamera(FRONT_CAM_NAME);
     // cameraRight = new PhotonCamera(RIGHT_CAM_NAME);
     // might want to remove this before comp
-    PhotonCamera.setVersionCheckEnabled(false);
+    // PhotonCamera.setVersionCheckEnabled(false);
 
     try {
       field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
@@ -45,6 +47,6 @@ public class Vision extends SubsystemBase {
   }
 
   public Optional<EstimatedRobotPose> getGlobalPoseFromLeft() {return frontEstimator.update();}
-  public Optional<EstimatedRobotPose> getGlobalPoseFromRight() {return rightEstimator.update();}
+  public Optional<EstimatedRobotPose> getGlobalPoseFromRight() {return Optional.empty();}
 
 }
