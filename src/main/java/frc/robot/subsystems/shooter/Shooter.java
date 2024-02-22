@@ -13,8 +13,8 @@ import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 
-  protected FlywheelMotor topMotor = new FlywheelMotor("Shooter/Top", TOP_ID, PID, FEEDFORWARD, false);
-  protected FlywheelMotor bottomMotor = new FlywheelMotor("Shooter/Bottom", BOTTOM_ID, PID, FEEDFORWARD, false);
+  protected FlywheelMotor topMotor = new FlywheelMotor("Shooter/Top", TOP_ID, PID, FEEDFORWARD, false, false);
+  protected FlywheelMotor bottomMotor = new FlywheelMotor("Shooter/Bottom", BOTTOM_ID, PID, FEEDFORWARD, false, false);
 
   public Shooter() {}
 
@@ -40,7 +40,7 @@ public class Shooter extends SubsystemBase {
     bottomMotor.setSpeed(speed);
   }
 
-  Debouncer speedDebouncer = new Debouncer(0.1);
+  Debouncer speedDebouncer = new Debouncer(0.4);
   public boolean atSpeed() {
     boolean speedWithinTolerance = Math.abs(topMotor.getVelocity() - topMotor.getVelocitySetpoint()) < SPEED_TOLERANCE &&
                              Math.abs(bottomMotor.getVelocity() - bottomMotor.getVelocitySetpoint()) < SPEED_TOLERANCE;

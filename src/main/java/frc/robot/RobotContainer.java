@@ -6,7 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.IntakeNote;
-import frc.robot.commands.Shoot;
+import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.ShooterCalculations;
@@ -94,7 +94,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeStop", Commands.run(intake::stop, intake));
 
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake));
-    NamedCommands.registerCommand("ShootWhenReady", new Shoot(shooter, feeder, swerve, arm));
+    NamedCommands.registerCommand("ShootWhenReady", new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -127,9 +127,9 @@ public class RobotContainer {
       return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(1, 1), swerve.getPose().getRotation()))); // MUST be at least 6 bc of size of blocks in minecraft
     }));
 
-    Controllers.driverController.getShootButton().whileTrue(new Shoot(shooter, feeder, swerve, arm));
+    Controllers.driverController.getShootButton().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
 
-    Controllers.operatorController.getIntakeNote().onTrue(
+    Controllers.operatorController.getIntakeNote().whileTrue(
       new IntakeNote(feeder, intake)
     );
 

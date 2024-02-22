@@ -32,7 +32,7 @@ public class FlywheelMotor {
 
   String name;
 
-  public FlywheelMotor(String name, int id, double[] PID, SimpleMotorFeedforward ff, boolean inverted) {
+  public FlywheelMotor(String name, int id, double[] PID, SimpleMotorFeedforward ff, boolean inverted, boolean brakeMode) {
     pid = new PIDController(PID[0], PID[1], PID[2]);
     this.name = name;
     this.ff = ff;
@@ -42,7 +42,11 @@ public class FlywheelMotor {
 
     flex.setSmartCurrentLimit(80);
     flex.setInverted(inverted);
-    flex.setIdleMode(IdleMode.kCoast);
+    if(brakeMode) {
+      flex.setIdleMode(IdleMode.kBrake);
+    } else {
+      flex.setIdleMode(IdleMode.kCoast);
+    }
 
     // we're just not gonna set the position or velocity conversion factors because they default to rot(/min)
 
@@ -54,7 +58,7 @@ public class FlywheelMotor {
   }
 
   public FlywheelMotor(String name, int id, double[] PID, SimpleMotorFeedforward ff) {
-    this(name, id, PID, ff, true);
+    this(name, id, PID, ff, true, false);
   }
 
   public void setSpeed(double speed) {
