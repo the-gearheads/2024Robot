@@ -27,6 +27,7 @@ public class Feeder extends SubsystemBase {
     feederMotor.log();
     handoffMotor.periodic();
     handoffMotor.log();
+    SmartDashboard.putBoolean("Feeder/NoteSwitch", noteInPlaceSwitch.getAsBoolean());
   }
   
   public void run() {

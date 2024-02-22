@@ -129,7 +129,7 @@ public class RobotContainer {
 
     Controllers.driverController.getShootButton().whileTrue(new Shoot(shooter, feeder, swerve, arm));
 
-    Controllers.operatorController.getIntakeNote().whileTrue(
+    Controllers.operatorController.getIntakeNote().onTrue(
       new IntakeNote(feeder, intake)
     );
 

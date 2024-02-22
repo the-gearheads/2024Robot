@@ -12,7 +12,7 @@ public class Thrustmaster implements OperatorController {
   // https://ts.thrustmaster.com/download/accessories/Manuals/T16000M/T16000M-User_manual.pdf for button layout
 
   public Trigger getIntakeNote() {
-    return new Trigger(()->joy.getRawButton(1));
+    return new Trigger(()->joy.getRawButtonPressed(1));
   }
 
   public Trigger getArmUp() {
