@@ -45,7 +45,7 @@ public class Vision extends SubsystemBase {
     // rightEstimator = new PhotonPoseEstimator(field, strategy, cameraRight, RIGHT_TRANSFORM);
   }
 
-  public Optional<EstimatedRobotPose> getGlobalPoseFromLeft() {
+  public Optional<EstimatedRobotPose> getGlobalPoseFromFront() {
     Logger.recordOutput("/Vision/refPose", frontEstimator.getReferencePose());
     var updated = frontEstimator.update();
     if(updated.isPresent()) {

@@ -298,10 +298,10 @@ public class Swerve extends SubsystemBase {
       poseEstimator.updateWithTime(timestamps[time], getGyroRotation(), reshapedPositions[time]);
     }
 
-    Optional<EstimatedRobotPose> leftVision = vision.getGlobalPoseFromLeft();
-    Optional<EstimatedRobotPose> rightVision = vision.getGlobalPoseFromLeft();
-    if (leftVision.isPresent()) {
-      poseEstimator.addVisionMeasurement(leftVision.get().estimatedPose.toPose2d(), leftVision.get().timestampSeconds);
+    Optional<EstimatedRobotPose> frontVision = vision.getGlobalPoseFromFront();
+    Optional<EstimatedRobotPose> rightVision = vision.getGlobalPoseFromFront();
+    if (frontVision.isPresent()) {
+      poseEstimator.addVisionMeasurement(frontVision.get().estimatedPose.toPose2d(), frontVision.get().timestampSeconds);
     }
     if (rightVision.isPresent()) {
       poseEstimator.addVisionMeasurement(rightVision.get().estimatedPose.toPose2d(), rightVision.get().timestampSeconds);

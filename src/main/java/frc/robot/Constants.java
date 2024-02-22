@@ -152,7 +152,7 @@ public final class Constants {
     public static final String RIGHT_CAM_NAME = "Right Camera";  // Placeholder
 
     public static final Transform3d FRONT_CAM_TRANSFORM = 
-      new Transform3d(new Translation3d(0.41, 0.5534, 0.22), 
+      new Transform3d(new Translation3d(0.41, 0.5534, 0.22), // 0.5534  WHY IS THIS CORRECT AGHHHHHHHH
       new Rotation3d(0, Units.degreesToRadians(-21), Units.degreesToRadians(-4))
     );  // Placeholder
     // public static final Transform3d RIGHT_TRANSFORM = new Transform3d();  // Placeholder
