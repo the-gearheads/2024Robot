@@ -192,7 +192,7 @@ public class Swerve extends SubsystemBase {
     return pathfindingCommand.withTimeout(5);
   }
 
-  PIDController headingController = new PIDController(5, 0, 0.5);
+  PIDController headingController = new PIDController(5.2, 0, 0.5);
 
   public void drive(ChassisSpeeds speeds, Double alignToAngle) {
 
@@ -200,7 +200,7 @@ public class Swerve extends SubsystemBase {
     double commandedRot = headingController.calculate(getPose().getRotation().getRadians());
 
     headingController.enableContinuousInput(0, 2 * Math.PI);
-    headingController.setTolerance(0.02);
+    headingController.setTolerance(0.005);
 
     if(alignToAngle != null) {
       headingController.setSetpoint(alignToAngle);
