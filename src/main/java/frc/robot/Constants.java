@@ -56,7 +56,7 @@ public final class Constants {
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
     public static final double DRIVE_RATIO = (45.0 * 22) / (DRIVE_PINION_TOOTH_COUNT * 15);
 
-    public static final double ODOMETRY_FREQUENCY = 100;
+    public static final double ODOMETRY_FREQUENCY = 50;
 
     // Throughbore encoder is directly on the output steer shaft
     public static final double STEER_RATIO = 1;
@@ -152,9 +152,9 @@ public final class Constants {
     public static final String RIGHT_CAM_NAME = "Right Camera";  // Placeholder
 
     public static final Transform3d FRONT_CAM_TRANSFORM = 
-      new Transform3d(new Translation3d(0.41, 0.5534, 0.22), // 0.5534  WHY IS THIS CORRECT AGHHHHHHHH
-      new Rotation3d(0, Units.degreesToRadians(-21), Units.degreesToRadians(-4))
-    );  // Placeholder
+      new Transform3d(new Translation3d(0.41, 0.15, 0.19),
+      new Rotation3d(Units.degreesToRadians(-2), Units.degreesToRadians(-21), Units.degreesToRadians(-4))  // 15.5
+    );
     // public static final Transform3d RIGHT_TRANSFORM = new Transform3d();  // Placeholder
   }
   public static class Controllers {

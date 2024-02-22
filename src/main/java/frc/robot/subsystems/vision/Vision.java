@@ -40,6 +40,7 @@ public class Vision extends SubsystemBase {
       System.out.println(AprilTagFields.k2024Crescendo.m_resourceFile);
     }
     strategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+    // strategy = PoseStrategy.LOWEST_AMBIGUITY;
 
     frontEstimator = new PhotonPoseEstimator(field, strategy, cameraFront, FRONT_CAM_TRANSFORM);
     // rightEstimator = new PhotonPoseEstimator(field, strategy, cameraRight, RIGHT_TRANSFORM);

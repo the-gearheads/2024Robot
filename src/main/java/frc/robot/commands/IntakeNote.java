@@ -28,5 +28,6 @@ public class IntakeNote extends Command {
   @Override
   public void end(boolean interrupted) {
     feeder.stop();
+    intake.stop();
   }
 }

@@ -27,6 +27,10 @@ public class Shoot extends Command {
   @Override
   public void initialize() {
     shooter.setSpeed(DEFAULT_SPEED);
+  }
+
+  @Override
+  public void execute() {
     arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
   }
 
