@@ -131,14 +131,15 @@ public class RobotContainer {
     Controllers.driverController.getShootButton().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
 
     Controllers.operatorController.getIntakeNote().whileTrue(
-      new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch()::getAsBoolean)
-        .andThen(new WaitCommand(0.12))
+      new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch())
+        .andThen(Commands.run(()->{}).until(feeder.getNoteSwitch().negate().debounce(0.04)).withTimeout(1.5))
+        .andThen(new WaitCommand(0.1))
         .andThen(Commands.runOnce(()->{
           feeder.stop();
           intake.stop();
         }, shooter).andThen(Commands.run(()->{ // requiring shooter cause i dont want it to run and this was a place to put it
           feeder.runAtSpeed(-100);
-        }).until(feeder.getNoteSwitch().debounce(0.02)::getAsBoolean)))
+        }).until(feeder.getNoteSwitch().debounce(0.02))))
     );
 
     Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {
@@ -174,10 +175,12 @@ public class RobotContainer {
     }));
 
     Controllers.operatorController.getArmAutosOn().onTrue(new InstantCommand(()->{
-    arm.setDefaultCommand(Commands.run(()->{
-     arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
-    }, arm));
-    shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
+      arm.setDefaultCommand(Commands.run(()->{
+        arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
+      }, arm));
+      shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
+      Commands.run(()->{}, shooter).schedule();
+      Commands.run(()->{}, arm).schedule();
     }));
 
     Controllers.operatorController.getIntakeOverride().whileTrue(Commands.startEnd(

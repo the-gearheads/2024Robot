@@ -129,7 +129,7 @@ public final class Constants {
     public static final int NOTE_SWITCH_ID = 9;
     public static final double[] PID = {0.00038793, 0, 0};
     public static final double[] HANDOFF_PID = {0.0019749, 0, 0}; 
-    public static final double SPEED = 4600.0;
+    public static final double SPEED = 3000.0;
     public static final SimpleMotorFeedforward FEEDER_FF = new SimpleMotorFeedforward(0.065837, 0.0019032, 0.00021355); 
     public static final SimpleMotorFeedforward HANDOFF_FF = new SimpleMotorFeedforward(0.1132, 0.0018353, 0.00013306);
   }
@@ -137,7 +137,7 @@ public final class Constants {
   public static class IntakeConstants {
     public static final int ID = 14;
     public static final double[] PID = {0.0018087, 0, 0};
-    public static final double SPEED = 5300;
+    public static final double SPEED = 5500;
     public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.26764, 0.0018386, 0.00010506);
   }
 
