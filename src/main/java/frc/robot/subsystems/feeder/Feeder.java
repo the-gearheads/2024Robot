@@ -19,7 +19,7 @@ import org.littletonrobotics.junction.Logger;
 public class Feeder extends SubsystemBase {
   FlywheelMotor feederMotor = new FlywheelMotor("Feeder", FEEDER_ID, PID, FEEDER_FF, true, true);
   FlywheelMotor handoffMotor = new FlywheelMotor("Handoff", HANDOFF_ID, PID, FEEDER_FF, true, true);
-  Trigger noteInPlaceSwitch = new Trigger(new DigitalInput(NOTE_SWITCH_ID)::get).negate().debounce(0.08);
+  Trigger noteInPlaceSwitch = new Trigger(new DigitalInput(NOTE_SWITCH_ID)::get).negate().debounce(0.02);
 
   public Feeder() {
     SmartDashboard.putNumber("Feeder/RunSpeed", SPEED);
@@ -34,13 +34,16 @@ public class Feeder extends SubsystemBase {
   }
   
   public void run() {
-    feederMotor.setSpeed(SmartDashboard.getNumber("Feeder/RunSpeed", SPEED));
-    handoffMotor.setSpeed(SmartDashboard.getNumber("Feeder/RunSpeed", SPEED));
+    runAtSpeed(SmartDashboard.getNumber("Feeder/RunSpeed", SPEED));
   }
 
   public void runReverse() {
-    feederMotor.setSpeed(-SmartDashboard.getNumber("Feeder/RunSpeed", SPEED));
-    handoffMotor.setSpeed(-SmartDashboard.getNumber("Feeder/RunSpeed", SPEED));
+    runAtSpeed(-SmartDashboard.getNumber("Feeder/RunSpeed", SPEED));
+  }
+
+  public void runAtSpeed(double speed) {
+    feederMotor.setSpeed(speed);
+    handoffMotor.setSpeed(speed);
   }
 
   public void stop() {

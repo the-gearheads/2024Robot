@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -130,7 +131,14 @@ public class RobotContainer {
     Controllers.driverController.getShootButton().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
 
     Controllers.operatorController.getIntakeNote().whileTrue(
-      new IntakeNote(feeder, intake)
+      new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch()::getAsBoolean)
+        .andThen(new WaitCommand(0.12))
+        .andThen(Commands.runOnce(()->{
+          feeder.stop();
+          intake.stop();
+        }, shooter).andThen(Commands.run(()->{ // requiring shooter cause i dont want it to run and this was a place to put it
+          feeder.runAtSpeed(-100);
+        }).until(feeder.getNoteSwitch().debounce(0.02)::getAsBoolean)))
     );
 
     Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {
