@@ -12,21 +12,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "TestPath"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootWhenReady"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootWhenReady"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlignToSpeakerYaw"
+                }
+              }
+            ]
           }
         }
       ]

@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.PrepareToShoot;
+import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.ShooterCalculations;
@@ -97,7 +98,7 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake));
     NamedCommands.registerCommand("ShootWhenReady", new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
-
+    NamedCommands.registerCommand("AlignToSpeakerYaw", new SwerveAlignToSpeaker(swerve));
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
