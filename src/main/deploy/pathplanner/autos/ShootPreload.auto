@@ -2,19 +2,31 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.45,
-      "y": 6.82
+      "x": 1.2537638750491173,
+      "y": 5.55
     },
-    "rotation": -127.69999999999999
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "TestPath"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "ShootWhenReady"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         }
       ]

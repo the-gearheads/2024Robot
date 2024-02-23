@@ -135,12 +135,12 @@ public class RobotContainer {
 
     Controllers.operatorController.getIntakeNote().whileTrue(
       new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch())
-        .andThen(Commands.run(()->{}).until(feeder.getNoteSwitch().negate().debounce(0.04)).withTimeout(1.5))
-        .andThen(new WaitCommand(0.1))
+        .andThen(Commands.run(()->{}).until(feeder.getNoteSwitch().negate().debounce(0.04)).withTimeout(1.5))  // 0.02
+        .andThen(new WaitCommand(0.06))  // 0.1
         .andThen(Commands.runOnce(()->{
           feeder.stop();
           intake.stop();
-        }, shooter).andThen(Commands.run(()->{ // requiring shooter cause i dont want it to run and this was a place to put it
+        }).andThen(Commands.run(()->{ // requiring shooter cause i dont want it to run and this was a place to put it
           feeder.runAtSpeed(-100);
         }).until(feeder.getNoteSwitch().debounce(0.02))))
     );
@@ -227,7 +227,7 @@ public class RobotContainer {
    */ 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return sysidAuto.get();
-    // return autoChooser.getSelected();
+    // return sysidAuto.get();
+    return autoChooser.getSelected();
   }
 }

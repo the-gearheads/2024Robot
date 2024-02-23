@@ -29,11 +29,6 @@
           "visible": true
         }
       },
-      "/FMSInfo": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Auto Chooser": {
         "window": {
           "visible": true
@@ -203,7 +198,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 0,
+          "height": 140,
           "series": [
             {
               "color": [
@@ -222,6 +217,42 @@
                 1.0
               ],
               "id": "NT:/AdvantageKit/RealOutputs/Shooter/Bottom/Velocty"
+            }
+          ]
+        }
+      ],
+      "window": {
+        "visible": false
+      }
+    },
+    "Plot <2>": {
+      "plots": [
+        {
+          "backgroundColor": [
+            0.0,
+            0.0,
+            0.0,
+            0.8500000238418579
+          ],
+          "height": 332,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/AdvantageKit/RealOutputs/Feeder/VelocitySetpoint"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/AdvantageKit/RealOutputs/Shooter/Bottom/VoltsSetpoint"
             }
           ]
         }
