@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 /**
@@ -129,6 +130,8 @@ public class RobotContainer {
     }));
 
     Controllers.driverController.getShootButton().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
+
+    Controllers.driverController.getShootingPrepare().onTrue(new RepeatCommand(new PrepareToShoot(shooter, swerve, arm)));
 
     Controllers.operatorController.getIntakeNote().whileTrue(
       new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch())
