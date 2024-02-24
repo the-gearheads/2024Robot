@@ -17,8 +17,8 @@ import static frc.robot.Constants.FeederConstants.*;
 import org.littletonrobotics.junction.Logger;
 
 public class Feeder extends SubsystemBase {
-  FlywheelMotor feederMotor = new FlywheelMotor("Feeder", FEEDER_ID, PID, FEEDER_FF, true, true);
-  FlywheelMotor handoffMotor = new FlywheelMotor("Handoff", HANDOFF_ID, PID, FEEDER_FF, true, true);
+  public FlywheelMotor feederMotor = new FlywheelMotor("Feeder", FEEDER_ID, PID, FEEDER_FF, true, true);
+  public FlywheelMotor handoffMotor = new FlywheelMotor("Handoff", HANDOFF_ID, PID, FEEDER_FF, true, true);
   Trigger noteInPlaceSwitch = new Trigger(new DigitalInput(NOTE_SWITCH_ID)::get).negate().debounce(0.02);
 
   public Feeder() {

@@ -16,6 +16,7 @@
   "NTProvider": {
     "types": {
       "/AdvantageKit/RealOutputs/Arm/Mechanism2d": "Mechanism2d",
+      "/AdvantageKit/RealOutputs/Mechanism2d": "Mechanism2d",
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
@@ -24,7 +25,7 @@
       "/SmartDashboard/Vision and Paths Field": "Field2d"
     },
     "windows": {
-      "/AdvantageKit/RealOutputs/Arm/Mechanism2d": {
+      "/AdvantageKit/RealOutputs/Mechanism2d": {
         "window": {
           "visible": true
         }
@@ -91,6 +92,9 @@
             "open": true
           },
           "Swerve": {
+            "BL": {
+              "open": true
+            },
             "Teleop": {
               "open": true
             },
@@ -105,6 +109,9 @@
       },
       "SmartDashboard": {
         "Arm": {
+          "open": true
+        },
+        "Shooter": {
           "open": true
         },
         "Swerve": {
@@ -234,7 +241,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 332,
+          "height": 211,
           "series": [
             {
               "color": [
@@ -256,7 +263,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     }
   }
 }

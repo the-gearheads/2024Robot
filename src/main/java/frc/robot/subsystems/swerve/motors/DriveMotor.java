@@ -38,7 +38,7 @@ public class DriveMotor {
   }
 
   public void log() {
-    Logger.recordOutput(modulePath + "/driveVolts", flex.getAppliedOutput() * flex.getBusVoltage());
+    Logger.recordOutput(modulePath + "/driveVolts", getVoltage());
     Logger.recordOutput(modulePath + "/drivePos", getPosition());
     Logger.recordOutput(modulePath + "/driveVel", getVelocity());
     Logger.recordOutput(modulePath + "/targetSpeed", driveSetpoint);
@@ -48,6 +48,10 @@ public class DriveMotor {
   public void setSpeed(double speed) {
     driveSetpoint = speed;
     pid.setReference(speed, ControlType.kVelocity, 0, DRIVE_FEEDFORWARD.calculate(speed));
+  }
+
+  public double getVoltage() {
+    return flex.getAppliedOutput() * flex.getBusVoltage();
   }
 
   public void periodic() {

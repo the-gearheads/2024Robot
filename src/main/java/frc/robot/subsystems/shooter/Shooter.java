@@ -3,6 +3,7 @@ package frc.robot.subsystems.shooter;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Robot;
 import frc.robot.subsystems.FlywheelMotor;
 
 import static frc.robot.Constants.ShooterConstants.*;
@@ -13,8 +14,8 @@ import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 
-  protected FlywheelMotor topMotor = new FlywheelMotor("Shooter/Top", TOP_ID, PID, FEEDFORWARD, false, false);
-  protected FlywheelMotor bottomMotor = new FlywheelMotor("Shooter/Bottom", BOTTOM_ID, PID, FEEDFORWARD, false, false);
+  public FlywheelMotor topMotor = new FlywheelMotor("Shooter/Top", TOP_ID, PID, FEEDFORWARD, false, false);
+  public FlywheelMotor bottomMotor = new FlywheelMotor("Shooter/Bottom", BOTTOM_ID, PID, FEEDFORWARD, false, false);
 
   public Shooter() {}
 
@@ -42,8 +43,12 @@ public class Shooter extends SubsystemBase {
 
   Debouncer speedDebouncer = new Debouncer(0.4);
   public boolean atSpeed() {
-    boolean speedWithinTolerance = Math.abs(topMotor.getVelocity() - topMotor.getVelocitySetpoint()) < SPEED_TOLERANCE &&
-                             Math.abs(bottomMotor.getVelocity() - bottomMotor.getVelocitySetpoint()) < SPEED_TOLERANCE;
+    double tolerance = SPEED_TOLERANCE;
+    if(Robot.isSimulation()) {
+      tolerance = 700; // sim setpoint 6k rpm turns out to be like 6661 rpm
+    }
+    boolean speedWithinTolerance = Math.abs(topMotor.getVelocity() - topMotor.getVelocitySetpoint()) < tolerance &&
+                             Math.abs(bottomMotor.getVelocity() - bottomMotor.getVelocitySetpoint()) < tolerance;
     return speedDebouncer.calculate(speedWithinTolerance);
   }
   

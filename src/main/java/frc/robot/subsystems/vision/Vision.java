@@ -21,11 +21,11 @@ import static frc.robot.Constants.VisionConstants.*;
 
 public class Vision extends SubsystemBase {
   private PhotonCamera cameraFront;
-  private PhotonCamera cameraRight;
+  // private PhotonCamera cameraRight;
   private AprilTagFieldLayout field;
   private PoseStrategy strategy;
   private PhotonPoseEstimator frontEstimator;
-  private PhotonPoseEstimator rightEstimator;
+  // private PhotonPoseEstimator rightEstimator;
 
   public Vision() {
     cameraFront = new PhotonCamera(FRONT_CAM_NAME);

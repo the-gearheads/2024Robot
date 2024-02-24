@@ -3,16 +3,22 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.RelativeEncoder;
 
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.util.HandledSleep;
 
 import static edu.wpi.first.units.Units.*;
@@ -31,6 +37,9 @@ public class FlywheelMotor {
   SimpleMotorFeedforward ff;
 
   String name;
+
+  FlywheelSim sim;
+  double simShooterPos = 0;
 
   public FlywheelMotor(String name, int id, double[] PID, SimpleMotorFeedforward ff, boolean inverted, boolean brakeMode) {
     pid = new PIDController(PID[0], PID[1], PID[2]);
@@ -54,6 +63,10 @@ public class FlywheelMotor {
     enc.setAverageDepth(1);
     enc.setMeasurementPeriod(8);
 
+    if(Robot.isSimulation()) {
+      sim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(ff.kv, ff.ka), DCMotor.getNeoVortex(1), 1);
+    }
+
     SmartDashboard.putBoolean(name + "/manualVoltageOnly", false);
   }
 
@@ -66,22 +79,35 @@ public class FlywheelMotor {
   }
 
   public void periodic() {
+    if(Robot.isSimulation()) {
+      var maxVolts = RobotController.getBatteryVoltage();
+      sim.setInputVoltage(MathUtil.clamp(targetVolts, -maxVolts, maxVolts));
+      if(DriverStation.isDisabled()) {
+        sim.setInputVoltage(0);
+      }
+      sim.update(0.02);
+      simShooterPos += sim.getAngularVelocityRadPerSec() * 0.02;
+    }
+
     if(!DriverStation.isFMSAttached() && SmartDashboard.getBoolean(name + "/manualVoltageOnly", false)) {
       return;
     }
+
     if(pid.getSetpoint() == 0) {
       // Want to coast to a stop rather than brake
       flex.setVoltage(0);
       return;
     }
-    flex.setVoltage(ff.calculate(pid.getSetpoint()) + pid.calculate(enc.getVelocity()));
+    setVolts(ff.calculate(pid.getSetpoint()) + pid.calculate(enc.getVelocity()));
   }
 
   public double getVolts() {
+    if(Robot.isSimulation()) return targetVolts;
     return flex.getAppliedOutput() * flex.getBusVoltage();
   }
 
   public double getVelocity() {
+    if(Robot.isSimulation()) return sim.getAngularVelocityRadPerSec(); // constants actually output in rpm so this function name is wrong btw
     return enc.getVelocity();
   }
 
@@ -90,8 +116,13 @@ public class FlywheelMotor {
   }
 
   public void setVolts(double volts) {
-    targetVolts = volts; // tbh idk if they really differ
+    targetVolts = volts;
     flex.setVoltage(volts);
+  }
+
+  public double getPosition() {
+    if(Robot.isSimulation()) return simShooterPos;
+    return enc.getPosition();
   }
 
   public void setVolts(Measure<Voltage> volts) {
