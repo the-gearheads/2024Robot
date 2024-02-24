@@ -18,12 +18,6 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootWhenReady"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "AlignToSpeakerYaw"
                 }
               }

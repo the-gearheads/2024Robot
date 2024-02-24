@@ -28,10 +28,6 @@ public class ShooterCalculations {
     }
     Rotation2d angle = new Rotation2d(Math.atan2(xyPos.getY() - robotPos.getY(), xyPos.getX() - robotPos.getX()));
 
-    if (isRed) {
-      angle = angle.plus(new Rotation2d(Math.PI));
-    }
-
     Logger.recordOutput("Calculations/YawToSpeaker", angle.getDegrees());
 
     return angle;
