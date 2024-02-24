@@ -23,11 +23,11 @@ public class PrepareToShoot extends Command {
 
   @Override
   public void initialize() {
-    shooter.setSpeed(DEFAULT_SPEED);
   }
 
   @Override
   public void execute() {
+    shooter.setSpeed(DEFAULT_SPEED);
     arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
   }
 

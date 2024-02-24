@@ -31,19 +31,38 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "sequential",
                 "data": {
-                  "pathName": "S1F1"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "S1F1"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "IntakeAndShoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoArmHeight"
                 }
               }
             ]
@@ -54,15 +73,34 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "sequential",
                 "data": {
-                  "pathName": "F1F2"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "F1F2"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "IntakeAndShoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoArmHeight"
                 }
               }
             ]

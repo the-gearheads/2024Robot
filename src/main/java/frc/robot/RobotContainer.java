@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.commands.AutoArmHeight;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.PrepareToShoot;
@@ -110,6 +111,8 @@ public class RobotContainer {
           feeder.runAtSpeed(-100);
         }).until(feeder.getNoteSwitch().debounce(0.02)))));
   
+    NamedCommands.registerCommand("PrepareShoot", new PrepareToShoot(shooter, swerve, arm));
+    NamedCommands.registerCommand("AutoArmHeight", new AutoArmHeight(arm, swerve));
     NamedCommands.registerCommand("ShootWhenReady", new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
     NamedCommands.registerCommand("AlignToSpeakerYaw", new SwerveAlignToSpeaker(swerve));
     NamedCommands.registerCommand("IntakeAndShoot", Commands.run(()->{
