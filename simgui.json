@@ -79,6 +79,9 @@
           "Feeder": {
             "open": true
           },
+          "Intake": {
+            "open": true
+          },
           "LoggedRobot": {
             "open": true
           },

@@ -20,6 +20,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
 import static frc.robot.Constants.ArmConstants.armOverrideVoltage;
+import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -99,9 +100,23 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeStart", Commands.run(intake::run, intake));
     NamedCommands.registerCommand("IntakeStop", Commands.run(intake::stop, intake));
 
-    NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake));
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch())
+        .andThen(Commands.run(()->{}).until(feeder.getNoteSwitch().negate().debounce(0.04)).withTimeout(1.5))  // 0.02
+        .andThen(new WaitCommand(0.06))  // 0.1
+        .andThen(Commands.runOnce(()->{
+          feeder.stop();
+          intake.stop();
+        }).andThen(Commands.run(()->{ 
+          feeder.runAtSpeed(-100);
+        }).until(feeder.getNoteSwitch().debounce(0.02)))));
+  
     NamedCommands.registerCommand("ShootWhenReady", new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
     NamedCommands.registerCommand("AlignToSpeakerYaw", new SwerveAlignToSpeaker(swerve));
+    NamedCommands.registerCommand("IntakeAndShoot", Commands.run(()->{
+      intake.run();
+      feeder.run();
+      shooter.setSpeed(DEFAULT_SPEED);
+    }));
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }

@@ -2,15 +2,73 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2,
-      "y": 2
+      "x": 1.4,
+      "y": 4.104648209296419
     },
-    "rotation": 0
+    "rotation": 130.0
   },
   "command": {
     "type": "sequential",
     "data": {
-      "commands": []
+      "commands": [
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootWhenReady"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlignToSpeakerYaw"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S1F1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeAndShoot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "F1F2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeAndShoot"
+                }
+              }
+            ]
+          }
+        }
+      ]
     }
   },
   "folder": null,
