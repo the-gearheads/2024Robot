@@ -160,7 +160,7 @@ public class Arm extends SubsystemBase {
 
   public Rotation2d getAngle() {
     if(Robot.isSimulation()) return new Rotation2d(armSim.getAngleRads());
-    return new Rotation2d((1-enc.getAbsolutePosition()-ARM_OFFSET)*ARM_POS_FACTOR);
+    return new Rotation2d((1-enc.getAbsolutePosition())*ARM_POS_FACTOR - ARM_OFFSET);
   }
 
   public double getVelocity() {

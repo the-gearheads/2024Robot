@@ -75,6 +75,7 @@ public class RobotContainer {
     // arm.setDefaultCommand(new ArmNTControl(arm));
 
     shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
+    // shooter.setDefaultCommand(Commands.none());
 
     feeder.setDefaultCommand(Commands.run(feeder::stop, feeder));
     intake.setDefaultCommand(Commands.run(intake::stop, intake));
@@ -119,7 +120,7 @@ public class RobotContainer {
       intake.run();
       feeder.run();
       shooter.setSpeed(DEFAULT_SPEED);
-    }));
+    }, feeder));
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
