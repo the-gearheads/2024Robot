@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkRelativeEncoder;
 
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -59,7 +60,7 @@ public class FlywheelMotor {
 
     // we're just not gonna set the position or velocity conversion factors because they default to rot(/min)
 
-    enc = flex.getEncoder();
+    enc = flex.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
     enc.setAverageDepth(1);
     enc.setMeasurementPeriod(8);
 
