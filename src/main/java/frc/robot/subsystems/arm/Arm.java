@@ -16,11 +16,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -41,11 +37,6 @@ public class Arm extends SubsystemBase {
   SingleJointedArmSim armSim = new SingleJointedArmSim(LinearSystemId.identifyPositionSystem(SIM_FEEDFORWARD.kv, SIM_FEEDFORWARD.ka),
                                                        DCMotor.getNeoVortex(2), ARM_MOTOR_GEARING,
                                                        ARM_LENGTH, MIN_ANGLE-0.1, MAX_ANGLE+0.1, false, 0.79);
-  Mechanism2d mech = new Mechanism2d(1, 1);
-  // cad guesstimates cause ascope wants these in meters
-  MechanismRoot2d root = mech.getRoot("Shooter", 0.1032, 0.1379);
-  MechanismLigament2d armMech = root.append(new MechanismLigament2d("Arm", ARM_LENGTH, 45));
-  MechanismLigament2d floorMech = root.append(new MechanismLigament2d("Floor", 0.7557, 0));
 
   DutyCycleEncoder enc = new DutyCycleEncoder(0);
   public Arm() {
@@ -84,9 +75,6 @@ public class Arm extends SubsystemBase {
     }
     // hi gavin and or michael if you're reading this i'm sorry for the mess i made in the arm subsystem i'm trying to fix it now i promise i'll do better next time i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry
     SmartDashboard.putNumber("Arm/manualVoltage", 0);
-
-    armMech.setColor(new Color8Bit(255, 255, 0));
-    floorMech.setColor(new Color8Bit(255, 128, 128));
 
     // update arm sim once so it doesn't start at 0
     HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
@@ -168,13 +156,11 @@ public class Arm extends SubsystemBase {
     Logger.recordOutput("Arm/SetpointOutOfRange", pid.getSetpoint().position < MIN_ANGLE || pid.getSetpoint().position > MAX_ANGLE);
     Logger.recordOutput("Arm/GoalOutOfRange", pid.getGoal().position < MIN_ANGLE || pid.getGoal().position > MAX_ANGLE);
     Logger.recordOutput("Arm/EncConnected", enc.isConnected());
-    armMech.setAngle(getAngle().getDegrees());
-    Logger.recordOutput("Arm/Mechanism2d", mech);
   }
 
   public Rotation2d getAngle() {
     if(Robot.isSimulation()) return new Rotation2d(armSim.getAngleRads());
-    return new Rotation2d((1-enc.getAbsolutePosition()-ARM_OFFSET)*ARM_POS_FACTOR);
+    return new Rotation2d((1-enc.getAbsolutePosition())*ARM_POS_FACTOR - ARM_OFFSET);
   }
 
   public double getVelocity() {

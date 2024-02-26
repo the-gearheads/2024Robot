@@ -19,8 +19,8 @@ public interface DriverController {
     return 0;
   }
 
-  public default double getSlowModifierAxis() {
-    return 0;
+  public default Trigger getShootingPrepare() {
+    return new Trigger(() -> false);
   }
 
   public default Trigger getGyroZeroButton() {

@@ -10,7 +10,7 @@ import static frc.robot.Constants.IntakeConstants.*;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
-  FlywheelMotor motor = new FlywheelMotor("Intake", ID, PID, FEEDFORWARD, false);
+  public FlywheelMotor motor = new FlywheelMotor("Intake", ID, PID, FEEDFORWARD, false, false);
   public Intake() {
     SmartDashboard.putNumber("Intake/RunSpeed", SPEED);
   }

@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import frc.robot.commands.AutoArmHeight;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.IntakeNote;
-import frc.robot.commands.Shoot;
+import frc.robot.commands.PrepareToShoot;
+import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
+import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.feeder.Feeder;
@@ -18,6 +21,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
 import static frc.robot.Constants.ArmConstants.armOverrideVoltage;
+import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -37,6 +41,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -52,6 +58,8 @@ public class RobotContainer {
   public final Arm arm = new Arm();
   public final Feeder feeder = new Feeder();
   public final Intake intake = new Intake();
+  @SuppressWarnings("unused")
+  private final MechanismViz mechanismViz = new MechanismViz(arm::getAngle, shooter.topMotor::getPosition, shooter.bottomMotor::getPosition, intake.motor::getPosition, feeder.feederMotor::getPosition);
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private SendableChooser<Command> autoChooser;
 
@@ -67,6 +75,7 @@ public class RobotContainer {
     // arm.setDefaultCommand(new ArmNTControl(arm));
 
     shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
+    // shooter.setDefaultCommand(Commands.none());
 
     feeder.setDefaultCommand(Commands.run(feeder::stop, feeder));
     intake.setDefaultCommand(Commands.run(intake::stop, intake));
@@ -93,9 +102,25 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeStart", Commands.run(intake::run, intake));
     NamedCommands.registerCommand("IntakeStop", Commands.run(intake::stop, intake));
 
-    NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake));
-    NamedCommands.registerCommand("ShootWhenReady", new Shoot(shooter, feeder, swerve, arm));
-
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch())
+        .andThen(Commands.run(()->{}).until(feeder.getNoteSwitch().negate().debounce(0.04)).withTimeout(1.5))  // 0.02
+        .andThen(new WaitCommand(0.06))  // 0.1
+        .andThen(Commands.runOnce(()->{
+          feeder.stop();
+          intake.stop();
+        }).andThen(Commands.run(()->{ 
+          feeder.runAtSpeed(-100);
+        }).until(feeder.getNoteSwitch().debounce(0.02)))));
+  
+    NamedCommands.registerCommand("PrepareShoot", new PrepareToShoot(shooter, swerve, arm));
+    NamedCommands.registerCommand("AutoArmHeight", new AutoArmHeight(arm, swerve));
+    NamedCommands.registerCommand("ShootWhenReady", new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
+    NamedCommands.registerCommand("AlignToSpeakerYaw", new SwerveAlignToSpeaker(swerve));
+    NamedCommands.registerCommand("IntakeAndShoot", Commands.run(()->{
+      intake.run();
+      feeder.run();
+      shooter.setSpeed(DEFAULT_SPEED);
+    }, feeder));
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -127,10 +152,20 @@ public class RobotContainer {
       return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(1, 1), swerve.getPose().getRotation()))); // MUST be at least 6 bc of size of blocks in minecraft
     }));
 
-    Controllers.driverController.getShootButton().whileTrue(new Shoot(shooter, feeder, swerve, arm));
+    Controllers.driverController.getShootButton().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
 
-    Controllers.operatorController.getIntakeNote().onTrue(
-      new IntakeNote(feeder, intake)
+    Controllers.driverController.getShootingPrepare().onTrue(new RepeatCommand(new PrepareToShoot(shooter, swerve, arm)));
+
+    Controllers.operatorController.getIntakeNote().whileTrue(
+      new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch())
+        .andThen(Commands.run(()->{}).until(feeder.getNoteSwitch().negate().debounce(0.04)).withTimeout(1.5))  // 0.02
+        .andThen(new WaitCommand(0.06))  // 0.1
+        .andThen(Commands.runOnce(()->{
+          feeder.stop();
+          intake.stop();
+        }).andThen(Commands.run(()->{ // requiring shooter cause i dont want it to run and this was a place to put it
+          feeder.runAtSpeed(-100);
+        }).until(feeder.getNoteSwitch().debounce(0.02))))
     );
 
     Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {
@@ -166,10 +201,12 @@ public class RobotContainer {
     }));
 
     Controllers.operatorController.getArmAutosOn().onTrue(new InstantCommand(()->{
-    arm.setDefaultCommand(Commands.run(()->{
-     arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
-    }, arm));
-    shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
+      arm.setDefaultCommand(Commands.run(()->{
+        arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
+      }, arm));
+      shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
+      Commands.run(()->{}, shooter).schedule();
+      Commands.run(()->{}, arm).schedule();
     }));
 
     Controllers.operatorController.getIntakeOverride().whileTrue(Commands.startEnd(
@@ -213,7 +250,7 @@ public class RobotContainer {
    */ 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return sysidAuto.get();
-    // return autoChooser.getSelected();
+    // return sysidAuto.get();
+    return autoChooser.getSelected();
   }
 }

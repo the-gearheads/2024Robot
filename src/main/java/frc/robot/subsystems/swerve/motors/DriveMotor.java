@@ -4,51 +4,57 @@ import static frc.robot.Constants.SwerveConstants.*;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
-
-import edu.wpi.first.math.controller.PIDController;
 
 public class DriveMotor {
 
   CANSparkFlex flex;
   RelativeEncoder encoder;
 
-  PIDController pid = new PIDController(DRIVE_PID[0], DRIVE_PID[1], DRIVE_PID[2]);
+  SparkPIDController pid;
 
   String modulePath;
   boolean manualVoltageOnly = false;
+  double driveSetpoint = 0;
 
   int index;
 
   /* id is the CAN id, index is the index into the array of modules and stuff */
   public DriveMotor(int id, int index, String modulePath) {
     flex = new CANSparkFlex(id, MotorType.kBrushless);
+    pid = flex.getPIDController();
+    pid.setP((DRIVE_PID[0] / 12.0) * DRIVE_VEL_FACTOR);
+    pid.setI(0);
+    pid.setD(0);
     encoder = flex.getEncoder();
     this.modulePath = modulePath;
     this.index = index;
   }
 
   public void log() {
-    Logger.recordOutput(modulePath + "/driveVolts", flex.getAppliedOutput() * flex.getBusVoltage());
+    Logger.recordOutput(modulePath + "/driveVolts", getVoltage());
     Logger.recordOutput(modulePath + "/drivePos", getPosition());
     Logger.recordOutput(modulePath + "/driveVel", getVelocity());
-    Logger.recordOutput(modulePath + "/targetSpeed", pid.getSetpoint());
+    Logger.recordOutput(modulePath + "/targetSpeed", driveSetpoint);
     Logger.recordOutput(modulePath + "/manualVoltageOnly", manualVoltageOnly);
   }
 
   public void setSpeed(double speed) {
-    pid.setSetpoint(speed);
+    driveSetpoint = speed;
+    pid.setReference(speed, ControlType.kVelocity, 0, DRIVE_FEEDFORWARD.calculate(speed));
+  }
+
+  public double getVoltage() {
+    return flex.getAppliedOutput() * flex.getBusVoltage();
   }
 
   public void periodic() {
-    if (manualVoltageOnly) {
-      return;
-    }
-    setVoltage(pid.calculate(getVelocity()) + DRIVE_FEEDFORWARD.calculate(pid.getSetpoint()));
   }
 
   /* meant for sysid and stuff */
@@ -57,7 +63,7 @@ public class DriveMotor {
   }
 
   public void setVoltage(double volts) {
-    flex.setVoltage(volts);
+    pid.setReference(volts, ControlType.kVoltage);
   }
 
   public double getPosition() {

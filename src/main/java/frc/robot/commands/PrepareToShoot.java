@@ -2,30 +2,31 @@ package frc.robot.commands;
 
 import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
-public class Shoot extends Command {
+public class PrepareToShoot extends Command {
   Shooter shooter;
-  Feeder feeder;
   Swerve swerve;
   Arm arm;
 
-  public Shoot(Shooter shooter, Feeder feeder, Swerve swerve, Arm arm) {
+  public PrepareToShoot(Shooter shooter, Swerve swerve, Arm arm) {
     this.shooter = shooter;
-    this.feeder = feeder;
     this.swerve = swerve;
     this.arm = arm;
-    addRequirements(feeder, shooter, arm);
+    addRequirements(shooter, arm);
   }
 
   @Override
   public void initialize() {
+  }
+
+  @Override
+  public void execute() {
     shooter.setSpeed(DEFAULT_SPEED);
     arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
   }
@@ -33,14 +34,7 @@ public class Shoot extends Command {
   @Override
   public boolean isFinished() {
     double shooterAngle = ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation());
-    return shooter.atSpeed() && swerve.atSpeakerYaw() && arm.getAngle().getRadians() == shooterAngle;
+    return shooter.atSpeed() && swerve.atSpeakerYaw() && MathUtil.isNear(arm.getAngle().getRadians(), shooterAngle, 0.01);
   }
 
-  @Override
-  public void end(boolean interrupted) {
-    if (!interrupted) {
-      feeder.run();
-      new WaitCommand(0.5);
-    }
-  }
 }

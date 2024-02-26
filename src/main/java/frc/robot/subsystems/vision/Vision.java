@@ -21,11 +21,11 @@ import static frc.robot.Constants.VisionConstants.*;
 
 public class Vision extends SubsystemBase {
   private PhotonCamera cameraFront;
-  private PhotonCamera cameraRight;
+  // private PhotonCamera cameraRight;
   private AprilTagFieldLayout field;
   private PoseStrategy strategy;
   private PhotonPoseEstimator frontEstimator;
-  private PhotonPoseEstimator rightEstimator;
+  // private PhotonPoseEstimator rightEstimator;
 
   public Vision() {
     cameraFront = new PhotonCamera(FRONT_CAM_NAME);
@@ -40,6 +40,7 @@ public class Vision extends SubsystemBase {
       System.out.println(AprilTagFields.k2024Crescendo.m_resourceFile);
     }
     strategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+    // strategy = PoseStrategy.LOWEST_AMBIGUITY;
 
     frontEstimator = new PhotonPoseEstimator(field, strategy, cameraFront, FRONT_CAM_TRANSFORM);
     // rightEstimator = new PhotonPoseEstimator(field, strategy, cameraRight, RIGHT_TRANSFORM);

@@ -56,7 +56,7 @@ public final class Constants {
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
     public static final double DRIVE_RATIO = (45.0 * 22) / (DRIVE_PINION_TOOTH_COUNT * 15);
 
-    public static final double ODOMETRY_FREQUENCY = 100;
+    public static final double ODOMETRY_FREQUENCY = 50;
 
     // Throughbore encoder is directly on the output steer shaft
     public static final double STEER_RATIO = 1;
@@ -72,7 +72,7 @@ public final class Constants {
 
 
     public static final double[] STEER_PIDF = {1, 0, 0, 0}; // apparently just a P value of 1 worked for us??? i wanna test that a bit more throughly
-    public static final double[] DRIVE_PID = {0.04, 0, 0, 1 / DRIVE_FREE_SPD};
+    public static final double[] DRIVE_PID = {0.04, 0, 0};
     public static final SimpleMotorFeedforward DRIVE_FEEDFORWARD = new SimpleMotorFeedforward(0.25521, 2.0821, 0.10605);
 
 
@@ -84,7 +84,7 @@ public final class Constants {
     public static final double MAX_MOD_TRANS_SPEED = 1; // m/s
     public static final double MAX_MOD_ROT_SPEED = 1; // rad/s
 
-    public static final double FACING_SPEAKER_TOLERANCE = Units.degreesToRadians(1);
+    public static final double FACING_SPEAKER_TOLERANCE = (1.0 / 360.0) * (2 * Math.PI);
   }
 
   public static class ShooterConstants {
@@ -101,8 +101,8 @@ public final class Constants {
     public static final int MAIN_ARM_ID = 10;
     public static final int FOLLOWER_ARM_ID = 9;
     public static final double MAX_ANGLE_DEG = 110.17978;
-    public static final double MIN_ANGLE_DEG = 19.996227;
-    public static final double ARM_OFFSET = 0.16789;
+    public static final double MIN_ANGLE_DEG = 16.5;
+    public static final double ARM_OFFSET = -0.100539;
     public static final double ARM_POS_FACTOR = 9.0/20.0 * 2 * Math.PI; // 20:9 artio between encoder and arm, also conv to radians
     public static final double ARM_ANGLE_LIVE_FF_THRESHOLD = 10; //deg
     public static final double ARM_LENGTH = 0.6660; // meters, sim and mechanism2d only
@@ -111,14 +111,16 @@ public final class Constants {
     public static final ArmFeedforward SIM_FEEDFORWARD = new ArmFeedforward(0.2509, 0.099081, 5.5782, 0.28261); // both of these are wrong but this one is less wrong for the purposes of sim
     public static final double[] PID = {34.566, 0, 1.0137};
     public static final Constraints ARM_CONSTRAINTS = new Constraints(
-      Units.degreesToRadians(101), // max vel, deg/s
+      Units.degreesToRadians(101), // max vel, deg/s  101
       Units.degreesToRadians(400) // max acc, deg/s^2 
     );
     public static final double MAX_ANGLE = (MAX_ANGLE_DEG / 360.0) * (2 * Math.PI);
     public static final double MIN_ANGLE = (MIN_ANGLE_DEG / 360.0) * (2 * Math.PI);
 
-    public static final double[] SPLINE_DISTANCES = {1.0959, 1.5100, 2.0153, 2.4980, 3.0284, 3.5106, 4.0048, 4.9951};
-    public static final double[] SPLINE_ANGLES =    {0.9564, 0.8569, 0.7608, 0.6672, 0.5920, 0.5588, 0.5090, 0.4762};
+    // public static final double[] SPLINE_DISTANCES = {1.0959, 1.5100, 2.0153, 2.4980, 3.0284, 3.5106, 4.0048, 4.9951};  // old values
+    // public static final double[] SPLINE_ANGLES =    {0.9564, 0.8569, 0.7608, 0.6672, 0.5920, 0.5588, 0.5090, 0.4762};  // old values
+    public static final double[] SPLINE_DISTANCES = {1.201, 1.538, 2.026, 2.522, 3.017, 3.465, 4.00, 4.416, 5.17};
+    public static final double[] SPLINE_ANGLES =    {0.893, 0.803, 0.692, 0.592, 0.507, 0.463, 0.416, 0.409, 0.380};
 
     public static final Measure<Voltage> armOverrideVoltage = Volts.of(2);
   }
@@ -129,7 +131,7 @@ public final class Constants {
     public static final int NOTE_SWITCH_ID = 9;
     public static final double[] PID = {0.00038793, 0, 0};
     public static final double[] HANDOFF_PID = {0.0019749, 0, 0}; 
-    public static final double SPEED = 5000.0;
+    public static final double SPEED = 3000.0;
     public static final SimpleMotorFeedforward FEEDER_FF = new SimpleMotorFeedforward(0.065837, 0.0019032, 0.00021355); 
     public static final SimpleMotorFeedforward HANDOFF_FF = new SimpleMotorFeedforward(0.1132, 0.0018353, 0.00013306);
   }
@@ -137,7 +139,7 @@ public final class Constants {
   public static class IntakeConstants {
     public static final int ID = 14;
     public static final double[] PID = {0.0018087, 0, 0};
-    public static final double SPEED = 4750;
+    public static final double SPEED = 5500;
     public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.26764, 0.0018386, 0.00010506);
   }
 
@@ -152,9 +154,9 @@ public final class Constants {
     public static final String RIGHT_CAM_NAME = "Right Camera";  // Placeholder
 
     public static final Transform3d FRONT_CAM_TRANSFORM = 
-      new Transform3d(new Translation3d(0.41, 0.5534, 0.22), // 0.5534  WHY IS THIS CORRECT AGHHHHHHHH
-      new Rotation3d(0, Units.degreesToRadians(-21), Units.degreesToRadians(-4))
-    );  // Placeholder
+      new Transform3d(new Translation3d(0.41, 0.15, 0.19),
+      new Rotation3d(Units.degreesToRadians(-2), Units.degreesToRadians(-21), Units.degreesToRadians(-4))  // 15.5
+    );
     // public static final Transform3d RIGHT_TRANSFORM = new Transform3d();  // Placeholder
   }
   public static class Controllers {

@@ -34,14 +34,14 @@ public class XboxDriverController implements DriverController {
   }
 
   @Override
-  public double getSlowModifierAxis() {
-    return Controllers.deadband(controller.getLeftTriggerAxis());
+  public Trigger getShootingPrepare() {
+    return new Trigger(() -> controller.getLeftBumper());
   }
 
-  @Override
-  public Trigger getGyroZeroButton() {
-    return new Trigger(()-> controller.getLeftBumper());
-  }
+  // @Override
+  // public Trigger getGyroZeroButton() {
+  //   return new Trigger(()-> controller.getLeftBumper());
+  // }
 
     @Override
   public Trigger getResetPoseButton() {
