@@ -17,16 +17,19 @@ import static frc.robot.Constants.ArmConstants.*;
 public class ShooterCalculations {
   // not quite sure whether to have separate variables for red and blue but for now this is fine
   static Translation3d speakerPosition = new Translation3d(0.173, 5.543, 2.216);
+  static Translation2d speakerBackPosition = new Translation2d(0.0, 5.55);
   // Distance (m) -> Angle (rad)
   static PolynomialSplineFunction shooterAngleFunction = new SplineInterpolator().interpolate(SPLINE_DISTANCES, SPLINE_ANGLES);
   
   public static Rotation2d getYawToSpeaker(Translation2d robotPos) {
-    Translation2d xyPos = speakerPosition.toTranslation2d();
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     if(isRed) {
-      xyPos = GeometryUtil.flipFieldPosition(xyPos);
+      speakerBackPosition = GeometryUtil.flipFieldPosition(speakerBackPosition);
     }
-    Rotation2d angle = new Rotation2d(Math.atan2(xyPos.getY() - robotPos.getY(), xyPos.getX() - robotPos.getX()));
+
+    // Rotation2d angle = new Rotation2d(Math.atan2(xyPos.getY() - robotPos.getY(), xyPos.getX() - robotPos.getX()));
+    Rotation2d angle = speakerBackPosition.minus(robotPos).getAngle();
+
 
     Logger.recordOutput("Calculations/YawToSpeaker", angle.getDegrees());
 
