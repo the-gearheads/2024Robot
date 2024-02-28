@@ -6,7 +6,9 @@ import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.util.GeometryUtil;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -23,12 +25,15 @@ public class ShooterCalculations {
   
   public static Rotation2d getYawToSpeaker(Translation2d robotPos) {
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+    Translation2d targetAngle = speakerBackPosition;
     if(isRed) {
-      speakerBackPosition = GeometryUtil.flipFieldPosition(speakerBackPosition);
+      targetAngle = GeometryUtil.flipFieldPosition(speakerBackPosition);
     }
 
+    Logger.recordOutput("Calculations/SpeakerBackPos", new Pose3d(new Translation3d(targetAngle.getX(), targetAngle.getY(), speakerPosition.getZ()), new Rotation3d()));
+
     // Rotation2d angle = new Rotation2d(Math.atan2(xyPos.getY() - robotPos.getY(), xyPos.getX() - robotPos.getX()));
-    Rotation2d angle = speakerBackPosition.minus(robotPos).getAngle();
+    Rotation2d angle = targetAngle.minus(robotPos).getAngle();
 
 
     Logger.recordOutput("Calculations/YawToSpeaker", angle.getDegrees());
@@ -42,6 +47,7 @@ public class ShooterCalculations {
     if(isRed) {
       pos = GeometryUtil.flipFieldPosition(pos);
     }
+    Logger.recordOutput("Calculations/SpeakerPos", new Pose3d(speakerPosition, new Rotation3d()));
     double dist = pos.getDistance(robotPos);
     Logger.recordOutput("Calculations/DistanceToSpeaker", dist);
     return dist;

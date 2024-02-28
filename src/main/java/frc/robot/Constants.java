@@ -79,6 +79,7 @@ public final class Constants {
     public static final int DRIVE_CURRENT_LIMIT = 80;
     public static final int STEER_CURRENT_LIMIT = 40;
 
+    public static final double PATHPLANNER_MAX_MOD_SPEED = 5; // m/s I think
     // For desaturateWheelSpeeds
     public static final double MAX_MOD_SPEED = 1;  // m/s, placeholders
     public static final double MAX_MOD_TRANS_SPEED = 1; // m/s

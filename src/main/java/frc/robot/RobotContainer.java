@@ -120,7 +120,7 @@ public class RobotContainer {
       intake.run();
       feeder.run();
       shooter.setSpeed(DEFAULT_SPEED);
-    }, feeder));
+    }, feeder, intake, shooter));
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
