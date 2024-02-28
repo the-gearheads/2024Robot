@@ -61,33 +61,7 @@
                       "data": {
                         "waitTime": 0.5
                       }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutoArmHeight"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeStart"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
+                    },
                     {
                       "type": "path",
                       "data": {
@@ -99,43 +73,11 @@
                       "data": {
                         "waitTime": 0.5
                       }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutoArmHeight"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeAndShoot"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
+                    },
                     {
                       "type": "path",
                       "data": {
                         "pathName": "F2F3"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
                       }
                     }
                   ]
