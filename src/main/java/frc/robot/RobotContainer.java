@@ -123,6 +123,12 @@ public class RobotContainer {
     }, feeder, intake, shooter));
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
+    NamedCommands.registerCommand("DisableVision", new InstantCommand(() -> {
+      swerve.disableVision();
+    }));
+    NamedCommands.registerCommand("EnableVision", new InstantCommand(() -> {
+      swerve.enableVision();
+    }));
   }
 
   public void updateControllers() {

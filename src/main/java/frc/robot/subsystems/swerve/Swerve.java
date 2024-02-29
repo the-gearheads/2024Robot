@@ -58,6 +58,7 @@ public class Swerve extends SubsystemBase {
   Field2d field = new Field2d();
   /* Want to put vision and path states on this field */
   Field2d vpField = new Field2d();
+  boolean visionEnabled = true;
 
   int simGyro = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
   SimDouble simGyroAngle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(simGyro, "Yaw"));
@@ -303,10 +304,10 @@ public class Swerve extends SubsystemBase {
 
     Optional<EstimatedRobotPose> frontVision = vision.getGlobalPoseFromFront();
     Optional<EstimatedRobotPose> rightVision = vision.getGlobalPoseFromFront();
-    if (frontVision.isPresent()) {
+    if (frontVision.isPresent() && isVisionEnabled()) {
       poseEstimator.addVisionMeasurement(frontVision.get().estimatedPose.toPose2d(), frontVision.get().timestampSeconds);
     }
-    if (rightVision.isPresent()) {
+    if (rightVision.isPresent() && isVisionEnabled()) {
       poseEstimator.addVisionMeasurement(rightVision.get().estimatedPose.toPose2d(), rightVision.get().timestampSeconds);
     }
 
@@ -399,6 +400,18 @@ public class Swerve extends SubsystemBase {
         this
       )
     );
+  }
+
+  public boolean isVisionEnabled() {
+    return visionEnabled;
+  }
+
+  public void disableVision() {
+    this.visionEnabled = false;
+  }
+
+  public void enableVision() {
+    this.visionEnabled = true;
   }
 
   /* Not really volts */
