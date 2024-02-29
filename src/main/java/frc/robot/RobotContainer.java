@@ -42,7 +42,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -102,16 +101,16 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeStart", Commands.run(intake::run, intake));
     NamedCommands.registerCommand("IntakeStop", Commands.run(intake::stop, intake));
 
-    NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch())
-        .andThen(Commands.run(()->{}).until(feeder.getNoteSwitch().negate().debounce(0.04)).withTimeout(1.5))  // 0.02
-        .andThen(new WaitCommand(0.06))  // 0.1
-        .andThen(Commands.runOnce(()->{
-          feeder.stop();
-          intake.stop();
-        }).andThen(Commands.run(()->{ 
-          feeder.runAtSpeed(-100);
-        }).until(feeder.getNoteSwitch().debounce(0.02)))));
-  
+    // NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch())
+    //     .andThen(Commands.run(()->{}).until(feeder.getNoteSwitch().negate().debounce(0.04)).withTimeout(1.5))  // 0.02
+    //     .andThen(new WaitCommand(0.06))  // 0.1
+    //     .andThen(Commands.runOnce(()->{
+    //       feeder.stop();
+    //       intake.stop();
+    //     }).andThen(Commands.run(()->{ 
+    //       feeder.runAtSpeed(-100);
+    //     }).until(feeder.getNoteSwitch().debounce(0.02)))));
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake));
     NamedCommands.registerCommand("PrepareShoot", new PrepareToShoot(shooter, swerve, arm));
     NamedCommands.registerCommand("AutoArmHeight", new AutoArmHeight(arm, swerve));
     NamedCommands.registerCommand("ShootWhenReady", new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
@@ -162,17 +161,19 @@ public class RobotContainer {
 
     Controllers.driverController.getShootingPrepare().onTrue(new RepeatCommand(new PrepareToShoot(shooter, swerve, arm)));
 
-    Controllers.operatorController.getIntakeNote().whileTrue(
-      new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch())
-        .andThen(Commands.run(()->{}).until(feeder.getNoteSwitch().negate().debounce(0.04)).withTimeout(1.5))  // 0.02
-        .andThen(new WaitCommand(0.06))  // 0.1
-        .andThen(Commands.runOnce(()->{
-          feeder.stop();
-          intake.stop();
-        }).andThen(Commands.run(()->{ // requiring shooter cause i dont want it to run and this was a place to put it
-          feeder.runAtSpeed(-100);
-        }).until(feeder.getNoteSwitch().debounce(0.02))))
-    );
+    // Controllers.operatorController.getIntakeNote().whileTrue(
+    //   new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch())
+    //     .andThen(Commands.run(()->{}).until(feeder.getNoteSwitch().negate().debounce(0.04)).withTimeout(1.5))  // 0.02
+    //     .andThen(new WaitCommand(0.06))  // 0.1
+    //     .andThen(Commands.runOnce(()->{
+    //       feeder.stop();
+    //       intake.stop();
+    //     }).andThen(Commands.run(()->{ // requiring shooter cause i dont want it to run and this was a place to put it
+    //       feeder.runAtSpeed(-100);
+    //     }).until(feeder.getNoteSwitch().debounce(0.02))))
+    // );
+
+    Controllers.operatorController.getIntakeNote().whileTrue(new IntakeNote(feeder, intake));
 
     Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {
        shooter.setSpeed(Constants.ShooterConstants.DEFAULT_SPEED);

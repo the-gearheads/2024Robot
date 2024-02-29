@@ -28,7 +28,7 @@ public class IntakeNote extends Command {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return feeder.getBeamBreakSwitch().getAsBoolean();
   }
 
   @Override

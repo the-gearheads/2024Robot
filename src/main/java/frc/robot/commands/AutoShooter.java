@@ -26,7 +26,7 @@ public class AutoShooter extends Command {
   @Override
   public void execute() {
     Pose2d pose = swerve.getPoseAllianceRelative();
-    if (shooterSpin.contains(pose) && feeder.getNoteSwitch().getAsBoolean()) {
+    if (shooterSpin.contains(pose) && feeder.getBeamBreakSwitch().getAsBoolean()) {
       shooter.setSpeed(DEFAULT_SPEED);
     } else {
       shooter.setSpeed(0);
