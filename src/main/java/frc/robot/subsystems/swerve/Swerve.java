@@ -319,6 +319,7 @@ public class Swerve extends SubsystemBase {
     Logger.recordOutput("Swerve/CurrentSpeeds", getRobotRelativeSpeeds());
     Logger.recordOutput("Swerve/GyroAngle", -Units.degreesToRadians(gyro.getYaw()));
     Logger.recordOutput("Swerve/atSpeakerYaw", atSpeakerYaw());
+    Logger.recordOutput("Vision/VisionEnabled", isVisionEnabled());
     ShooterCalculations.getShooterAngle(getPose().getTranslation());
     ShooterCalculations.getYawToSpeaker(getPose().getTranslation());
     field.setRobotPose(getPose());
