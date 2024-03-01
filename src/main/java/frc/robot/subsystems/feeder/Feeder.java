@@ -19,7 +19,6 @@ import org.littletonrobotics.junction.Logger;
 public class Feeder extends SubsystemBase {
   public FlywheelMotor feederMotor = new FlywheelMotor("Feeder", FEEDER_ID, PID, FEEDER_FF, true, true);
   public FlywheelMotor handoffMotor = new FlywheelMotor("Handoff", HANDOFF_ID, PID, FEEDER_FF, true, true);
-  Trigger irSwitch = new Trigger(new DigitalInput(IR_SWITCH_ID)::get).negate().debounce(0.02);
   Trigger beamBreakSwitch = new Trigger(new DigitalInput(BEAMBREAK_SWITCH_ID)::get).negate();
   public Feeder() {
     SmartDashboard.putNumber("Feeder/RunSpeed", SPEED);
@@ -30,7 +29,6 @@ public class Feeder extends SubsystemBase {
     feederMotor.log();
     handoffMotor.periodic();
     handoffMotor.log();
-    Logger.recordOutput("Feeder/irSwitch", irSwitch.getAsBoolean());
     Logger.recordOutput("Feeder/beamBreakSwitch", beamBreakSwitch.getAsBoolean());
   }
   
@@ -54,10 +52,6 @@ public class Feeder extends SubsystemBase {
 
   public Command getRunFeederCommand(double seconds) {
     return Commands.run(this::run, this).andThen(new WaitCommand(seconds)).andThen(Commands.run(this::stop, this));
-  }
-
-  public Trigger getIrSwitch() {
-    return irSwitch;
   }
 
   public Trigger getBeamBreakSwitch() {

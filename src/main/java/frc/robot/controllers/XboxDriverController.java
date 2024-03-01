@@ -24,18 +24,18 @@ public class XboxDriverController implements DriverController {
 
   @Override
   public double getRotateAxis() {
-    controller.setRumble(RumbleType.kBothRumble, Math.abs(controller.getRightX()));
+    // controller.setRumble(RumbleType.kBothRumble, Math.abs(controller.getRightX()));
     return Controllers.deadband(-controller.getRightX());
   }
 
   @Override
   public double getSpeedModifierAxis() {
-    return Controllers.deadband(controller.getRightTriggerAxis());
+    return Controllers.deadband(controller.getLeftTriggerAxis());
   }
 
   @Override
   public Trigger getShootingPrepare() {
-    return new Trigger(() -> controller.getLeftBumper());
+    return new Trigger(() -> controller.getRightTriggerAxis() > 0.2);
   }
 
   // @Override
@@ -43,23 +43,38 @@ public class XboxDriverController implements DriverController {
   //   return new Trigger(()-> controller.getLeftBumper());
   // }
 
-    @Override
-  public Trigger getResetPoseButton() {
-    return new Trigger(()-> controller.getRightBumper());
+  // @Override
+  // public Trigger getResetPoseButton() {
+  //   return new Trigger(()-> controller.getRightBumper());
+  // }
+
+  // @Override
+  // public Trigger getPatthfindButton() {
+  //   return new Trigger(() -> controller.getXButton());
+  // }
+
+  // @Override
+  // public Trigger getAlignToSpeakerBtn() {
+  //   return new Trigger(() -> controller.getYButton());
+  // }
+
+  @Override
+  public Trigger getAutoShootBtn() {
+    return new Trigger(() -> controller.getAButton());
   }
 
   @Override
-  public Trigger getPatthfindButton() {
-    return new Trigger(() -> controller.getXButton());
+  public Trigger getShootBtn() {
+    return new Trigger(() -> controller.getBButton());
   }
 
   @Override
-  public Trigger getAlignToSpeakerBtn() {
+  public Trigger getSpeakerMode() {
     return new Trigger(() -> controller.getYButton());
   }
 
   @Override
-  public Trigger getShootButton() {
-    return new Trigger(() -> controller.getAButton());
+  public Trigger getAmpMode() {
+    return new Trigger(() -> controller.getXButton());
   }
 }

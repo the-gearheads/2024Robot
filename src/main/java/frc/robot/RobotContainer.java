@@ -42,6 +42,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -100,26 +102,23 @@ public class RobotContainer {
     NamedCommands.registerCommand("FeederStop", Commands.run(feeder::stop, feeder));
     NamedCommands.registerCommand("IntakeStart", Commands.run(intake::run, intake));
     NamedCommands.registerCommand("IntakeStop", Commands.run(intake::stop, intake));
-
-    // NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch())
-    //     .andThen(Commands.run(()->{}).until(feeder.getNoteSwitch().negate().debounce(0.04)).withTimeout(1.5))  // 0.02
-    //     .andThen(new WaitCommand(0.06))  // 0.1
-    //     .andThen(Commands.runOnce(()->{
-    //       feeder.stop();
-    //       intake.stop();
-    //     }).andThen(Commands.run(()->{ 
-    //       feeder.runAtSpeed(-100);
-    //     }).until(feeder.getNoteSwitch().debounce(0.02)))));
+    
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake));
     NamedCommands.registerCommand("PrepareShoot", new PrepareToShoot(shooter, swerve, arm));
     NamedCommands.registerCommand("AutoArmHeight", new AutoArmHeight(arm, swerve));
     NamedCommands.registerCommand("ShootWhenReady", new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
+    NamedCommands.registerCommand("FeedNote", new SequentialCommandGroup(
+      new WaitUntilCommand(feeder.getBeamBreakSwitch()),
+      Commands.run(feeder::run, feeder).until(feeder.getBeamBreakSwitch().debounce(0.05).negate())
+    ));
     NamedCommands.registerCommand("AlignToSpeakerYaw", new SwerveAlignToSpeaker(swerve));
     NamedCommands.registerCommand("IntakeAndShoot", Commands.run(()->{
       intake.run();
       feeder.run();
       shooter.setSpeed(DEFAULT_SPEED);
     }, feeder, intake, shooter));
+
+
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
     NamedCommands.registerCommand("DisableVision", new InstantCommand(() -> {
@@ -157,7 +156,7 @@ public class RobotContainer {
       return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(1, 1), swerve.getPose().getRotation()))); // MUST be at least 6 bc of size of blocks in minecraft
     }));
 
-    Controllers.driverController.getShootButton().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
+    Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
 
     Controllers.driverController.getShootingPrepare().onTrue(new RepeatCommand(new PrepareToShoot(shooter, swerve, arm)));
 

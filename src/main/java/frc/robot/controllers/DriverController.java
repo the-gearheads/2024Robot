@@ -43,7 +43,19 @@ public interface DriverController {
     return new Trigger(() -> false);
   }
 
-  public default Trigger getShootButton() {
+  public default Trigger getAutoShootBtn() {
+    return new Trigger(() -> false);
+  }
+  
+  public default Trigger getShootBtn() {
+    return new Trigger(() -> false);
+  }
+
+  public default Trigger getSpeakerMode() {
+    return new Trigger(() -> false);
+  }
+
+  public default Trigger getAmpMode() {
     return new Trigger(() -> false);
   }
 }
