@@ -112,7 +112,7 @@ public final class Constants {
     public static final ArmFeedforward SIM_FEEDFORWARD = new ArmFeedforward(0.2509, 0.099081, 5.5782, 0.28261); // both of these are wrong but this one is less wrong for the purposes of sim
     public static final double[] PID = {34.566, 0, 1.0137};
     public static final Constraints ARM_CONSTRAINTS = new Constraints(
-      Units.degreesToRadians(101), // max vel, deg/s  101
+      Units.degreesToRadians(400), // max vel, deg/s  101
       Units.degreesToRadians(400) // max acc, deg/s^2 
     );
     public static final double MAX_ANGLE = (MAX_ANGLE_DEG / 360.0) * (2 * Math.PI);
@@ -161,7 +161,7 @@ public final class Constants {
     // );
     public static final Transform3d FRONT_CAM_TRANSFORM = 
       new Transform3d(new Translation3d(0.28575, 0.00635, 0.212725),
-      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(30), Units.degreesToRadians(0))
+      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-30), Units.degreesToRadians(0))
     );
     // public static final Transform3d RIGHT_TRANSFORM = new Transform3d();  // Placeholder
   }
