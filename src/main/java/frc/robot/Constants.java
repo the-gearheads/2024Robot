@@ -173,6 +173,9 @@ public final class Constants {
     public static final double MOD_TRANS_SPEED_FACTOR = 6;
     public static final double MOD_ROT_SPEED_FACTOR = 3;
 
+    public static final double MOD_TRANS_SLOW_FACTOR = 0.3;
+    public static final double MOD_ROT_SLOW_FACTOR = 0.3;
+
   }
 
   public static class FieldConstants {

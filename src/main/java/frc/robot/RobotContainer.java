@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
@@ -103,10 +104,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake));
     NamedCommands.registerCommand("PrepareShoot", new PrepareToShoot(shooter, swerve, arm));
     NamedCommands.registerCommand("AutoArmHeight", new AutoArmHeight(arm, swerve));
-    NamedCommands.registerCommand("ShootWhenReady", new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
+    NamedCommands.registerCommand("ShootWhenReady", new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand()));
     NamedCommands.registerCommand("FeedNote", new SequentialCommandGroup(
       new WaitUntilCommand(feeder.getBeamBreakSwitch()),
-      Commands.run(feeder::run, feeder).until(feeder.getBeamBreakSwitch().debounce(0.05).negate())
+      feeder.getRunFeederCommand()
     ));
     NamedCommands.registerCommand("AlignToSpeakerYaw", new SwerveAlignToSpeaker(swerve));
     NamedCommands.registerCommand("IntakeAndShoot", Commands.run(()->{
@@ -138,23 +139,9 @@ public class RobotContainer {
     Controllers.updateActiveControllerInstance();
 
     // teleop controlls
-    Controllers.driverController.getGyroZeroButton().onTrue(new InstantCommand(() -> {
-      Rotation2d rot = new Rotation2d(180);
-      if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) rot = new Rotation2d(Math.PI);
-      swerve.resetPose(new Pose2d(swerve.getPose().getTranslation(), rot));
-    }));
-
-    Controllers.driverController.getResetPoseButton().onTrue(new InstantCommand(() -> {
-        Pose2d pose = new Pose2d(new Translation2d(Units.inchesToMeters(36.2 + (29.875 / 2.0)), Units.inchesToMeters(218.4)), Rotation2d.fromDegrees(180));
-        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) pose = GeometryUtil.flipFieldPose(pose);
-        swerve.resetPose(pose);
-    }));
-
-    Controllers.driverController.getPatthfindButton().onTrue(new ProxyCommand(()->{
-      return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(1, 1), swerve.getPose().getRotation()))); // MUST be at least 6 bc of size of blocks in minecraft
-    }));
-
-    Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
+    Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand()));
+    Controllers.driverController.getAlignBtn().whileTrue(new RepeatCommand(new PrepareToShoot(shooter, swerve, arm)));
+    
 
 
     // Controllers.operatorController.getIntakeNote().whileTrue(

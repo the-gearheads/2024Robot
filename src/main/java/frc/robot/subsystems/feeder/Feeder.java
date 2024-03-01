@@ -54,6 +54,10 @@ public class Feeder extends SubsystemBase {
     return Commands.run(this::run, this).andThen(new WaitCommand(seconds)).andThen(Commands.run(this::stop, this));
   }
 
+  public Command getRunFeederCommand() {
+    return Commands.run(this::run, this).until(this.getBeamBreakSwitch().debounce(0.04).negate());
+  }
+
   public Trigger getBeamBreakSwitch() {
     return beamBreakSwitch;
   }

@@ -40,13 +40,14 @@ public class Teleop extends Command {
     var attemptingToRotate = MathUtil.applyDeadband(rot, 0.02) != 0; 
 
     double speedMod = Math.abs(Math.pow(Controllers.driverController.getSpeedModifierAxis(), 2));
+    boolean slowMod = Controllers.driverController.getSlowBtn().getAsBoolean();
 
     x = Math.pow(x, 2) * Math.signum(x);
     y = Math.pow(y, 2) * Math.signum(y);
     rot = Math.pow(rot, 3);
 
-    // maybe consider throwing a slewratelimiter here, will test when robot is present
-
+    // maybe consider throwing a slewratelimiter here
+    
     x *= BASE_TRANS_SPEED;
     y *= BASE_TRANS_SPEED;
     rot *= BASE_ROT_SPEED;
@@ -55,6 +56,12 @@ public class Teleop extends Command {
     y   += y   * speedMod * MOD_TRANS_SPEED_FACTOR;
     rot += rot * speedMod * MOD_ROT_SPEED_FACTOR;
 
+    if (slowMod) {
+      x *= MOD_TRANS_SLOW_FACTOR;
+      y *= MOD_TRANS_SLOW_FACTOR;
+      rot *= MOD_ROT_SLOW_FACTOR;
+    }
+    
     var speeds = new ChassisSpeeds(x, y, rot);
 
     var forcedAngle = Controllers.driverController.getAlignBtn().getAsBoolean() || Controllers.driverController.getAutoShootBtn().getAsBoolean() ?
