@@ -19,7 +19,11 @@ public interface DriverController {
     return 0;
   }
 
-  public default Trigger getShootingPrepare() {
+  public default Trigger getAlignBtn() {
+    return new Trigger(() -> false);
+  }
+
+  public default Trigger getSlowBtn() {
     return new Trigger(() -> false);
   }
 

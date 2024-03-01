@@ -57,7 +57,7 @@ public class Teleop extends Command {
 
     var speeds = new ChassisSpeeds(x, y, rot);
 
-    var forcedAngle = Controllers.driverController.getShootingPrepare().getAsBoolean() || Controllers.driverController.getAutoShootBtn().getAsBoolean() ?
+    var forcedAngle = Controllers.driverController.getAlignBtn().getAsBoolean() || Controllers.driverController.getAutoShootBtn().getAsBoolean() ?
                       ShooterCalculations.getYawToSpeaker(swerve.getPose().getTranslation()).getRadians() : null;
     if(forcedAngle != null) headingController.setSetpoint(swerve.getGyroRotation().getRadians());
 

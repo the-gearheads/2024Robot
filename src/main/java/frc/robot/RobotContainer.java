@@ -25,23 +25,13 @@ import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.util.GeometryUtil;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ProxyCommand;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
@@ -140,38 +130,8 @@ public class RobotContainer {
     // Find new controllers
     Controllers.updateActiveControllerInstance();
 
-    Controllers.driverController.getGyroZeroButton().onTrue(new InstantCommand(() -> {
-      Rotation2d rot = new Rotation2d(180);
-      if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) rot = new Rotation2d(Math.PI);
-      swerve.resetPose(new Pose2d(swerve.getPose().getTranslation(), rot));
-    }));
-
-    Controllers.driverController.getResetPoseButton().onTrue(new InstantCommand(() -> {
-        Pose2d pose = new Pose2d(new Translation2d(Units.inchesToMeters(36.2 + (29.875 / 2.0)), Units.inchesToMeters(218.4)), Rotation2d.fromDegrees(180));
-        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) pose = GeometryUtil.flipFieldPose(pose);
-        swerve.resetPose(pose);
-    }));
-
-    Controllers.driverController.getPatthfindButton().onTrue(new ProxyCommand(()->{
-      return swerve.pathFindTo(swerve.getPose().plus(new Transform2d(new Translation2d(1, 1), swerve.getPose().getRotation()))); // MUST be at least 6 bc of size of blocks in minecraft
-    }));
-
-    Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand(2)));
-
-    Controllers.driverController.getShootingPrepare().onTrue(new RepeatCommand(new PrepareToShoot(shooter, swerve, arm)));
-
-    // Controllers.operatorController.getIntakeNote().whileTrue(
-    //   new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch())
-    //     .andThen(Commands.run(()->{}).until(feeder.getNoteSwitch().negate().debounce(0.04)).withTimeout(1.5))  // 0.02
-    //     .andThen(new WaitCommand(0.06))  // 0.1
-    //     .andThen(Commands.runOnce(()->{
-    //       feeder.stop();
-    //       intake.stop();
-    //     }).andThen(Commands.run(()->{ // requiring shooter cause i dont want it to run and this was a place to put it
-    //       feeder.runAtSpeed(-100);
-    //     }).until(feeder.getNoteSwitch().debounce(0.02))))
-    // );
-
+    // teleop controls
+    
     Controllers.operatorController.getIntakeNote().whileTrue(new IntakeNote(feeder, intake));
 
     Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {
