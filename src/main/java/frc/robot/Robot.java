@@ -75,6 +75,7 @@ public class Robot extends LoggedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     m_robotContainer.updateControllers();
+    RobotState.log();
 
     if (DriverStation.isEStopped()) {
       m_robotContainer.leds.setState(LedState.HOT_PINK);
