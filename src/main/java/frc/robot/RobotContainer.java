@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.commands.Align;
 import frc.robot.commands.AutoArmHeight;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.AutonAutoArmHeight;
@@ -33,7 +34,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
@@ -135,19 +135,7 @@ public class RobotContainer {
     // teleop controlls
     Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand()));
     Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand());
-    Controllers.driverController.getAlignBtn().whileTrue(new RepeatCommand(new PrepareToShoot(shooter, swerve, arm)));
-
-    // Controllers.operatorController.getIntakeNote().whileTrue(
-    //   new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch())
-    //     .andThen(Commands.run(()->{}).until(feeder.getNoteSwitch().negate().debounce(0.04)).withTimeout(1.5))  // 0.02
-    //     .andThen(new WaitCommand(0.06))  // 0.1
-    //     .andThen(Commands.runOnce(()->{
-    //       feeder.stop();
-    //       intake.stop();
-    //     }).andThen(Commands.run(()->{ // requiring shooter cause i dont want it to run and this was a place to put it
-    //       feeder.runAtSpeed(-100);
-    //     }).until(feeder.getNoteSwitch().debounce(0.02))))
-    // );
+    Controllers.driverController.getAlignBtn().whileTrue(new Align(shooter, swerve, arm));
 
     Controllers.operatorController.getIntakeNote().whileTrue(new IntakeNote(feeder, intake));
 
@@ -219,13 +207,17 @@ public class RobotContainer {
       feeder
     ));
 
-    Controllers.operatorController.getAmpOverride().whileTrue(Commands.run(
-      ()->{
-        shooter.setTopSpeed(-Constants.ShooterConstants.AMP_SPEED);
-        shooter.setBottomSpeed(Constants.ShooterConstants.AMP_SPEED);
-      },
-      shooter
-    ));
+    Controllers.operatorController.getSetSpeakerModeBtn().onTrue(new InstantCommand(()->{
+      ScoringState.goalMode = ScoringState.GoalMode.SPEAKER;
+    }));
+
+    Controllers.operatorController.getSetAmpModeBtn().onTrue(new InstantCommand(()->{
+      ScoringState.goalMode = ScoringState.GoalMode.AMP;
+    }));
+
+    Controllers.operatorController.getSetStageModeBtn().onTrue(new InstantCommand(()->{
+      ScoringState.goalMode = ScoringState.GoalMode.STAGE;
+    }));
   }
 
   /**

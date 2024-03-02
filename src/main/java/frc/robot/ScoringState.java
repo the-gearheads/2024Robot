@@ -2,9 +2,9 @@ package frc.robot;
 
 import org.littletonrobotics.junction.Logger;
 
-public class RobotState {
-  enum GoalMode {
-    AMP, SPEAKER
+public class ScoringState {
+  public enum GoalMode {
+    AMP, SPEAKER, STAGE
   }
 
   public static GoalMode goalMode = GoalMode.SPEAKER;

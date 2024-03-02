@@ -31,10 +31,6 @@ public class Thrustmaster implements OperatorController {
     return new Trigger(() -> joy.getRawButton(7));
   }
 
-  public Trigger getAmpOverride() {
-    return new Trigger(()->joy.getRawButton(3));
-  }
-
   // right side manual controls shooter -> feeeder -> intake left to right, top forwards, bottom backwards
   public Trigger getShooterOverride() {
     return new Trigger(()->joy.getRawButton(13));
@@ -60,4 +56,15 @@ public class Thrustmaster implements OperatorController {
     return new Trigger(()->joy.getRawButton(16));
   }
 
+  public Trigger getSetAmpModeBtn() {
+    return new Trigger(()->joy.getRawButton(3));
+  }
+  
+  public Trigger getSetSpeakerModeBtn() {
+    return new Trigger(()->joy.getRawButton(4));
+  }
+  
+  public Trigger getSetStageModeBtn() {
+    return new Trigger(()->joy.getRawButton(2));
+  }
 }

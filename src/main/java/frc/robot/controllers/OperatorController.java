@@ -50,4 +50,16 @@ public interface OperatorController {
   public default Trigger getIntakeRevOverride() {
     return new Trigger(()->false);
   }
+  
+  public default Trigger getSetAmpModeBtn() {
+    return new Trigger(()->false);
+  }
+  
+  public default Trigger getSetSpeakerModeBtn() {
+    return new Trigger(()->false);
+  }
+  
+  public default Trigger getSetStageModeBtn() {
+    return new Trigger(()->false);
+  }
 }
