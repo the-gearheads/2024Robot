@@ -60,7 +60,8 @@ public class FlywheelMotor {
 
     // we're just not gonna set the position or velocity conversion factors because they default to rot(/min)
 
-    enc = flex.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
+    // enc = flex.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
+    enc = flex.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
     enc.setAverageDepth(1);
     enc.setMeasurementPeriod(8);
 
