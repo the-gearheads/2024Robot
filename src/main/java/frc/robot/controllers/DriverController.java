@@ -1,65 +1,66 @@
 package frc.robot.controllers;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-public interface DriverController {
-  public default double getTranslateXAxis() {
-    return 0;
+public class DriverController {
+
+  XboxController controller;
+
+  public DriverController(int id) {
+    if(id == -1) {
+      this.controller = null;
+      return;
+    }
+    this.controller = new XboxController(id);
   }
 
-  public default double getTranslateYAxis() {
-    return 0;
+  private boolean isNull() {
+    return controller == null;
   }
 
-  public default double getRotateAxis() {
-    return 0;
-  }
-
-  public default double getSpeedModifierAxis() {
-    return 0;
-  }
-
-  public default Trigger getAlignBtn() {
+  private Trigger emptyTrigger() {
     return new Trigger(() -> false);
   }
 
-  public default Trigger getSlowBtn() {
-    return new Trigger(() -> false);
+  public double getTranslateXAxis() {
+    if(isNull()) return 0;
+    return Controllers.deadband(-controller.getLeftY());
   }
 
-  public default Trigger getGyroZeroButton() {
-    return new Trigger(() -> false);
+  public double getTranslateYAxis() {
+    if(isNull()) return 0;
+    return Controllers.deadband(-controller.getLeftX());
   }
 
-  public default Trigger getPatthfindButton() {
-    return new Trigger(() -> false);
+  public double getRotateAxis() {
+    if(isNull()) return 0;
+    // controller.setRumble(RumbleType.kBothRumble, Math.abs(controller.getRightX()));
+    return Controllers.deadband(-controller.getRightX());
   }
 
-  public default Trigger getResetPoseButton() {
-    return new Trigger(() -> false);
-  }
-
-  public default Trigger getAlignToSpeakerBtn() {
-    return new Trigger(() -> false);
-  }
-
-  public default Trigger getRobotRelativeToggleBtn() {
-    return new Trigger(() -> false);
-  }
-
-  public default Trigger getAutoShootBtn() {
-    return new Trigger(() -> false);
+  public double getSpeedUpAxis() {
+    if(isNull()) return 0;
+    return Controllers.deadband(controller.getLeftTriggerAxis());
   }
   
-  public default Trigger getShootBtn() {
-    return new Trigger(() -> false);
+  public double getSlowDownAxis() {
+    if(isNull()) return 0;
+    return Controllers.deadband(controller.getRightTriggerAxis());
   }
 
-  public default Trigger getSpeakerMode() {
-    return new Trigger(() -> false);
+  public Trigger getAlignBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getRightBumper());
   }
 
-  public default Trigger getAmpMode() {
-    return new Trigger(() -> false);
+  public Trigger getAutoShootBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getAButton());
+  }
+
+  public Trigger getShootBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getBButton());
   }
 }

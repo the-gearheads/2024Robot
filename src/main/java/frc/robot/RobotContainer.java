@@ -13,7 +13,6 @@ import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.MechanismViz;
-import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
@@ -135,6 +134,7 @@ public class RobotContainer {
 
     // teleop controlls
     Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand()));
+    Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand());
     Controllers.driverController.getAlignBtn().whileTrue(new RepeatCommand(new PrepareToShoot(shooter, swerve, arm)));
 
     // Controllers.operatorController.getIntakeNote().whileTrue(
@@ -180,20 +180,18 @@ public class RobotContainer {
       shooter.getDefaultCommand().cancel();
       arm.setDefaultCommand(Commands.run(()->{}, arm));
       shooter.setDefaultCommand(Commands.run(()->{shooter.setSpeed(0);}, shooter));
-      Commands.run(()->{}, shooter).schedule();
-      Commands.run(()->{}, arm).schedule();
+      Commands.runOnce(()->{}, shooter).schedule();
+      Commands.runOnce(()->{}, arm).schedule();
       shooter.setSpeed(0);
     }));
 
     Controllers.operatorController.getArmAutosOn().onTrue(new InstantCommand(()->{
       arm.getDefaultCommand().cancel();
       shooter.getDefaultCommand().cancel();
-      arm.setDefaultCommand(Commands.run(()->{
-        arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
-      }, arm));
+      arm.setDefaultCommand(new AutoArmHeight(arm, swerve));
       shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
-      Commands.run(()->{}, shooter).schedule();
-      Commands.run(()->{}, arm).schedule();
+      Commands.runOnce(()->{}, shooter).schedule();
+      Commands.runOnce(()->{}, arm).schedule();
     }));
 
     Controllers.operatorController.getIntakeOverride().whileTrue(Commands.startEnd(

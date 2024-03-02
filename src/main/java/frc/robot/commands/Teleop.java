@@ -39,8 +39,8 @@ public class Teleop extends Command {
 
     var attemptingToRotate = MathUtil.applyDeadband(rot, 0.02) != 0; 
 
-    double speedMod = Math.abs(Math.pow(Controllers.driverController.getSpeedModifierAxis(), 2));
-    boolean slowMod = Controllers.driverController.getSlowBtn().getAsBoolean();
+    double speedMod = Math.abs(Math.pow(Controllers.driverController.getSpeedUpAxis(), 2));
+    double slowMod = Math.abs(Math.pow(Controllers.driverController.getSlowDownAxis(), 2));
 
     x = Math.pow(x, 2) * Math.signum(x);
     y = Math.pow(y, 2) * Math.signum(y);
@@ -48,20 +48,14 @@ public class Teleop extends Command {
 
     // maybe consider throwing a slewratelimiter here
     
-    x *= BASE_TRANS_SPEED;
-    y *= BASE_TRANS_SPEED;
-    rot *= BASE_ROT_SPEED;
+    x /= MathUtil.interpolate(1, MOD_ROT_SLOW_FACTOR, slowMod);
+    y /= MathUtil.interpolate(1, MOD_ROT_SLOW_FACTOR, slowMod);
+    rot /= MathUtil.interpolate(1, MOD_ROT_SLOW_FACTOR, slowMod);
 
-    x   += x   * speedMod * MOD_TRANS_SPEED_FACTOR;
-    y   += y   * speedMod * MOD_TRANS_SPEED_FACTOR;
-    rot += rot * speedMod * MOD_ROT_SPEED_FACTOR;
+    x *= BASE_TRANS_SPEED * (1 + speedMod * MOD_TRANS_SPEED_FACTOR);
+    y *= BASE_TRANS_SPEED * (1 + speedMod * MOD_TRANS_SPEED_FACTOR);
+    rot *= BASE_ROT_SPEED * (1 + speedMod * MOD_ROT_SPEED_FACTOR);
 
-    if (slowMod) {
-      x *= MOD_TRANS_SLOW_FACTOR;
-      y *= MOD_TRANS_SLOW_FACTOR;
-      rot *= MOD_ROT_SLOW_FACTOR;
-    }
-    
     var speeds = new ChassisSpeeds(x, y, rot);
 
     var forcedAngle = Controllers.driverController.getAlignBtn().getAsBoolean() || Controllers.driverController.getAutoShootBtn().getAsBoolean() ?

@@ -30,7 +30,8 @@ public class Controllers {
 
   public static void updateActiveControllerInstance() {
     // Defaults, since a NullPointerException would be far worse than any warnings
-    driverController = new DriverController() {};
+    // driverController = new DriverController() {};
+    driverController = new DriverController(-1);
     operatorController = new OperatorController() {};
 
     boolean foundDriveController = false;
@@ -50,7 +51,7 @@ public class Controllers {
       // No filtering for now, just use the first
       else if (!foundDriveController) {
         foundDriveController = true;
-        driverController = new XboxDriverController(i);
+        driverController = new DriverController(i);
       }
     
     }

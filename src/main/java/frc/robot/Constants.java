@@ -175,11 +175,12 @@ public final class Constants {
 
     public static final double BASE_TRANS_SPEED = 2;
     public static final double BASE_ROT_SPEED = 2.5;
-    public static final double MOD_TRANS_SPEED_FACTOR = 6;
-    public static final double MOD_ROT_SPEED_FACTOR = 3;
+    public static final double MOD_TRANS_SPEED_FACTOR = 2;
+    public static final double MOD_ROT_SPEED_FACTOR = 2.5;
 
-    public static final double MOD_TRANS_SLOW_FACTOR = 0.3;
-    public static final double MOD_ROT_SLOW_FACTOR = 0.3;
+    // Speed divided by this
+    public static final double MOD_TRANS_SLOW_FACTOR = 2;
+    public static final double MOD_ROT_SLOW_FACTOR = 2;
 
   }
 
