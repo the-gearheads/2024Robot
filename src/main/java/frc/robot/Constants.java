@@ -198,5 +198,9 @@ public final class Constants {
     /* Rough estimate, refine later */
     public static final int LENGTH = 260;
   }
+
+  public static class BrakeCoastButton {
+    public static final int PORT = 4;
+  }
   
 }

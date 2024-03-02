@@ -31,9 +31,9 @@ public class Robot extends LoggedRobot {
 
   private RobotContainer m_robotContainer;
 
-    /* Globals :( */
-    public static double matchTime = -1;
-    private static double matchTimeStart = 0;
+  /* Globals :( */
+  public static double matchTime = -1;
+  private static double matchTimeStart = 0;
 
   /**
    * This function is run when the robot is first started up and should be used for any

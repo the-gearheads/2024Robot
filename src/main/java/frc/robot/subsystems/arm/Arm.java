@@ -196,6 +196,12 @@ public class Arm extends SubsystemBase {
     );
   }
 
+  public void setBrakeCoast(boolean willBrake) {
+    mainFlex.setIdleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    followerFlex.setIdleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    Logger.recordOutput("Arm/IsBraken", willBrake);
+  }
+
   
   public void setupStatusFrames() {
     mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
