@@ -176,6 +176,8 @@ public class RobotContainer {
     }));
 
     Controllers.operatorController.getArmAutosOff().onTrue(new InstantCommand(()->{
+      arm.getDefaultCommand().cancel();
+      shooter.getDefaultCommand().cancel();
       arm.setDefaultCommand(Commands.run(()->{}, arm));
       shooter.setDefaultCommand(Commands.run(()->{shooter.setSpeed(0);}, shooter));
       Commands.run(()->{}, shooter).schedule();
@@ -184,6 +186,8 @@ public class RobotContainer {
     }));
 
     Controllers.operatorController.getArmAutosOn().onTrue(new InstantCommand(()->{
+      arm.getDefaultCommand().cancel();
+      shooter.getDefaultCommand().cancel();
       arm.setDefaultCommand(Commands.run(()->{
         arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
       }, arm));

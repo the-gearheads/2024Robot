@@ -171,6 +171,7 @@ public class Swerve extends SubsystemBase {
         this // Reference to this subsystem to set requirements
     );
 
+    SmartDashboard.putBoolean("Swerve/DesaturateWheelSpeeds", DESATURATE);
     SmartDashboard.putData("Swerve/PoseRotPID", headingController);
   }
 
@@ -211,14 +212,16 @@ public class Swerve extends SubsystemBase {
       headingController.setSetpoint(alignToAngle);
       if(!headingController.atSetpoint()) {
         speeds.omegaRadiansPerSecond = commandedRot;
+      } else {
+        speeds.omegaRadiansPerSecond = 0;
       }
     }
 
     ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
     rotSpdSetpoint = discretized.omegaRadiansPerSecond;
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(discretized);
-    if (SmartDashboard.getBoolean("Swerve/desaturateWheelSpeeds", false)) {
-      SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, discretized, MAX_MOD_SPEED, MAX_MOD_TRANS_SPEED, MAX_MOD_ROT_SPEED);
+    if (SmartDashboard.getBoolean("Swerve/desaturateWheelSpeeds", DESATURATE)) {
+      SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, discretized, MAX_MOD_SPEED, MAX_ROBOT_TRANS_SPEED, MAX_ROBOT_ROT_SPEED);
     }
 
     Logger.recordOutput("Swerve/Speeds", speeds);

@@ -81,9 +81,10 @@ public final class Constants {
 
     public static final double PATHPLANNER_MAX_MOD_SPEED = 5; // m/s I think
     // For desaturateWheelSpeeds
-    public static final double MAX_MOD_SPEED = 1;  // m/s, placeholders
-    public static final double MAX_MOD_TRANS_SPEED = 1; // m/s
-    public static final double MAX_MOD_ROT_SPEED = 1; // rad/s
+    public static final boolean DESATURATE = true;
+    public static final double MAX_MOD_SPEED = DRIVE_FREE_SPD;  // m/s, placeholders
+    public static final double MAX_ROBOT_TRANS_SPEED = DRIVE_FEEDFORWARD.maxAchievableVelocity(12, 0.1); // m/s
+    public static final double MAX_ROBOT_ROT_SPEED = MAX_ROBOT_TRANS_SPEED / 0.4585738763; // rad/s, 0.45 is radius of robot, spd/r is rad/s
 
     public static final double FACING_SPEAKER_TOLERANCE = (1.0 / 360.0) * (2 * Math.PI);
 

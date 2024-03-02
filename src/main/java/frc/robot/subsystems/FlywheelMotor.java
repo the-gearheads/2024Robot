@@ -97,7 +97,7 @@ public class FlywheelMotor {
 
     if(pid.getSetpoint() == 0) {
       // Want to coast to a stop rather than brake
-      flex.setVoltage(0);
+      setVolts(0);
       return;
     }
     setVolts(ff.calculate(pid.getSetpoint()) + pid.calculate(enc.getVelocity()));

@@ -29,7 +29,7 @@ public class XboxDriverController implements DriverController {
 
   @Override
   public double getSpeedModifierAxis() {
-    return Controllers.deadband(controller.getRightTriggerAxis());
+    return Controllers.deadband(controller.getLeftTriggerAxis());
   }
   
   @Override

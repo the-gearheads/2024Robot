@@ -16,6 +16,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 
 import static frc.robot.Constants.VisionConstants.*;
 
@@ -31,7 +32,8 @@ public class Vision extends SubsystemBase {
     cameraFront = new PhotonCamera(FRONT_CAM_NAME);
     // cameraRight = new PhotonCamera(RIGHT_CAM_NAME);
     // might want to remove this before comp
-    // PhotonCamera.setVersionCheckEnabled(false);
+    if(Robot.isSimulation())
+      PhotonCamera.setVersionCheckEnabled(false);
 
     try {
       field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
