@@ -23,8 +23,11 @@ import frc.robot.subsystems.swerve.Swerve;
 import static frc.robot.Constants.ArmConstants.armOverrideVoltage;
 import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -116,6 +119,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("EnableVision", new InstantCommand(() -> {
       swerve.enableVision();
     }));
+
   }
 
   public void updateControllers() {

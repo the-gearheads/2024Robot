@@ -86,6 +86,11 @@ public final class Constants {
     public static final double MAX_MOD_ROT_SPEED = 1; // rad/s
 
     public static final double FACING_SPEAKER_TOLERANCE = (1.0 / 360.0) * (2 * Math.PI);
+
+    public static enum Mode {
+      SPEAKER,
+      AMP
+    }
   }
 
   public static class ShooterConstants {

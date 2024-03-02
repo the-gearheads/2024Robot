@@ -63,7 +63,8 @@ public class Swerve extends SubsystemBase {
   int simGyro = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
   SimDouble simGyroAngle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(simGyro, "Yaw"));
   double rotSpdSetpoint = 0;
-  
+  Mode mode = Mode.SPEAKER;
+
   SwerveModule[] modules = {
     new SwerveModule(0, "FL"),
     new SwerveModule(1, "FR"),
@@ -342,6 +343,8 @@ public class Swerve extends SubsystemBase {
     return difference < FACING_SPEAKER_TOLERANCE;
   }
 
+
+
   public Pose2d getPoseAllianceRelative() {
     Pose2d pose = poseEstimator.getEstimatedPosition();
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
@@ -413,6 +416,14 @@ public class Swerve extends SubsystemBase {
 
   public void enableVision() {
     this.visionEnabled = true;
+  }
+
+  public Mode getMode() {
+    return mode;
+  } 
+
+  public void setMode(Mode mode) {
+    this.mode = mode;
   }
 
   /* Not really volts */
