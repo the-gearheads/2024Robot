@@ -119,7 +119,7 @@ public final class Constants {
     public static final double[] PID = {34.566, 0, 1.0137};
     public static final Constraints ARM_CONSTRAINTS = new Constraints(
       Units.degreesToRadians(400), // max vel, deg/s  101
-      Units.degreesToRadians(400) // max acc, deg/s^2 
+      Units.degreesToRadians(650) // max acc, deg/s^2 
     );
     public static final double MAX_ANGLE = (MAX_ANGLE_DEG / 360.0) * (2 * Math.PI);
     public static final double MIN_ANGLE = (MIN_ANGLE_DEG / 360.0) * (2 * Math.PI);
