@@ -20,6 +20,12 @@
                 "data": {
                   "name": "AlignToSpeakerYaw"
                 }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
               }
             ]
           }
@@ -37,7 +43,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutoArmHeight"
+                  "name": "AutonAutoArmHeight"
                 }
               },
               {
@@ -51,9 +57,21 @@
                       }
                     },
                     {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
                       "type": "path",
                       "data": {
                         "pathName": "F1F2"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
                       }
                     },
                     {
@@ -72,6 +90,12 @@
           "type": "parallel",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              },
               {
                 "type": "sequential",
                 "data": {
@@ -92,25 +116,18 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "IntakeNote"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "ShootWhenReady"
-                      }
-                    }
-                  ]
+                  "name": "AutonAutoArmHeight"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootWhenReady"
           }
         }
       ]

@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.AutoArmHeight;
 import frc.robot.commands.AutoShooter;
+import frc.robot.commands.AutonAutoArmHeight;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.SwerveAlignToSpeaker;
@@ -23,11 +24,9 @@ import frc.robot.subsystems.swerve.Swerve;
 import static frc.robot.Constants.ArmConstants.armOverrideVoltage;
 import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
-import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -97,6 +96,7 @@ public class RobotContainer {
     
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(feeder, intake));
     NamedCommands.registerCommand("PrepareShoot", new PrepareToShoot(shooter, swerve, arm));
+    NamedCommands.registerCommand("AutonAutoArmHeight", new AutonAutoArmHeight(arm));
     NamedCommands.registerCommand("AutoArmHeight", new AutoArmHeight(arm, swerve));
     NamedCommands.registerCommand("ShootWhenReady", new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand()));
     NamedCommands.registerCommand("FeedNote", new SequentialCommandGroup(
@@ -136,8 +136,6 @@ public class RobotContainer {
     // teleop controlls
     Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand()));
     Controllers.driverController.getAlignBtn().whileTrue(new RepeatCommand(new PrepareToShoot(shooter, swerve, arm)));
-    
-
 
     // Controllers.operatorController.getIntakeNote().whileTrue(
     //   new IntakeNote(feeder, intake, false).until(feeder.getNoteSwitch())
