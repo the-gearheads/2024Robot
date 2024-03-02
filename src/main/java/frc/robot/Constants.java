@@ -158,18 +158,17 @@ public final class Constants {
   }
 
   public static class VisionConstants {
-    public static final String FRONT_CAM_NAME = "front_spinel";  // Placeholder
-    public static final String RIGHT_CAM_NAME = "Right Camera";  // Placeholder
-
-    // public static final Transform3d FRONT_CAM_TRANSFORM = 
-    //   new Transform3d(new Translation3d(0.41, 0.15, 0.19),
-    //   new Rotation3d(Units.degreesToRadians(-2), Units.degreesToRadians(-21), Units.degreesToRadians(-4))  // 15.5
-    // );
+    public static final String FRONT_CAM_NAME = "front_spinel";
+    public static final String BACK_CAM_NAME = "spinel_front";
+    
     public static final Transform3d FRONT_CAM_TRANSFORM = 
       new Transform3d(new Translation3d(0.28575, 0.00635, 0.212725),
       new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-30), Units.degreesToRadians(0))
     );
-    // public static final Transform3d RIGHT_TRANSFORM = new Transform3d();  // Placeholder
+    public static final Transform3d BACK_CAM_TRANSFORM = new Transform3d(
+      new Translation3d(-0.3683, 0.24765, 0.2413),
+      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-30), Units.degreesToRadians(0))
+    );
   }
   public static class Controllers {
     public static final double JOYSTICK_DEADBAND = 0.05;

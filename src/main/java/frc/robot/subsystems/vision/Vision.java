@@ -22,15 +22,15 @@ import static frc.robot.Constants.VisionConstants.*;
 
 public class Vision extends SubsystemBase {
   private PhotonCamera cameraFront;
-  // private PhotonCamera cameraRight;
+  private PhotonCamera cameraBack;
   private AprilTagFieldLayout field;
   private PoseStrategy strategy;
   private PhotonPoseEstimator frontEstimator;
-  // private PhotonPoseEstimator rightEstimator;
+  private PhotonPoseEstimator backEstimator;
 
   public Vision() {
     cameraFront = new PhotonCamera(FRONT_CAM_NAME);
-    // cameraRight = new PhotonCamera(RIGHT_CAM_NAME);
+    cameraBack = new PhotonCamera(BACK_CAM_NAME);
     // might want to remove this before comp
     if(Robot.isSimulation())
       PhotonCamera.setVersionCheckEnabled(false);
@@ -45,17 +45,25 @@ public class Vision extends SubsystemBase {
     // strategy = PoseStrategy.LOWEST_AMBIGUITY;
 
     frontEstimator = new PhotonPoseEstimator(field, strategy, cameraFront, FRONT_CAM_TRANSFORM);
-    // rightEstimator = new PhotonPoseEstimator(field, strategy, cameraRight, RIGHT_TRANSFORM);
+    backEstimator = new PhotonPoseEstimator(field, strategy, cameraBack, BACK_CAM_TRANSFORM);
   }
 
   public Optional<EstimatedRobotPose> getGlobalPoseFromFront() {
-    Logger.recordOutput("/Vision/refPose", frontEstimator.getReferencePose());
+    Logger.recordOutput("/Vision/FrontRefPose", frontEstimator.getReferencePose());
     var updated = frontEstimator.update();
     if(updated.isPresent()) {
-      Logger.recordOutput("/Vision/estPose", updated.get().estimatedPose);
+      Logger.recordOutput("/Vision/FrontEstPose", updated.get().estimatedPose);
     }
     return updated;
   }
-  public Optional<EstimatedRobotPose> getGlobalPoseFromRight() {return Optional.empty();}
+
+  public Optional<EstimatedRobotPose> getGlobalPoseFromBack() {
+    Logger.recordOutput("/Vision/BackRefPose", backEstimator.getReferencePose());
+    var updated = backEstimator.update();
+    if(updated.isPresent()) {
+      Logger.recordOutput("/Vision/BackEstPose", updated.get().estimatedPose);
+    }
+    return updated;
+  }
 
 }

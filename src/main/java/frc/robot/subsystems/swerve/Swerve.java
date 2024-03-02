@@ -307,12 +307,12 @@ public class Swerve extends SubsystemBase {
     }
 
     Optional<EstimatedRobotPose> frontVision = vision.getGlobalPoseFromFront();
-    Optional<EstimatedRobotPose> rightVision = vision.getGlobalPoseFromFront();
+    Optional<EstimatedRobotPose> backVision = vision.getGlobalPoseFromBack();
     if (frontVision.isPresent() && isVisionEnabled()) {
       poseEstimator.addVisionMeasurement(frontVision.get().estimatedPose.toPose2d(), frontVision.get().timestampSeconds);
     }
-    if (rightVision.isPresent() && isVisionEnabled()) {
-      poseEstimator.addVisionMeasurement(rightVision.get().estimatedPose.toPose2d(), rightVision.get().timestampSeconds);
+    if (backVision.isPresent() && isVisionEnabled()) {
+      poseEstimator.addVisionMeasurement(backVision.get().estimatedPose.toPose2d(), backVision.get().timestampSeconds);
     }
 
     Logger.recordOutput("Swerve/Pose", getPose());
