@@ -63,7 +63,6 @@ public class Swerve extends SubsystemBase {
   int simGyro = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
   SimDouble simGyroAngle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(simGyro, "Yaw"));
   double rotSpdSetpoint = 0;
-  Mode mode = Mode.SPEAKER;
 
   SwerveModule[] modules = {
     new SwerveModule(0, "FL"),
@@ -419,14 +418,6 @@ public class Swerve extends SubsystemBase {
 
   public void enableVision() {
     this.visionEnabled = true;
-  }
-
-  public Mode getMode() {
-    return mode;
-  } 
-
-  public void setMode(Mode mode) {
-    this.mode = mode;
   }
 
   /* Not really volts */

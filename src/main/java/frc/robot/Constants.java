@@ -88,10 +88,7 @@ public final class Constants {
 
     public static final double FACING_SPEAKER_TOLERANCE = (1.0 / 360.0) * (2 * Math.PI);
 
-    public static enum Mode {
-      SPEAKER,
-      AMP
-    }
+    public static final double AMP_YAW = (270d / 360d) * 2 * Math.PI;
   }
 
   public static class ShooterConstants {
