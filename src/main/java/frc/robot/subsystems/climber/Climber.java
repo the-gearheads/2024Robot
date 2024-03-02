@@ -7,9 +7,11 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
-  private final CANSparkFlex leftClimber = new CANSparkFlex(0, MotorType.kBrushless); 
+  private final CANSparkFlex leftClimber = new CANSparkFlex(0, MotorType.kBrushless);
   private final CANSparkFlex rightClimber = new CANSparkFlex(0, MotorType.kBrushless);
+  @SuppressWarnings("unused")
   private final RelativeEncoder leftEncoder;
+  @SuppressWarnings("unused")
   private final RelativeEncoder rightEncoder;
 
   public Climber() {
