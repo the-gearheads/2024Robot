@@ -341,11 +341,14 @@ public class Swerve extends SubsystemBase {
   }
 
   public boolean atSpeakerYaw() {
-    // var difference = Math.abs(ShooterCalculations.getYawToSpeaker(getPose().getTranslation()).minus(getPose().getRotation()).getRadians());
-    return headingController.getPositionError() < FACING_SPEAKER_TOLERANCE;
+    var difference = Math.abs(ShooterCalculations.getYawToSpeaker(getPose().getTranslation()).minus(getPose().getRotation()).getRadians());
+    return difference < FACING_SPEAKER_TOLERANCE;
   }
 
-
+  public boolean atAmpYaw() {
+    var difference = Math.abs(new Rotation2d(AMP_YAW).minus(getPose().getRotation()).getRadians());
+    return difference < FACING_SPEAKER_TOLERANCE;
+  }
 
   public Pose2d getPoseAllianceRelative() {
     Pose2d pose = poseEstimator.getEstimatedPosition();

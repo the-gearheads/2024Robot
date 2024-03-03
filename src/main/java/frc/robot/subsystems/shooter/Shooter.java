@@ -45,7 +45,7 @@ public class Shooter extends SubsystemBase {
   public boolean atSpeed() {
     double tolerance = SPEED_TOLERANCE;
     if(Robot.isSimulation()) {
-      tolerance = 700; // sim setpoint 6k rpm turns out to be like 6661 rpm
+      tolerance = 3000; // sim setpoint 4k rpm turns out to be like 6661 rpm
     }
     boolean speedWithinTolerance = Math.abs(topMotor.getVelocity() - topMotor.getVelocitySetpoint()) < tolerance &&
                              Math.abs(bottomMotor.getVelocity() - bottomMotor.getVelocitySetpoint()) < tolerance;
