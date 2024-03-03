@@ -100,6 +100,7 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.schedule();
     }
     CANSparkLowLevel.enableExternalUSBControl(false);
+    m_robotContainer.arm.setBrakeCoast(true);
   }
 
   /** This function is called periodically during autonomous. */
@@ -117,6 +118,7 @@ public class Robot extends LoggedRobot {
     }
 
     matchTimeStart = Timer.getFPGATimestamp();
+    m_robotContainer.arm.setBrakeCoast(true);
     CANSparkLowLevel.enableExternalUSBControl(false);
   }
 

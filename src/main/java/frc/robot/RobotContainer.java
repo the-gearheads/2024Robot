@@ -17,7 +17,6 @@ import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.leds.LedState;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
@@ -30,14 +29,12 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -61,7 +58,7 @@ public class RobotContainer {
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private SendableChooser<Command> autoChooser;
 
-  private Trigger brakeCoastButton = new Trigger(new DigitalInput(Constants.BrakeCoastButton.PORT)::get).negate().debounce(0.2);
+  private Trigger brakeCoastButton = new Trigger(new DigitalInput(Constants.BrakeCoastButton.PORT)::get).negate().debounce(0.05);
   private boolean isBraken = false;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -126,14 +123,17 @@ public class RobotContainer {
       swerve.enableVision();
     }));
 
-    brakeCoastButton.and(RobotState::isDisabled).onTrue(new InstantCommand(()->{
-      isBraken = !isBraken;
-      arm.setBrakeCoast(isBraken);
-    }).andThen(
-      new ProxyCommand(Commands.run(()->{
-        leds.setStateForTimeCommand(isBraken ? LedState.FLASH_RED : LedState.FLASH_GREEN, 2);
-      }, leds))
-    ));
+    // brakeCoastButton.whileTrue(Commands.run(()->{System.out.println("bruh");}));
+    
+    // brakeCoastButton.and(RobotState::isDisabled).onTrue(new InstantCommand(()->{
+    //   isBraken = !isBraken;
+    //   arm.setBrakeCoast(isBraken);
+    //   System.out.println("bruh2");
+    // }).andThen(
+    //   new ProxyCommand(Commands.run(()->{
+    //     leds.setStateForTimeCommand(isBraken ? LedState.FLASH_RED : LedState.FLASH_GREEN, 2);
+    //   }, leds))
+    // ));
 
   }
 
