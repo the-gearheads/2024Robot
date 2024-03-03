@@ -12,6 +12,8 @@ import org.littletonrobotics.urcl.URCL;
 
 import com.revrobotics.CANSparkLowLevel;
 
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
@@ -82,12 +84,28 @@ public class Robot extends LoggedRobot {
     }
   }
 
+  private DigitalInput brakeCoastButton = new DigitalInput(Constants.BrakeCoastButton.PORT);
+  private Debouncer brakeCoastButtonDebouncer = new Debouncer(0.05);
+  private boolean lastBrakeCoastButton = false;
+  private boolean isBraken = false;
+
+
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    boolean output = brakeCoastButtonDebouncer.calculate(!brakeCoastButton.get());
+
+    if(output && !lastBrakeCoastButton) {
+      isBraken = !isBraken;
+      m_robotContainer.arm.setBrakeCoast(isBraken);
+      m_robotContainer.leds.setStateForTimeCommand(isBraken ? LedState.FLASH_RED : LedState.FLASH_GREEN, 2).schedule();
+    }
+
+    lastBrakeCoastButton = output;
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override

@@ -28,6 +28,7 @@ import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -57,9 +58,6 @@ public class RobotContainer {
   private final MechanismViz mechanismViz = new MechanismViz(arm::getAngle, shooter.topMotor::getPosition, shooter.bottomMotor::getPosition, intake.motor::getPosition, feeder.feederMotor::getPosition);
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private SendableChooser<Command> autoChooser;
-
-  private Trigger brakeCoastButton = new Trigger(new DigitalInput(Constants.BrakeCoastButton.PORT)::get).negate().debounce(0.05);
-  private boolean isBraken = false;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -122,19 +120,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("EnableVision", new InstantCommand(() -> {
       swerve.enableVision();
     }));
-
-    // brakeCoastButton.whileTrue(Commands.run(()->{System.out.println("bruh");}));
-    
-    // brakeCoastButton.and(RobotState::isDisabled).onTrue(new InstantCommand(()->{
-    //   isBraken = !isBraken;
-    //   arm.setBrakeCoast(isBraken);
-    //   System.out.println("bruh2");
-    // }).andThen(
-    //   new ProxyCommand(Commands.run(()->{
-    //     leds.setStateForTimeCommand(isBraken ? LedState.FLASH_RED : LedState.FLASH_GREEN, 2);
-    //   }, leds))
-    // ));
-
   }
 
   public void updateControllers() {
