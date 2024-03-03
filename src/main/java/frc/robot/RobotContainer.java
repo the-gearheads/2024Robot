@@ -15,6 +15,7 @@ import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.NoteSimMgr;
+import frc.robot.subsystems.NoteSimMgr.NoteState;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
@@ -229,6 +230,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     // return sysidAuto.get();
+    if(Robot.isSimulation()) {
+      noteSimMgr.setNoteState(NoteState.INTOOK);
+    }
     return autoChooser.getSelected();
   }
 }

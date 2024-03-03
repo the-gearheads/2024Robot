@@ -23,7 +23,7 @@ public class NoteSimMgr extends SubsystemBase {
 
   DIOSim noteSwitchSim = new DIOSim(BEAMBREAK_SWITCH_ID);
 
-  enum NoteState {
+  public enum NoteState {
     EMPTY, INTOOK
   }
 
@@ -75,6 +75,10 @@ public class NoteSimMgr extends SubsystemBase {
     return noteState == NoteState.INTOOK;
   }
 
+  public void setNoteState(NoteState state) {
+    noteState = state;
+  }
+
   // totally enough decimal places (also these are probably a couple inches off but whatever)
   private final Translation2d[] NOTE_POSITIONS = {
     new Translation2d(2.893739700317383, 4.12746000289917), // BF1
@@ -92,7 +96,7 @@ public class NoteSimMgr extends SubsystemBase {
     new Translation2d(8.279884338378906, 7.473394393920898), // C5
   };
 
-  private final double POS_TOLERANCE = Units.inchesToMeters(4);
+  private final double POS_TOLERANCE = Units.inchesToMeters(14);
 
   boolean isInNote(Translation2d robotPos) {
     for (Translation2d notePos : NOTE_POSITIONS) {
