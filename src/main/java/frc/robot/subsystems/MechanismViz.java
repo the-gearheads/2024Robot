@@ -30,6 +30,8 @@ public class MechanismViz extends SubsystemBase {
   private final Color8Bit SHOOTER_COLOR = new Color8Bit(128, 255, 128);
   private final Color8Bit ARM_COLOR = new Color8Bit(255, 255, 0);
 
+  private final Color8Bit ARM_NOTED_COLOR = new Color8Bit(244, 119, 2);
+
   Mechanism2d mech = new Mechanism2d(1, 1);
   // cad guesstimates cause ascope wants these in meters
   MechanismRoot2d root = mech.getRoot("Shooter", 0.1032, 0.1379);
@@ -52,8 +54,9 @@ public class MechanismViz extends SubsystemBase {
   Supplier<Double> intakePos;
   // I think I'll just ignore the existance of the handoff motor
   Supplier<Double> feederPos;
+  Supplier<Boolean> noteSwitch;
 
-  public MechanismViz(Supplier<Rotation2d> armAngle, Supplier<Double> topShooterPos, Supplier<Double> bottomShooterPos, Supplier<Double> intakePos, Supplier<Double> feederPos) {
+  public MechanismViz(Supplier<Rotation2d> armAngle, Supplier<Double> topShooterPos, Supplier<Double> bottomShooterPos, Supplier<Double> intakePos, Supplier<Double> feederPos, Supplier<Boolean> noteSwitch) {
     arm12Mech.setColor(ARM_COLOR);
     arm22Mech.setColor(ARM_COLOR);
     frontFloorMech.setColor(FLOOR_COLOR);
@@ -67,6 +70,7 @@ public class MechanismViz extends SubsystemBase {
     this.bottomShooterPos = bottomShooterPos;
     this.intakePos = intakePos;
     this.feederPos = feederPos;
+    this.noteSwitch = noteSwitch;
   }
 
   @Override
@@ -78,6 +82,11 @@ public class MechanismViz extends SubsystemBase {
     bottomShooterMech.setAngle(bottomShooterPos.get() * 360.0); // rotations -> degrees
     intakeMech.setAngle(intakePos.get() * 360.0); // rotations -> degrees
     feederMech.setAngle(feederPos.get() * 360.0); // rotations -> degrees
+    if(noteSwitch.get()) {
+      arm12Mech.setColor(ARM_NOTED_COLOR);
+    } else {
+      arm12Mech.setColor(ARM_COLOR);
+    }
     Logger.recordOutput("Mechanism2d", mech);
   }
 

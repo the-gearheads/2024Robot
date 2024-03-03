@@ -43,7 +43,7 @@ public class Controllers {
         continue;
 
 
-      if (!foundOperatorController && joyName.contains("T.16000M")) {
+      if (!foundOperatorController && (joyName.contains("T.16000M") || joyName.contains("Keyboard 1"))) {
         foundOperatorController = true;
         operatorController = new Thrustmaster(i);
       }
