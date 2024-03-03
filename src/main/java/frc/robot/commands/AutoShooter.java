@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.ScoringState;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
@@ -27,7 +28,16 @@ public class AutoShooter extends Command {
   public void execute() {
     Pose2d pose = swerve.getPoseAllianceRelative();
     if (shooterSpin.contains(pose) && feeder.getBeamBreakSwitch().getAsBoolean()) {
-      shooter.setSpeed(DEFAULT_SPEED);
+      switch (ScoringState.goalMode) {
+        case SPEAKER:
+        default:
+          shooter.setSpeed(DEFAULT_SPEED);
+          break;
+        case AMP:
+          shooter.setTopSpeed(-AMP_SPEED);
+          shooter.setBottomSpeed(AMP_SPEED);
+          break;
+      }
     } else {
       shooter.setSpeed(0);
     }

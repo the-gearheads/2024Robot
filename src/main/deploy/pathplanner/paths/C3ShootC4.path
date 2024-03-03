@@ -8,10 +8,10 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.130226277546571,
-        "y": 3.391304788307582
+        "x": 6.556727360030062,
+        "y": 3.1345924335684296
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "C3Shoot"
     },
     {
@@ -20,26 +20,26 @@
         "y": 5.781606622595669
       },
       "prevControl": {
-        "x": 6.256917580187827,
-        "y": 5.828383240365429
+        "x": 6.1743696090131905,
+        "y": 5.31544775418318
       },
       "nextControl": null,
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "C4"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": 180.0,
+      "waypointRelativePos": 0.9,
+      "rotationDegrees": -170.0,
       "rotateFast": false
     }
   ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.2,
+    "maxAcceleration": 2.3,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },

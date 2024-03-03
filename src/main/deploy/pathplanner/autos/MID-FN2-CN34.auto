@@ -39,6 +39,12 @@
                 "data": {
                   "pathName": "S2F2"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
               }
             ]
           }

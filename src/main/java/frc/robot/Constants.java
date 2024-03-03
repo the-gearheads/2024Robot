@@ -96,7 +96,7 @@ public final class Constants {
     public static final int BOTTOM_ID = 12;
     public static final int DEFAULT_SPEED = 6000;
     public static final int AMP_SPEED = 4000;
-    public static final double AMP_ANGLE = 105 * 2 * Math.PI / 360;
+    public static final double AMP_ANGLE = 100d * 2d * Math.PI / 360;
     public static final double SPEED_TOLERANCE = 150;
     public static final double[] PID = {0.0021693, 0, 0};
     public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.045537, 0.0017932, 0.0001929);

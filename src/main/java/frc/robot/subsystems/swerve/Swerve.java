@@ -341,8 +341,8 @@ public class Swerve extends SubsystemBase {
   }
 
   public boolean atSpeakerYaw() {
-    var difference = Math.abs(ShooterCalculations.getYawToSpeaker(getPose().getTranslation()).minus(getPose().getRotation()).getRadians());
-    return difference < FACING_SPEAKER_TOLERANCE;
+    // var difference = Math.abs(ShooterCalculations.getYawToSpeaker(getPose().getTranslation()).minus(getPose().getRotation()).getRadians());
+    return headingController.getPositionError() < FACING_SPEAKER_TOLERANCE;
   }
 
 

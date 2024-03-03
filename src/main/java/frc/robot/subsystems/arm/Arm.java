@@ -50,9 +50,6 @@ public class Arm extends SubsystemBase {
     mainFlex.getForwardLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyClosed).enableLimitSwitch(true);
     mainFlex.getReverseLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyClosed).enableLimitSwitch(true);
 
-    mainFlex.setInverted(true);
-    followerFlex.setInverted(true);
-
     mainFlex.setSmartCurrentLimit(80);
     followerFlex.setSmartCurrentLimit(80);
 
@@ -60,9 +57,6 @@ public class Arm extends SubsystemBase {
     // followerFlex.enableVoltageCompensation(12);
 
     followerFlex.follow(mainFlex, true);
-
-    mainFlex.setIdleMode(IdleMode.kBrake);
-    followerFlex.setIdleMode(IdleMode.kBrake);
 
     // We're doing this ourselves (DutyCycleEncoder doesn't have an invert mode)
     enc.setPositionOffset(0);
@@ -140,7 +134,7 @@ public class Arm extends SubsystemBase {
       return;
     }
     
-    mainFlex.setVoltage(output);
+    mainFlex.setVoltage(-output);
   }
 
   private void log() {
@@ -176,7 +170,7 @@ public class Arm extends SubsystemBase {
 
   public void setVoltage(Measure<Voltage> volts) {
     if(Robot.isSimulation()) armSim.setInputVoltage(volts.in(Volts));
-    mainFlex.setVoltage(volts.in(Volts));
+    mainFlex.setVoltage(-volts.in(Volts));
   }
 
   public void resetToCurrentPose() {

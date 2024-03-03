@@ -87,7 +87,7 @@ public class Robot extends LoggedRobot {
   private DigitalInput brakeCoastButton = new DigitalInput(Constants.BrakeCoastButton.PORT);
   private Debouncer brakeCoastButtonDebouncer = new Debouncer(0.05);
   private boolean lastBrakeCoastButton = false;
-  private boolean isBraken = false;
+  private boolean isBraken = true;
 
 
   /** This function is called once each time the robot enters Disabled mode. */
