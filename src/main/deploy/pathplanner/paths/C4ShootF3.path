@@ -3,16 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.65,
-        "y": 6.41
+        "x": 4.2728556716020805,
+        "y": 6.142347676619344
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4563044012073774,
-        "y": 6.634244438987691
+        "x": 3.4445214836375615,
+        "y": 6.277153455207811
       },
       "isLocked": false,
-      "linkedName": "C5Shoot"
+      "linkedName": "C4Shoot"
+    },
+    {
+      "anchor": {
+        "x": 2.6124981979693684,
+        "y": 6.304887564730085
+      },
+      "prevControl": {
+        "x": 2.873590420527099,
+        "y": 6.2682285353289995
+      },
+      "nextControl": {
+        "x": 2.1132842265684526,
+        "y": 6.374980421099916
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,8 +36,8 @@
         "y": 6.988995599612821
       },
       "prevControl": {
-        "x": 0.39639070322935055,
-        "y": 5.3441417472990755
+        "x": 2.2704441805280005,
+        "y": 6.730143910738272
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,7 +46,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.8,
+      "waypointRelativePos": 1.65,
       "rotationDegrees": -151.94,
       "rotateFast": false
     }
@@ -45,13 +61,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -152.5685851964079,
+    "rotation": -153.21287327022856,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -157.69379494509235,
+    "rotation": -170.1264011909517,
     "velocity": 0
   },
   "useDefaultConstraints": true

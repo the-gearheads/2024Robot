@@ -20,12 +20,6 @@
                 "data": {
                   "name": "AlignToSpeakerYaw"
                 }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
               }
             ]
           }
@@ -57,21 +51,9 @@
                       }
                     },
                     {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    },
-                    {
                       "type": "path",
                       "data": {
                         "pathName": "F1F2"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
                       }
                     },
                     {
@@ -87,32 +69,51 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "IntakeNote"
-                }
-              },
-              {
-                "type": "sequential",
+                "type": "parallel",
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "named",
                       "data": {
-                        "pathName": "F3C5"
+                        "name": "IntakeNote"
                       }
                     },
                     {
-                      "type": "path",
+                      "type": "sequential",
                       "data": {
-                        "pathName": "C5Shoot"
+                        "commands": [
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "F3C5"
+                            }
+                          },
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "C5Shoot"
+                            }
+                          }
+                        ]
                       }
                     }
                   ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShooterStart"
                 }
               }
             ]

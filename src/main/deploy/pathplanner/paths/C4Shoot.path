@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.569759425233137,
-        "y": 6.508799303312892
+        "x": 6.681045951165537,
+        "y": 6.181346709486769
       },
       "isLocked": false,
       "linkedName": "C4"
     },
     {
       "anchor": {
-        "x": 3.756312925731265,
-        "y": 6.1511252367234075
+        "x": 4.2728556716020805,
+        "y": 6.142347676619344
       },
       "prevControl": {
-        "x": 5.089154178308357,
-        "y": 6.699372255887369
+        "x": 5.3453290754562515,
+        "y": 6.317843324522754
       },
       "nextControl": null,
       "isLocked": false,
@@ -36,10 +36,28 @@
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.95,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "EnableVision"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 3.2,
-    "maxAcceleration": 2.3,
+    "maxVelocity": 2.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },

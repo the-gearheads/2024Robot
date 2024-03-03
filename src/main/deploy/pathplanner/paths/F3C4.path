@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.904894952647049,
-        "y": 7.007220871584601
+        "x": 2.8990839963661905,
+        "y": 6.988995599612821
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.162451467760079,
-        "y": 6.728691171668058
+        "x": 4.16954713315266,
+        "y": 6.601860557273513
       },
       "isLocked": false,
       "linkedName": "F3"
@@ -20,26 +20,44 @@
         "y": 5.781606622595669
       },
       "prevControl": {
-        "x": 7.0681809935048445,
-        "y": 6.083675024492907
+        "x": 7.280006298729937,
+        "y": 5.781606622595669
       },
       "nextControl": null,
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "C4"
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 0.8,
-      "rotationDegrees": 170.0,
+      "rotationDegrees": 180.0,
       "rotateFast": false
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.25,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "DisableVision"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 3.2,
-    "maxAcceleration": 2.3,
+    "maxVelocity": 2.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
