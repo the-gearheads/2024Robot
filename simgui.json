@@ -85,6 +85,9 @@
           "LoggedRobot": {
             "open": true
           },
+          "Mechanism2d": {
+            "open": true
+          },
           "Shooter": {
             "Bottom": {
               "open": true
