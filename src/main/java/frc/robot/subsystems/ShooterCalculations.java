@@ -13,8 +13,14 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.ScoringState;
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.subsystems.shooter.Shooter;
 
 import static frc.robot.Constants.ArmConstants.*;
+import static frc.robot.Constants.ShooterConstants.AMP_SPEED;
+import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
+import static frc.robot.Constants.SwerveConstants.AMP_YAW;
 
 public class ShooterCalculations {
   // not quite sure whether to have separate variables for red and blue but for now this is fine
@@ -23,7 +29,7 @@ public class ShooterCalculations {
   // Distance (m) -> Angle (rad)
   static PolynomialSplineFunction shooterAngleFunction = new SplineInterpolator().interpolate(SPLINE_DISTANCES, SPLINE_ANGLES);
   
-  public static Rotation2d getYawToSpeaker(Translation2d robotPos) {
+  private static Rotation2d getYawSpeaker(Translation2d robotPos) {
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     Translation2d targetAngle = speakerBackPosition;
     if(isRed) {
@@ -54,7 +60,7 @@ public class ShooterCalculations {
   }
 
   /* Need to account for stage and other things in the future */
-  public static double getShooterAngle(Translation2d robotPos) {
+  private static double getShooterAngleSpeaker(Translation2d robotPos) {
     double distance = getDistanceToSpeaker(robotPos);
     if(distance > SPLINE_DISTANCES[SPLINE_DISTANCES.length - 1]) {
       return SPLINE_ANGLES[SPLINE_ANGLES.length - 1];
@@ -67,5 +73,41 @@ public class ShooterCalculations {
     double angle = shooterAngleFunction.value(distance);
     Logger.recordOutput("Calculations/ShooterAngle", angle);
     return angle;
+  }
+
+  public static double getShooterAngle(Translation2d robotPos) {
+    switch(ScoringState.goalMode) {
+      case SPEAKER:
+        return getShooterAngleSpeaker(robotPos);
+      case AMP:
+      default:
+        return ShooterConstants.AMP_ANGLE;
+    }
+  }
+
+  public static Rotation2d getYaw(Translation2d robotPos) {
+    switch(ScoringState.goalMode) {
+      case SPEAKER:
+        return getYawSpeaker(robotPos);
+      case AMP:
+      default:
+        return new Rotation2d(AMP_YAW);
+    }
+  }
+
+  public static void setShooterPower(Shooter shooter) {
+    switch(ScoringState.goalMode) {
+      case AMP:
+        shooter.setTopSpeed(-AMP_SPEED);
+        shooter.setBottomSpeed(AMP_SPEED);
+        break;
+      case SPEAKER:
+        shooter.setSpeed(DEFAULT_SPEED);
+        break;
+      case STAGE:
+        // shooter.setSpeed(DEFAULT_SPEED);
+        // arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
+        break;
+    }
   }
 }

@@ -5,14 +5,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.ScoringState;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.util.BetterBangBang;
 
 import static frc.robot.Constants.Controllers.*;
-import static frc.robot.Constants.SwerveConstants.AMP_YAW;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -60,18 +58,8 @@ public class Teleop extends Command {
 
     var speeds = new ChassisSpeeds(x, y, rot);
 
-    double calculatedForcedAngle = 0;
-    switch(ScoringState.goalMode) {
-      case SPEAKER:
-        calculatedForcedAngle = ShooterCalculations.getYawToSpeaker(swerve.getPose().getTranslation()).getRadians();
-        break;
-      case AMP:
-        calculatedForcedAngle = AMP_YAW;
-        break;
-      case STAGE:
-        calculatedForcedAngle = 0; //todo: stage
-        break;
-    }
+    double calculatedForcedAngle = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
+
     var forcedAngle = Controllers.driverController.getAlignBtn().getAsBoolean() || Controllers.driverController.getAutoShootBtn().getAsBoolean() ?
                       calculatedForcedAngle : null;
     if(forcedAngle != null) headingController.setSetpoint(swerve.getGyroRotation().getRadians());

@@ -321,10 +321,9 @@ public class Swerve extends SubsystemBase {
     Logger.recordOutput("Swerve/PoseRotation", getPose().getRotation().getRadians());
     Logger.recordOutput("Swerve/CurrentSpeeds", getRobotRelativeSpeeds());
     Logger.recordOutput("Swerve/GyroAngle", -Units.degreesToRadians(gyro.getYaw()));
-    Logger.recordOutput("Swerve/atSpeakerYaw", atSpeakerYaw());
     Logger.recordOutput("Vision/VisionEnabled", isVisionEnabled());
     ShooterCalculations.getShooterAngle(getPose().getTranslation());
-    ShooterCalculations.getYawToSpeaker(getPose().getTranslation());
+    ShooterCalculations.getYaw(getPose().getTranslation());
     field.setRobotPose(getPose());
 
     if(!DriverStation.isFMSAttached()) {
@@ -340,13 +339,8 @@ public class Swerve extends SubsystemBase {
     return poseEstimator.getEstimatedPosition();
   }
 
-  public boolean atSpeakerYaw() {
-    var difference = Math.abs(ShooterCalculations.getYawToSpeaker(getPose().getTranslation()).minus(getPose().getRotation()).getRadians());
-    return difference < FACING_SPEAKER_TOLERANCE;
-  }
-
-  public boolean atAmpYaw() {
-    var difference = Math.abs(new Rotation2d(AMP_YAW).minus(getPose().getRotation()).getRadians());
+  public boolean atYaw(double yaw) {
+    var difference = Math.abs(new Rotation2d(yaw).minus(getPose().getRotation()).getRadians());
     return difference < FACING_SPEAKER_TOLERANCE;
   }
 

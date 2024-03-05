@@ -1,13 +1,7 @@
 package frc.robot.commands;
 
-import static frc.robot.Constants.ArmConstants.MIN_ANGLE;
-import static frc.robot.Constants.ShooterConstants.AMP_ANGLE;
-import static frc.robot.Constants.ShooterConstants.AMP_SPEED;
-import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.ScoringState;
 import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.shooter.Shooter;
@@ -31,39 +25,15 @@ public class PrepareToShoot extends Command {
 
   @Override
   public void execute() {
-    switch (ScoringState.goalMode) {
-      case AMP:
-        shooter.setTopSpeed(-AMP_SPEED);
-        shooter.setBottomSpeed(AMP_SPEED);
-        arm.setAngle(AMP_ANGLE);
-        break;
-      case SPEAKER:
-        shooter.setSpeed(DEFAULT_SPEED);
-        arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
-        break;
-      case STAGE:
-        // shooter.setSpeed(DEFAULT_SPEED);
-        // arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
-        break;
-    }  }
+    ShooterCalculations.setShooterPower(shooter);
+    arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
+  }
 
   @Override
   public boolean isFinished() {
-    boolean atYaw = false;
-    double shooterAngle = MIN_ANGLE;
-    switch (ScoringState.goalMode) {
-      case AMP:
-        shooterAngle = AMP_ANGLE;
-        atYaw = swerve.atAmpYaw();
-        break;
-      case SPEAKER:
-        shooterAngle = ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation());
-        atYaw = swerve.atSpeakerYaw();
-        break;
-      case STAGE:
-        break;
-    }
-    return shooter.atSpeed() && atYaw && MathUtil.isNear(arm.getAngle().getRadians(), shooterAngle, 0.01);
+    double targetYaw = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
+    double shooterAngle = ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation());
+    return shooter.atSpeed() && swerve.atYaw(targetYaw) && arm.atPoint(shooterAngle);
   }
 
 }

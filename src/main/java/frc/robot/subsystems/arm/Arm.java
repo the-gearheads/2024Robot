@@ -196,6 +196,10 @@ public class Arm extends SubsystemBase {
     Logger.recordOutput("Arm/IsBraken", willBrake);
   }
 
+  public boolean atPoint(double angle) {
+    return MathUtil.isNear(getAngle().getRadians(), angle, 0.01);
+  }
+
   
   public void setupStatusFrames() {
     mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
