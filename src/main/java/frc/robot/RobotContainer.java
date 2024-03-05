@@ -233,6 +233,7 @@ public class RobotContainer {
     if(Robot.isSimulation()) {
       noteSimMgr.setNoteState(NoteState.INTOOK);
     }
+    ScoringState.goalMode = ScoringState.GoalMode.SPEAKER;
     return autoChooser.getSelected();
   }
 }
