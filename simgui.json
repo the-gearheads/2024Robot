@@ -141,9 +141,6 @@
     }
   },
   "NetworkTables Info": {
-    "Connections": {
-      "open": true
-    },
     "Server": {
       "Publishers": {
         "open": true
