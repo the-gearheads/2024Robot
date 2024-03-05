@@ -20,6 +20,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import static frc.robot.Constants.ArmConstants.*;
 import static frc.robot.Constants.ShooterConstants.AMP_SPEED;
 import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
+import static frc.robot.Constants.ShooterConstants.SHOOTER_PIVOT_HEIGHT;
 import static frc.robot.Constants.SwerveConstants.AMP_YAW;
 
 public class ShooterCalculations {
@@ -72,6 +73,15 @@ public class ShooterCalculations {
 
     double angle = shooterAngleFunction.value(distance);
     Logger.recordOutput("Calculations/ShooterAngle", angle);
+    return angle;
+  }
+  
+  /* Need to account for stage and other things in the future */
+  private static double getMathShooterAngleSpeaker(Translation2d robotPos) {
+    double distance = getDistanceToSpeaker(robotPos);
+    double pivotToSpeakerHeight = speakerPosition.getZ() - SHOOTER_PIVOT_HEIGHT;
+    double angle = Math.atan2(pivotToSpeakerHeight, distance);
+    Logger.recordOutput("Calculations/atan2ShooterAngle", angle);
     return angle;
   }
 

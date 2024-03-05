@@ -99,6 +99,7 @@ public final class Constants {
     public static final double AMP_ANGLE = 100d * 2d * Math.PI / 360;
     public static final double SPEED_TOLERANCE = 150;
     public static final double[] PID = {0.0021693, 0, 0};
+    public static final double SHOOTER_PIVOT_HEIGHT = 0.3048; // placeholder
     public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.045537, 0.0017932, 0.0001929);
   }
 

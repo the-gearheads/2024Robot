@@ -20,8 +20,8 @@
         "y": 5.781606622595669
       },
       "prevControl": {
-        "x": 7.280006298729937,
-        "y": 5.781606622595669
+        "x": 7.240416488005663,
+        "y": 5.870088299312156
       },
       "nextControl": null,
       "isLocked": true,
@@ -36,34 +36,16 @@
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.25,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "DisableVision"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 5.4,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 178.85423716182504,
+    "rotation": 180.0,
     "rotateFast": false
   },
   "reversed": false,
