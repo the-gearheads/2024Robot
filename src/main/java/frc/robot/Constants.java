@@ -8,6 +8,8 @@ import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -104,6 +106,10 @@ public final class Constants {
     public static final double SHOOTER_PIVOT_HEIGHT = 0.3048; // placeholder
     public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.045537, 0.0017932, 0.0001929);
     public static final double AUTO_SHOOTER_DISTANCE = 7;  // meters from speaker where shooter will begin spinning, in amp or speaker mode
+
+    public static final double MAX_SHOOTING_SPEED_VX = 0.3; // m/s, preparetoshoot command waits for the chassisspeeds to be below this number before finishing
+    public static final double MAX_SHOOTING_SPEED_VY = 0.3;
+    public static final double MAX_SHOOTING_SPEED_ROT = 0.05; // omega rad / s
   }
 
   public static class ArmConstants {
@@ -200,6 +206,8 @@ public final class Constants {
     public static final double[] AMP_UP_X = {0.65, 3.25, 2.77, 0.95};
     public static final double[] AMP_UP_Y = {8.4, 8.4, 7.52, 7.52};
     public static final Polygon AMP_UP_ZONE = new Polygon(AMP_UP_X, AMP_UP_Y);
+
+    public static final Pose2d AMP_SCORE_POSE = new Pose2d(new Translation2d(1.83, 7.68), Rotation2d.fromDegrees(90));
 
   }
   public static class Leds {

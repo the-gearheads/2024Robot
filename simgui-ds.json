@@ -4,11 +4,6 @@
       "visible": true
     }
   },
-  "Keyboard 1 Settings": {
-    "window": {
-      "visible": true
-    }
-  },
   "keyboardJoysticks": [
     {
       "axisConfig": [
@@ -37,13 +32,13 @@
         66,
         78,
         89,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
         85,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
         -1,
         -1
       ],

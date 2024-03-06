@@ -137,8 +137,7 @@ public class RobotContainer {
     // teleop controlls
     Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand()));
     Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand());
-    Controllers.driverController.getAlignBtn().whileTrue(new Align(shooter, swerve, arm));
-
+    Controllers.driverController.getAlignBtn().whileTrue(new Align(swerve, arm));
     Controllers.operatorController.getIntakeNote().whileTrue(new IntakeNote(feeder, intake));
 
     Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {
