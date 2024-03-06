@@ -15,7 +15,7 @@ public class AutoShooter extends Command {
   Shooter shooter;
   Swerve swerve;
   Feeder feeder;
-  Polygon shooterSpin = new Polygon(SHOOTER_SPIN_X, SHOOTER_SPIN_Y);
+  
 
   public AutoShooter(Shooter shooter, Swerve swerve, Feeder feeder) {
     this.shooter = shooter;
@@ -26,8 +26,9 @@ public class AutoShooter extends Command {
 
   @Override
   public void execute() {
-    Pose2d pose = swerve.getPoseAllianceRelative();
-    if (shooterSpin.contains(pose) && feeder.getBeamBreakSwitch().getAsBoolean()) {
+    Pose2d pose = swerve.getPose();
+    double speakerDistance = ShooterCalculations.getDistanceToSpeaker(pose.getTranslation());
+    if (speakerDistance < AUTO_SHOOTER_DISTANCE && feeder.getBeamBreakSwitch().getAsBoolean()) {
       ShooterCalculations.setShooterPower(shooter);
     } else {
       shooter.setSpeed(0);

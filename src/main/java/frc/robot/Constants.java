@@ -101,6 +101,7 @@ public final class Constants {
     public static final double[] PID = {0.0021693, 0, 0};
     public static final double SHOOTER_PIVOT_HEIGHT = 0.3048; // placeholder
     public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.045537, 0.0017932, 0.0001929);
+    public static final double AUTO_SHOOTER_DISTANCE = 7;  // meters from speaker where shooter will begin spinning, in amp or speaker mode
   }
 
   public static class ArmConstants {
