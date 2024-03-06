@@ -206,8 +206,8 @@ public final class Constants {
     public static final double[] AMP_UP_X = {0.65, 3.25, 2.77, 0.95};
     public static final double[] AMP_UP_Y = {8.4, 8.4, 7.52, 7.52};
     public static final Polygon AMP_UP_ZONE = new Polygon(AMP_UP_X, AMP_UP_Y);
-
-    public static final Pose2d AMP_SCORE_POSE = new Pose2d(new Translation2d(1.83, 7.68), Rotation2d.fromDegrees(90));
+    
+    public static final Pose2d AMP_SCORE_POSE = new Pose2d(new Translation2d(1.83, 7.68), Rotation2d.fromDegrees(-90));
 
   }
   public static class Leds {

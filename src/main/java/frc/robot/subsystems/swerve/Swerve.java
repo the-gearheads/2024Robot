@@ -1,7 +1,28 @@
 package frc.robot.subsystems.swerve;
 
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.Constants.SwerveConstants.DESATURATE;
+import static frc.robot.Constants.SwerveConstants.FACING_SPEAKER_TOLERANCE;
+import static frc.robot.Constants.SwerveConstants.MAX_MOD_SPEED;
+import static frc.robot.Constants.SwerveConstants.MAX_ROBOT_ROT_SPEED;
+import static frc.robot.Constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
+import static frc.robot.Constants.SwerveConstants.PATHPLANNER_MAX_MOD_SPEED;
+import static frc.robot.Constants.SwerveConstants.WHEEL_POSITIONS;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.GeometryUtil;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -24,8 +45,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,21 +54,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Constants;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.HandledSleep;
-
-import static frc.robot.Constants.SwerveConstants.*;
-
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import static edu.wpi.first.units.Units.*;
-
-import org.littletonrobotics.junction.Logger;
-import org.photonvision.EstimatedRobotPose;
 
 public class Swerve extends SubsystemBase {
   static final Lock odometryLock = new ReentrantLock();
@@ -195,6 +205,20 @@ public class Swerve extends SubsystemBase {
             0.0 // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
     );
     return pathfindingCommand.withTimeout(5);
+  }
+
+  public Command goTo(Pose2d targetPose) {
+    List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
+        getPose(),
+        targetPose
+    );
+
+    PathPlannerPath ampPath = new PathPlannerPath(
+        bezierPoints,
+        AutoConstants.PATHFIND_CONSTRAINTS,
+        new GoalEndState(0.0, targetPose.getRotation())
+    );
+    return AutoBuilder.followPath(ampPath);
   }
 
   PIDController headingController = new PIDController(5.2, 0, 0.5);

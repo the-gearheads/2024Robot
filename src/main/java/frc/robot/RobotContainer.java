@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.commands.Align;
 import frc.robot.commands.AutoArmHeight;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.AutonAutoArmHeight;
@@ -12,6 +11,7 @@ import frc.robot.commands.IntakeNote;
 import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
+import frc.robot.commands.NTControl.ShooterNTControl;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.NoteSimMgr;
@@ -24,6 +24,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
 import static frc.robot.Constants.ArmConstants.armOverrideVoltage;
+import static frc.robot.Constants.FieldConstants.AMP_SCORE_POSE;
 import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
 
@@ -68,8 +69,8 @@ public class RobotContainer {
     arm.setDefaultCommand(new AutoArmHeight(arm, swerve));
     // arm.setDefaultCommand(new ArmNTControl(arm));
 
-    shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
-    // shooter.setDefaultCommand(Commands.none());
+    // shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
+    shooter.setDefaultCommand(new ShooterNTControl(shooter));
 
     feeder.setDefaultCommand(Commands.run(feeder::stop, feeder));
     intake.setDefaultCommand(Commands.run(intake::stop, intake));
@@ -137,7 +138,7 @@ public class RobotContainer {
     // teleop controlls
     Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand()));
     Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand());
-    Controllers.driverController.getAlignBtn().whileTrue(new Align(swerve, arm));
+    Controllers.driverController.getAlignBtn().whileTrue(swerve.goTo(AMP_SCORE_POSE));
     Controllers.operatorController.getIntakeNote().whileTrue(new IntakeNote(feeder, intake));
 
     Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {

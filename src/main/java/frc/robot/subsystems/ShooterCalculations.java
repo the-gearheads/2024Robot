@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.ScoringState;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.shooter.Shooter;
 
@@ -29,6 +28,7 @@ public class ShooterCalculations {
   // not quite sure whether to have separate variables for red and blue but for now this is fine
   static Translation3d speakerPosition = new Translation3d(0.173, 5.543, 2.216);
   static Translation2d speakerBackPosition = new Translation2d(0.0, 5.55);
+  static Translation2d ampPosition = new Translation2d(1.85, 8.15);
   // Distance (m) -> Angle (rad)
   static PolynomialSplineFunction shooterAngleFunction = new SplineInterpolator().interpolate(SPLINE_DISTANCES, SPLINE_ANGLES);
   
@@ -62,6 +62,18 @@ public class ShooterCalculations {
     return dist;
   }
 
+  public static double getDistanceToAmp(Translation2d robotPos) {
+    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+    Translation2d pos = ampPosition;
+    if(isRed) {
+      pos = GeometryUtil.flipFieldPosition(pos);
+    }
+    Logger.recordOutput("Calculations/AmpPose", new Pose2d(ampPosition, new Rotation2d()));
+    double dist = pos.getDistance(robotPos);
+    Logger.recordOutput("Calculations/DistanceToAmp", dist);
+    return dist;
+  }
+
   /* Need to account for stage and other things in the future */
   private static double getShooterAngleSpeaker(Translation2d robotPos) {
     double distance = getDistanceToSpeaker(robotPos);
@@ -92,7 +104,7 @@ public class ShooterCalculations {
       case SPEAKER:
         return getShooterAngleSpeaker(robotPos);
       case AMP:
-        if (FieldConstants.AMP_UP_ZONE.contains(new Pose2d(robotPos, new Rotation2d()))) {
+        if (getDistanceToAmp(robotPos) < 1) {
           return ShooterConstants.AMP_ANGLE;
         }
         return ShooterConstants.STOW_ANGLE;
