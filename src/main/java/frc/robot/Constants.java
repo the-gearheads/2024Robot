@@ -16,6 +16,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
+import frc.robot.util.Polygon;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -97,6 +98,7 @@ public final class Constants {
     public static final int DEFAULT_SPEED = 6000;
     public static final int AMP_SPEED = 4000;
     public static final double AMP_ANGLE = 100d * 2d * Math.PI / 360;
+    public static final double STOW_ANGLE = 20d * 2d * Math.PI / 360; 
     public static final double SPEED_TOLERANCE = 150;
     public static final double[] PID = {0.0021693, 0, 0};
     public static final double SHOOTER_PIVOT_HEIGHT = 0.3048; // placeholder
@@ -193,6 +195,11 @@ public final class Constants {
 
     public static final double[] SHOOTER_SPIN_X = {0, 0, 6.40, 6.40};
     public static final double[] SHOOTER_SPIN_Y = {0, 8.15, 8.15, 0};
+    public static final Polygon SHOOTER_SPIN_ZONE = new Polygon(SHOOTER_SPIN_X, SHOOTER_SPIN_Y);
+
+    public static final double[] AMP_UP_X = {0.65, 3.25, 2.77, 0.95};
+    public static final double[] AMP_UP_Y = {8.4, 8.4, 7.52, 7.52};
+    public static final Polygon AMP_UP_ZONE = new Polygon(AMP_UP_X, AMP_UP_Y);
 
   }
   public static class Leds {

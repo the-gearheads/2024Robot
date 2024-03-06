@@ -6,6 +6,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.util.GeometryUtil;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.ScoringState;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.shooter.Shooter;
 
@@ -90,8 +92,12 @@ public class ShooterCalculations {
       case SPEAKER:
         return getShooterAngleSpeaker(robotPos);
       case AMP:
+        if (FieldConstants.AMP_UP_ZONE.contains(new Pose2d(robotPos, new Rotation2d()))) {
+          return ShooterConstants.AMP_ANGLE;
+        }
+        return ShooterConstants.STOW_ANGLE;
       default:
-        return ShooterConstants.AMP_ANGLE;
+        return ShooterConstants.STOW_ANGLE;
     }
   }
 
