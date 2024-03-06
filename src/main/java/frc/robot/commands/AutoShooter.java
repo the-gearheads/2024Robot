@@ -6,7 +6,6 @@ import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
-import frc.robot.util.Polygon;
 
 import static frc.robot.Constants.FieldConstants.*;
 import static frc.robot.Constants.ShooterConstants.*;
