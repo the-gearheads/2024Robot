@@ -99,7 +99,7 @@ public final class Constants {
     public static final int BOTTOM_ID = 12;
     public static final int DEFAULT_SPEED = 6000;
     public static final int AMP_SPEED = 4000;
-    public static final double AMP_ANGLE = 100d * 2d * Math.PI / 360;
+    public static final double AMP_ANGLE = 103d * 2d * Math.PI / 360;
     public static final double STOW_ANGLE = 20d * 2d * Math.PI / 360; 
     public static final double SPEED_TOLERANCE = 150;
     public static final double[] PID = {0.0021693, 0, 0};
