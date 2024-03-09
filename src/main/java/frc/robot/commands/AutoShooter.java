@@ -27,7 +27,7 @@ public class AutoShooter extends Command {
   public void execute() {
     Pose2d pose = swerve.getPose();
     double speakerDistance = ShooterCalculations.getDistanceToSpeaker(pose.getTranslation());
-    if (speakerDistance < AUTO_SHOOTER_DISTANCE && feeder.getBeamBreakSwitch().getAsBoolean()) {
+    if (speakerDistance < AUTO_SHOOTER_DISTANCE) {
       ShooterCalculations.setShooterPower(shooter);
     } else {
       shooter.setSpeed(0);

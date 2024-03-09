@@ -67,4 +67,12 @@ public class Thrustmaster implements OperatorController {
   public Trigger getSetStageModeBtn() {
     return new Trigger(()->joy.getRawButton(2));
   }
+
+  public  Trigger getResetPoseBtn() {
+    return new Trigger(()->joy.getRawButton(9));
+  }
+
+  public  Trigger getDisableVisionBtn() {
+    return new Trigger(()->joy.getRawButton(6));
+  }
 }

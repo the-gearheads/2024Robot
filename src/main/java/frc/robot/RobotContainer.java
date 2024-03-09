@@ -136,10 +136,12 @@ public class RobotContainer {
     Controllers.updateActiveControllerInstance();
 
     // teleop controlls
-    Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand()));
+    Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(Commands.run(feeder::run, feeder)));
     Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand());
-    Controllers.driverController.getAlignBtn().whileTrue(swerve.goTo(AMP_SCORE_POSE));
+    Controllers.driverController.getAlignBtn().whileTrue(swerve.pathFindTo(AMP_SCORE_POSE));
     Controllers.operatorController.getIntakeNote().whileTrue(new IntakeNote(feeder, intake));
+    Controllers.operatorController.getResetPoseBtn().onTrue(new InstantCommand(() -> swerve.resetPose(AMP_SCORE_POSE)));
+    Controllers.operatorController.getDisableVisionBtn().onTrue(new InstantCommand(() -> swerve.disableVision()));
 
     Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {
        shooter.setSpeed(Constants.ShooterConstants.DEFAULT_SPEED);
