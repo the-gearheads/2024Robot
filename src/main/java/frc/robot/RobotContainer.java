@@ -69,8 +69,8 @@ public class RobotContainer {
     arm.setDefaultCommand(new AutoArmHeight(arm, swerve));
     // arm.setDefaultCommand(new ArmNTControl(arm));
 
-    // shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
-    shooter.setDefaultCommand(new ShooterNTControl(shooter));
+    shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
+    // shooter.setDefaultCommand(new ShooterNTControl(shooter));
 
     feeder.setDefaultCommand(Commands.run(feeder::stop, feeder));
     intake.setDefaultCommand(Commands.run(intake::stop, intake));
