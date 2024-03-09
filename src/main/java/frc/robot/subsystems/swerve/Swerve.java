@@ -208,8 +208,9 @@ public class Swerve extends SubsystemBase {
   }
 
   public Command goTo(Pose2d targetPose) {
+    Rotation2d startHeading = targetPose.getTranslation().minus(getPose().getTranslation()).getAngle();
     List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
-        getPose(),
+        new Pose2d(getPose().getTranslation(), startHeading),
         targetPose
     );
 

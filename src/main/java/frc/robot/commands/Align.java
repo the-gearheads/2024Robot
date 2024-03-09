@@ -4,7 +4,6 @@ import static frc.robot.Constants.FieldConstants.AMP_SCORE_POSE;
 
 import java.util.List;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -37,6 +36,6 @@ public class Align extends Command {
         AutoConstants.PATHFIND_CONSTRAINTS,
         new GoalEndState(0.0, Rotation2d.fromDegrees(-90))
     );
-    AutoBuilder.followPath(ampPath);
+    
   }
 }
