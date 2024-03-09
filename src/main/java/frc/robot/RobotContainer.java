@@ -11,7 +11,6 @@ import frc.robot.commands.IntakeNote;
 import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
-import frc.robot.commands.NTControl.ShooterNTControl;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.NoteSimMgr;
@@ -19,6 +18,7 @@ import frc.robot.subsystems.NoteSimMgr.NoteState;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.leds.LedState;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
@@ -136,10 +136,20 @@ public class RobotContainer {
     Controllers.updateActiveControllerInstance();
 
     // teleop controlls
-    Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(Commands.run(feeder::run, feeder)));
-    Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand());
-    Controllers.driverController.getAlignBtn().whileTrue(swerve.pathFindTo(AMP_SCORE_POSE));
-    Controllers.operatorController.getIntakeNote().whileTrue(new IntakeNote(feeder, intake));
+    Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(Commands.run(feeder::run, feeder).andThen(new InstantCommand(() -> {  if (feeder.getBeamBreakSwitch().getAsBoolean() == false) {
+    leds.setState(LedState.RAINBOW);
+
+  } else {
+    leds.setState(LedState.NOTE);
+  }}))));
+    Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand().alongWith(new InstantCommand(() -> {  if (feeder.getBeamBreakSwitch().getAsBoolean() == false) {
+    leds.setState(LedState.RAINBOW);
+
+  } else {
+    leds.setState(LedState.NOTE);
+  }})));
+    Controllers.driverController.getAlignBtn().whileTrue(swerve.goTo(AMP_SCORE_POSE));
+    Controllers.operatorController.getIntakeNote().whileTrue(new IntakeNote(feeder, intake).andThen(new InstantCommand(() -> {leds.setState(LedState.NOTE);})));
     Controllers.operatorController.getResetPoseBtn().onTrue(new InstantCommand(() -> swerve.resetPose(AMP_SCORE_POSE)));
     Controllers.operatorController.getDisableVisionBtn().onTrue(new InstantCommand(() -> swerve.disableVision()));
 
@@ -222,8 +232,10 @@ public class RobotContainer {
     Controllers.operatorController.getSetStageModeBtn().onTrue(new InstantCommand(()->{
       ScoringState.goalMode = ScoringState.GoalMode.STAGE;
     }));
-  }
+  
 
+
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

@@ -16,20 +16,32 @@
     },
     {
       "anchor": {
-        "x": 8.284915998403426,
-        "y": 7.447004608294931
+        "x": 8.519467324648936,
+        "y": 7.4909829819659635
       },
       "prevControl": {
-        "x": 5.910083820167641,
-        "y": 7.007220871584601
+        "x": 6.144635146413151,
+        "y": 7.051199245255634
       },
       "nextControl": null,
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "C5"
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "IntakeCSlow",
+      "minWaypointRelativePos": 0.85,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 2.5,
+        "maxAcceleration": 3.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0
+      }
+    }
+  ],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.3,

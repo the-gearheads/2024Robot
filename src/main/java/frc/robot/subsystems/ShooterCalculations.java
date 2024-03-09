@@ -105,7 +105,7 @@ public class ShooterCalculations {
         return getShooterAngleSpeaker(robotPos);
       case AMP:
         if (getDistanceToAmp(robotPos) < 1) {
-          return ShooterConstants.AMP_ANGLE;
+          return ShooterConstants.AMP_WAIT_ANGLE;
         }
         return ShooterConstants.STOW_ANGLE;
       default:
@@ -118,6 +118,7 @@ public class ShooterCalculations {
       case SPEAKER:
         return getYawSpeaker(robotPos);
       case AMP:
+        return robotPos.getAngle();
       default:
         return new Rotation2d(AMP_YAW);
     }
