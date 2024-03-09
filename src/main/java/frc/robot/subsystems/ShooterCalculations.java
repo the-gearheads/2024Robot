@@ -25,7 +25,8 @@ import static frc.robot.Constants.SwerveConstants.AMP_YAW;
 
 public class ShooterCalculations {
   // not quite sure whether to have separate variables for red and blue but for now this is fine
-  static Translation3d speakerPosition = new Translation3d(0.173, 5.543, 2.216);
+  static Translation3d speakerPosition = new Translation3d(0.173, 5.543, 2.05);
+  // static Translation3d speakerPosition = new Translation3d(0.173, 5.543, 1.9);
   static Translation2d speakerBackPosition = new Translation2d(0.0, 5.55);
   // Distance (m) -> Angle (rad)
   static PolynomialSplineFunction shooterAngleFunction = new SplineInterpolator().interpolate(SPLINE_DISTANCES, SPLINE_ANGLES);
@@ -80,6 +81,7 @@ public class ShooterCalculations {
   private static double getMathShooterAngleSpeaker(Translation2d robotPos) {
     double distance = getDistanceToSpeaker(robotPos);
     double pivotToSpeakerHeight = speakerPosition.getZ() - SHOOTER_PIVOT_HEIGHT;
+    Logger.recordOutput("Calculations/pivotToSpeakerHeight", pivotToSpeakerHeight);
     double angle = Math.atan2(pivotToSpeakerHeight, distance);
     Logger.recordOutput("Calculations/atan2ShooterAngle", angle);
     return angle;
@@ -88,7 +90,8 @@ public class ShooterCalculations {
   public static double getShooterAngle(Translation2d robotPos) {
     switch(ScoringState.goalMode) {
       case SPEAKER:
-        return getShooterAngleSpeaker(robotPos);
+      getMathShooterAngleSpeaker(robotPos);
+      return getShooterAngleSpeaker(robotPos);
       case AMP:
       default:
         return ShooterConstants.AMP_ANGLE;

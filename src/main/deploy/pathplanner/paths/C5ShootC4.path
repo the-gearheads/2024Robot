@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.94059134064214,
-        "y": 6.582228659952816
+        "x": 7.2411709495783665,
+        "y": 6.4902557155541665
       },
       "isLocked": false,
       "linkedName": "C5Shoot"
@@ -39,13 +39,13 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.3,
-    "maxAcceleration": 3.5,
-    "maxAngularVelocity": 540.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 520.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0,
+    "rotation": -179.74648050622798,
     "rotateFast": false
   },
   "reversed": false,
