@@ -62,4 +62,12 @@ public interface OperatorController {
   public default Trigger getSetStageModeBtn() {
     return new Trigger(()->false);
   }
+
+  public default Trigger getResetPoseBtn() {
+    return new Trigger(()->false);
+  }
+
+  public default Trigger getDisableVisionBtn() {
+    return new Trigger(()->false);
+  }
 }

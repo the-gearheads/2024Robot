@@ -14,9 +14,17 @@ public enum LedState {
   PURPLE(Color.kPurple), YELLOW(Color.kYellow),
   BLACK(Color.kBlack), WHITE(Color.kWhite), ORANGE(new Color(255, 89, 0)),
   GREEN(Color.kGreen), HOT_PINK(new Color(255, 0, 200)),
+  NOTE(Color.kOrange),
   FLASH_RED((AddressableLEDBuffer buf) -> {
     boolean isOn = Math.floor(Timer.getFPGATimestamp() * 10) % 2 == 0; 
     Color color = isOn ? Color.kRed : Color.kBlack;
+    for (int i = 0; i < buf.getLength(); i++) {
+      buf.setLED(i, color);
+    }
+  }),
+   FLASH_NOTE((AddressableLEDBuffer buf) -> {
+    boolean isOn = Math.floor(Timer.getFPGATimestamp() * 5) % 2 == 0; 
+    Color color = isOn ? Color.kOrange : Color.kBlack;
     for (int i = 0; i < buf.getLength(); i++) {
       buf.setLED(i, color);
     }

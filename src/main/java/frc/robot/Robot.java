@@ -106,6 +106,7 @@ public class Robot extends LoggedRobot {
     }
 
     lastBrakeCoastButton = output;
+    m_robotContainer.leds.setState(LedState.RAINBOW);
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */

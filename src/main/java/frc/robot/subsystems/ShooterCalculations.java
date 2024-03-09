@@ -6,6 +6,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.util.GeometryUtil;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -28,6 +29,7 @@ public class ShooterCalculations {
   static Translation3d speakerPosition = new Translation3d(0.173, 5.543, 2.05);
   // static Translation3d speakerPosition = new Translation3d(0.173, 5.543, 1.9);
   static Translation2d speakerBackPosition = new Translation2d(0.0, 5.55);
+  static Translation2d ampPosition = new Translation2d(1.85, 8.15);
   // Distance (m) -> Angle (rad)
   static PolynomialSplineFunction shooterAngleFunction = new SplineInterpolator().interpolate(SPLINE_DISTANCES, SPLINE_ANGLES);
   
@@ -61,9 +63,22 @@ public class ShooterCalculations {
     return dist;
   }
 
+  public static double getDistanceToAmp(Translation2d robotPos) {
+    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+    Translation2d pos = ampPosition;
+    if(isRed) {
+      pos = GeometryUtil.flipFieldPosition(pos);
+    }
+    Logger.recordOutput("Calculations/AmpPose", new Pose2d(ampPosition, new Rotation2d()));
+    double dist = pos.getDistance(robotPos);
+    Logger.recordOutput("Calculations/DistanceToAmp", dist);
+    return dist;
+  }
+
   /* Need to account for stage and other things in the future */
   private static double getShooterAngleSpeaker(Translation2d robotPos) {
     double distance = getDistanceToSpeaker(robotPos);
+    
     if(distance > SPLINE_DISTANCES[SPLINE_DISTANCES.length - 1]) {
       return SPLINE_ANGLES[SPLINE_ANGLES.length - 1];
     }
@@ -93,8 +108,12 @@ public class ShooterCalculations {
       getMathShooterAngleSpeaker(robotPos);
       return getShooterAngleSpeaker(robotPos);
       case AMP:
+        if (getDistanceToAmp(robotPos) < 1) {
+          return ShooterConstants.AMP_WAIT_ANGLE;
+        }
+        return ShooterConstants.STOW_ANGLE;
       default:
-        return ShooterConstants.AMP_ANGLE;
+        return ShooterConstants.STOW_ANGLE;
     }
   }
 
@@ -103,6 +122,7 @@ public class ShooterCalculations {
       case SPEAKER:
         return getYawSpeaker(robotPos);
       case AMP:
+        return new Rotation2d(AMP_YAW);
       default:
         return new Rotation2d(AMP_YAW);
     }

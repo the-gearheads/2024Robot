@@ -1,40 +1,41 @@
 package frc.robot.commands;
 
-import static frc.robot.Constants.ShooterConstants.*;
+import static frc.robot.Constants.FieldConstants.AMP_SCORE_POSE;
 
+import java.util.List;
+
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathPlannerPath;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ShooterCalculations;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class Align extends Command {
-  Shooter shooter;
   Swerve swerve;
   Arm arm;
 
-  public Align(Shooter shooter, Swerve swerve, Arm arm) {
-    this.shooter = shooter;
-    this.swerve = swerve;
+  public Align(Swerve swerve, Arm arm) {
     this.arm = arm;
-    addRequirements(shooter, arm);
-  }
-
-  @Override
-  public void initialize() {
+    this.swerve = swerve;
+    addRequirements(swerve, arm);
   }
 
   @Override
   public void execute() {
-    ShooterCalculations.setShooterPower(shooter);
-    arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
- }
+    List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
+        swerve.getPose(),
+        AMP_SCORE_POSE
+    );
 
-  @Override
-  public boolean isFinished() {
-    double shooterAngle = ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation());
-    double targetYaw = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
-    return shooter.atSpeed() && swerve.atYaw(targetYaw) && arm.atPoint(shooterAngle);
+    PathPlannerPath ampPath = new PathPlannerPath(
+        bezierPoints,
+        AutoConstants.PATHFIND_CONSTRAINTS,
+        new GoalEndState(0.0, Rotation2d.fromDegrees(-90))
+    );
+    
   }
-
 }

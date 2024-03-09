@@ -15,6 +15,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 
@@ -48,12 +49,24 @@ public class Vision extends SubsystemBase {
     backEstimator = new PhotonPoseEstimator(field, strategy, cameraBack, BACK_CAM_TRANSFORM);
   }
 
+  final double MAX_PITCHROLL = Units.degreesToRadians(30);
+  final double MAX_Z = Units.inchesToMeters(24);
+
   public Optional<EstimatedRobotPose> getGlobalPoseFromFront() {
     Logger.recordOutput("/Vision/FrontRefPose", frontEstimator.getReferencePose());
     var updated = frontEstimator.update();
     if(updated.isPresent()) {
+      double pitch = updated.get().estimatedPose.getRotation().getX();
+      double roll = updated.get().estimatedPose.getRotation().getY();
+      if(Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL || updated.get().estimatedPose.getTranslation().getZ() > MAX_Z) {
+        Logger.recordOutput("/Vision/FrontEstPoseUnfiltered", updated.get().estimatedPose);
+        return Optional.empty();
+      }
+
+      Logger.recordOutput("/Vision/FrontEstPoseUnfiltered", updated.get().estimatedPose);
       Logger.recordOutput("/Vision/FrontEstPose", updated.get().estimatedPose);
     }
+
     return updated;
   }
 
@@ -61,9 +74,17 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput("/Vision/BackRefPose", backEstimator.getReferencePose());
     var updated = backEstimator.update();
     if(updated.isPresent()) {
+      double pitch = updated.get().estimatedPose.getRotation().getX();
+      double roll = updated.get().estimatedPose.getRotation().getY();
+      if(Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL || updated.get().estimatedPose.getTranslation().getZ() > MAX_Z) {
+        Logger.recordOutput("/Vision/BackEstPoseUnfiltered", updated.get().estimatedPose);
+        return Optional.empty();
+      }
+
+      Logger.recordOutput("/Vision/BackEstPoseUnfiltered", updated.get().estimatedPose);
       Logger.recordOutput("/Vision/BackEstPose", updated.get().estimatedPose);
     }
+
     return updated;
   }
-
 }

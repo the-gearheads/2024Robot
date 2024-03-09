@@ -20,6 +20,9 @@
         "header": {
           "open": true
         }
+      },
+      "window": {
+        "visible": false
       }
     }
   },
@@ -144,8 +147,7 @@
     "Server": {
       "Publishers": {
         "open": true
-      },
-      "open": true
+      }
     },
     "visible": true
   },

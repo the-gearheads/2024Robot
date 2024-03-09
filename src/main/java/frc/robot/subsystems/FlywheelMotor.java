@@ -42,28 +42,22 @@ public class FlywheelMotor {
   FlywheelSim sim;
   double simShooterPos = 0;
 
+  boolean inverted, brakeMode;
+
   public FlywheelMotor(String name, int id, double[] PID, SimpleMotorFeedforward ff, boolean inverted, boolean brakeMode) {
     pid = new PIDController(PID[0], PID[1], PID[2]);
     this.name = name;
     this.ff = ff;
+    this.inverted = inverted;
+    this.brakeMode = brakeMode;
     flex = new CANSparkFlex(id, CANSparkFlex.MotorType.kBrushless);
     flex.restoreFactoryDefaults();
     HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
 
-    flex.setSmartCurrentLimit(80);
-    flex.setInverted(inverted);
-    if(brakeMode) {
-      flex.setIdleMode(IdleMode.kBrake);
-    } else {
-      flex.setIdleMode(IdleMode.kCoast);
-    }
-
-    // we're just not gonna set the position or velocity conversion factors because they default to rot(/min)
-
     enc = flex.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
     // enc = flex.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
-    enc.setAverageDepth(1);
-    enc.setMeasurementPeriod(8);
+
+    configure();
 
     if(Robot.isSimulation()) {
       sim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(ff.kv, ff.ka), DCMotor.getNeoVortex(1), 1);
@@ -74,6 +68,20 @@ public class FlywheelMotor {
 
   public FlywheelMotor(String name, int id, double[] PID, SimpleMotorFeedforward ff) {
     this(name, id, PID, ff, true, false);
+  }
+
+  public void configure() {
+    // we're just not gonna set the position or velocity conversion factors because they default to rot(/min)
+    flex.setSmartCurrentLimit(80);
+    flex.setInverted(inverted);
+    if(brakeMode) {
+      flex.setIdleMode(IdleMode.kBrake);
+    } else {
+      flex.setIdleMode(IdleMode.kCoast);
+    }
+
+    enc.setAverageDepth(1);
+    enc.setMeasurementPeriod(8);
   }
 
   public void setSpeed(double speed) {
