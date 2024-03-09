@@ -12,6 +12,7 @@ import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -89,6 +90,9 @@ public class FlywheelMotor {
     pid.setSetpoint(speed);
   }
 
+  double superSpeedCount = 0;
+  double lastReconfigured = Timer.getFPGATimestamp();
+
   public void periodic() {
     if(Robot.isSimulation()) {
       var maxVolts = RobotController.getBatteryVoltage();
@@ -110,6 +114,23 @@ public class FlywheelMotor {
       return;
     }
     setVolts(ff.calculate(pid.getSetpoint()) + pid.calculate(enc.getVelocity()));
+
+    if(Math.abs(enc.getVelocity()) > 8000) {
+      superSpeedCount++;
+    } else {
+      superSpeedCount = 0;
+    }
+
+    if(superSpeedCount > 10) {
+      DriverStation.reportWarning("FlywheelMotor " + name + " is like way too fast, reconfiguring", false);
+      if(Timer.getFPGATimestamp() - lastReconfigured > 1) {
+        superSpeedCount = 0;
+        lastReconfigured = Timer.getFPGATimestamp();
+        configure();
+      } else {
+        DriverStation.reportWarning("FlywheelMotor " + name + " reconfiguring, but we just did that, so not trying again", false);
+      }
+    }
   }
 
   public double getVolts() {
