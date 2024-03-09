@@ -21,6 +21,13 @@ public enum LedState {
     for (int i = 0; i < buf.getLength(); i++) {
       buf.setLED(i, color);
     }
+  }),
+   FLASH_NOTE((AddressableLEDBuffer buf) -> {
+    boolean isOn = Math.floor(Timer.getFPGATimestamp() * 5) % 2 == 0; 
+    Color color = isOn ? Color.kOrange : Color.kBlack;
+    for (int i = 0; i < buf.getLength(); i++) {
+      buf.setLED(i, color);
+    }
   }), 
   FLASH_YELLOW((AddressableLEDBuffer buf) -> {
     boolean isOn = Math.floor(Timer.getFPGATimestamp() * 10) % 2 == 0;

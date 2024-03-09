@@ -4,10 +4,30 @@
 
 package frc.robot;
 
+import static frc.robot.Constants.ArmConstants.armOverrideVoltage;
+import static frc.robot.Constants.FieldConstants.AMP_SCORE_POSE;
+import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.util.GeometryUtil;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.AutoArmHeight;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.AutonAutoArmHeight;
 import frc.robot.commands.IntakeNote;
+import frc.robot.commands.LedControl;
 import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
@@ -18,27 +38,9 @@ import frc.robot.subsystems.NoteSimMgr.NoteState;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.leds.LedState;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
-
-import static frc.robot.Constants.ArmConstants.armOverrideVoltage;
-import static frc.robot.Constants.FieldConstants.AMP_SCORE_POSE;
-import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
-
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -74,6 +76,7 @@ public class RobotContainer {
 
     feeder.setDefaultCommand(Commands.run(feeder::stop, feeder));
     intake.setDefaultCommand(Commands.run(intake::stop, intake));
+    leds.setDefaultCommand(new LedControl(leds, feeder));
 
     sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
@@ -136,21 +139,19 @@ public class RobotContainer {
     Controllers.updateActiveControllerInstance();
 
     // teleop controlls
-    Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(Commands.run(feeder::run, feeder).andThen(new InstantCommand(() -> {  if (feeder.getBeamBreakSwitch().getAsBoolean() == false) {
-    leds.setState(LedState.RAINBOW);
-
-  } else {
-    leds.setState(LedState.NOTE);
-  }}))));
-    Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand().alongWith(new InstantCommand(() -> {  if (feeder.getBeamBreakSwitch().getAsBoolean() == false) {
-    leds.setState(LedState.RAINBOW);
-
-  } else {
-    leds.setState(LedState.NOTE);
-  }})));
+    Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(Commands.run(feeder::run, feeder)));
+    Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand());
     Controllers.driverController.getAlignBtn().whileTrue(swerve.goTo(AMP_SCORE_POSE));
-    Controllers.operatorController.getIntakeNote().whileTrue(new IntakeNote(feeder, intake).andThen(new InstantCommand(() -> {leds.setState(LedState.NOTE);})));
-    Controllers.operatorController.getResetPoseBtn().onTrue(new InstantCommand(() -> swerve.resetPose(AMP_SCORE_POSE)));
+    Controllers.driverController.enableVision().onTrue(new InstantCommand(() -> swerve.enableVision()));
+    Controllers.operatorController.getIntakeNote().whileTrue(new IntakeNote(feeder, intake));
+    Controllers.operatorController.getResetPoseBtn().onTrue(new InstantCommand(() -> {
+        boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+        Pose2d pos = AMP_SCORE_POSE;
+        if(isRed) {
+          pos = GeometryUtil.flipFieldPose(pos);
+        }
+        swerve.resetPose(pos);
+    }));
     Controllers.operatorController.getDisableVisionBtn().onTrue(new InstantCommand(() -> swerve.disableVision()));
 
     Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {

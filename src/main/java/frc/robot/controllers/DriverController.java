@@ -63,4 +63,9 @@ public class DriverController {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getBButton());
   }
+
+  public Trigger enableVision() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getStartButton());
+  }
 }

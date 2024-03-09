@@ -29,6 +29,7 @@ public class Feeder extends SubsystemBase {
     feederMotor.log();
     handoffMotor.periodic();
     handoffMotor.log();
+
     Logger.recordOutput("Feeder/beamBreakSwitch", beamBreakSwitch.getAsBoolean());
   }
   

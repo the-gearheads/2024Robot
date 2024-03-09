@@ -77,6 +77,7 @@ public class ShooterCalculations {
   /* Need to account for stage and other things in the future */
   private static double getShooterAngleSpeaker(Translation2d robotPos) {
     double distance = getDistanceToSpeaker(robotPos);
+    
     if(distance > SPLINE_DISTANCES[SPLINE_DISTANCES.length - 1]) {
       return SPLINE_ANGLES[SPLINE_ANGLES.length - 1];
     }
@@ -118,7 +119,7 @@ public class ShooterCalculations {
       case SPEAKER:
         return getYawSpeaker(robotPos);
       case AMP:
-        return robotPos.getAngle();
+        return new Rotation2d(AMP_YAW);
       default:
         return new Rotation2d(AMP_YAW);
     }
