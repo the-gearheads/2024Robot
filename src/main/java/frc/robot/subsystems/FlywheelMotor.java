@@ -166,5 +166,7 @@ public class FlywheelMotor {
     Logger.recordOutput(name + "/VelocitySetpoint", getVelocitySetpoint());
     Logger.recordOutput(name + "/Volts", getVolts());
     Logger.recordOutput(name + "/VoltsSetpoint", targetVolts);
+    Logger.recordOutput(name + "/LastReconfigured", lastReconfigured);
+    Logger.recordOutput(name + "/SuperSpeedCount", superSpeedCount);
   }
 }
