@@ -103,7 +103,7 @@ public final class Constants {
     public static final double AMP_SCORE_ANGLE = 100d * 2d * Math.PI / 360;
     public static final double AMP_ANGLE_TOLERANCE = 1.2d * 2d * Math.PI / 360;
     public static final double STOW_ANGLE = 20d * 2d * Math.PI / 360; 
-    public static final double SPEED_TOLERANCE = 150;
+    public static final double SPEED_TOLERANCE = 240;
     
     public static final double[] PID = {0.0021693, 0, 0};
 

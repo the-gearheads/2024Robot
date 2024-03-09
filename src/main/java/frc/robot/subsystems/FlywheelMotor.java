@@ -74,12 +74,13 @@ public class FlywheelMotor {
     // we're just not gonna set the position or velocity conversion factors because they default to rot(/min)
     flex.setSmartCurrentLimit(80);
     flex.setInverted(inverted);
+    HandledSleep.sleep(100);
     if(brakeMode) {
       flex.setIdleMode(IdleMode.kBrake);
     } else {
       flex.setIdleMode(IdleMode.kCoast);
     }
-
+    HandledSleep.sleep(100); 
     enc.setAverageDepth(1);
     enc.setMeasurementPeriod(8);
   }
