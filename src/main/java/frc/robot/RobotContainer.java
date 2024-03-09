@@ -41,6 +41,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.util.HandledSleep;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -234,7 +235,19 @@ public class RobotContainer {
       ScoringState.goalMode = ScoringState.GoalMode.STAGE;
     }));
   
-
+    Controllers.driverController.reconfigureEverything().onTrue(new InstantCommand(()->{
+      arm.configure();
+      HandledSleep.sleep(100);
+      shooter.topMotor.configure();
+      HandledSleep.sleep(100);
+      shooter.bottomMotor.configure();
+      HandledSleep.sleep(100);
+      feeder.feederMotor.configure();
+      HandledSleep.sleep(100);
+      feeder.handoffMotor.configure();
+      HandledSleep.sleep(100);
+      intake.motor.configure();
+    }));
 
   }
   /**

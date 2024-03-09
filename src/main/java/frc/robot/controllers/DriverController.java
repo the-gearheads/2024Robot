@@ -68,4 +68,9 @@ public class DriverController {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getStartButton());
   }
+
+  public Trigger reconfigureEverything() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getLeftBumper());
+  }
 }

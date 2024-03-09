@@ -42,21 +42,8 @@ public class Arm extends SubsystemBase {
   public Arm() {
     mainFlex.restoreFactoryDefaults();
     followerFlex.restoreFactoryDefaults();
-    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
-    setupStatusFrames();
-    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
 
-
-    mainFlex.getForwardLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyClosed).enableLimitSwitch(true);
-    mainFlex.getReverseLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyClosed).enableLimitSwitch(true);
-
-    mainFlex.setSmartCurrentLimit(80);
-    followerFlex.setSmartCurrentLimit(80);
-
-    // mainFlex.enableVoltageCompensation(12);
-    // followerFlex.enableVoltageCompensation(12);
-
-    followerFlex.follow(mainFlex, true);
+    configure();
 
     // We're doing this ourselves (DutyCycleEncoder doesn't have an invert mode)
     enc.setPositionOffset(0);
@@ -75,6 +62,23 @@ public class Arm extends SubsystemBase {
     if(Robot.isSimulation()) armSim.update(0.02);
     pid.reset(getAngle().getRadians());
     pid.setGoal(getAngle().getRadians());
+  }
+
+  public void configure() {
+    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
+    setupStatusFrames();
+    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
+
+    mainFlex.getForwardLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyClosed).enableLimitSwitch(true);
+    mainFlex.getReverseLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyClosed).enableLimitSwitch(true);
+
+    mainFlex.setSmartCurrentLimit(80);
+    followerFlex.setSmartCurrentLimit(80);
+
+    // mainFlex.enableVoltageCompensation(12);
+    // followerFlex.enableVoltageCompensation(12);
+
+    followerFlex.follow(mainFlex, true);
   }
 
   private double output = 0;
