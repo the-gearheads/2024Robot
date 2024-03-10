@@ -88,6 +88,7 @@ public class DriveMotor {
     flex.setSmartCurrentLimit(DRIVE_CURRENT_LIMIT);
     flex.setIdleMode(IdleMode.kBrake);
     flex.setInverted(IS_INVERTED[index]);
+    flex.enableVoltageCompensation(12);
     encoder.setPositionConversionFactor(DRIVE_POS_FACTOR);
     encoder.setVelocityConversionFactor(DRIVE_VEL_FACTOR);
   }

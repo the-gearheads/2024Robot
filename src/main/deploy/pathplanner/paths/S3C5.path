@@ -8,10 +8,10 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.230849522187468,
-        "y": 5.792598941698302
+        "x": 3.088864545811459,
+        "y": 6.19883761260444
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": "S3"
     },
     {
@@ -30,16 +30,34 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.4,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "DisableVision"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 5.3,
-    "maxAcceleration": 3.5,
-    "maxAngularVelocity": 540.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 520.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -170.0,
+    "rotation": -169.9920201985587,
     "rotateFast": false
   },
   "reversed": false,

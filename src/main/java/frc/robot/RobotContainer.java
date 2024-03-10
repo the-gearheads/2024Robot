@@ -27,7 +27,7 @@ import frc.robot.commands.AutoArmHeight;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.AutonAutoArmHeight;
 import frc.robot.commands.IntakeNote;
-import frc.robot.commands.LedControl;
+import frc.robot.commands.TeleopLedControl;
 import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
@@ -41,6 +41,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.util.HandledSleep;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -76,7 +77,7 @@ public class RobotContainer {
 
     feeder.setDefaultCommand(Commands.run(feeder::stop, feeder));
     intake.setDefaultCommand(Commands.run(intake::stop, intake));
-    leds.setDefaultCommand(new LedControl(leds, feeder));
+    leds.setDefaultCommand(new TeleopLedControl(leds, feeder));
 
     sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
@@ -234,7 +235,19 @@ public class RobotContainer {
       ScoringState.goalMode = ScoringState.GoalMode.STAGE;
     }));
   
-
+    Controllers.driverController.reconfigureEverything().onTrue(new InstantCommand(()->{
+      arm.configure();
+      HandledSleep.sleep(100);
+      shooter.topMotor.configure();
+      HandledSleep.sleep(100);
+      shooter.bottomMotor.configure();
+      HandledSleep.sleep(100);
+      feeder.feederMotor.configure();
+      HandledSleep.sleep(100);
+      feeder.handoffMotor.configure();
+      HandledSleep.sleep(100);
+      intake.motor.configure();
+    }));
 
   }
   /**

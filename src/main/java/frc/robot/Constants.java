@@ -83,7 +83,7 @@ public final class Constants {
     public static final int STEER_CURRENT_LIMIT = 40;
 
     public static final double PATHPLANNER_MAX_MOD_SPEED = 5; // m/s I think
-    // For desaturateWheelSpeeds
+    // For desaturateWheelSpeeds 
     public static final boolean DESATURATE = true;
     public static final double MAX_MOD_SPEED = DRIVE_FREE_SPD;  // m/s, placeholders
     public static final double MAX_ROBOT_TRANS_SPEED = DRIVE_FEEDFORWARD.maxAchievableVelocity(12, 0.1); // m/s
@@ -99,11 +99,11 @@ public final class Constants {
     public static final int BOTTOM_ID = 12;
     public static final int DEFAULT_SPEED = 6000;
     public static final int AMP_SPEED = 4000;
-    public static final double AMP_WAIT_ANGLE = 100d * 2d * Math.PI / 360;
+    public static final double AMP_WAIT_ANGLE = 85d * 2d * Math.PI / 360;
     public static final double AMP_SCORE_ANGLE = 100d * 2d * Math.PI / 360;
     public static final double AMP_ANGLE_TOLERANCE = 1.2d * 2d * Math.PI / 360;
     public static final double STOW_ANGLE = 20d * 2d * Math.PI / 360; 
-    public static final double SPEED_TOLERANCE = 150;
+    public static final double SPEED_TOLERANCE = 240;
     
     public static final double[] PID = {0.0021693, 0, 0};
 
@@ -141,7 +141,7 @@ public final class Constants {
     public static final double[] SPLINE_DISTANCES = {1.201, 1.538, 2.026, 2.522, 3.017, 3.465, 4.00, 4.416, 5.17};
     public static final double[] SPLINE_ANGLES =    {0.893, 0.803, 0.692, 0.592, 0.507, 0.463, 0.416, 0.409, 0.380};
 
-    public static final Measure<Voltage> armOverrideVoltage = Volts.of(2);
+    public static final Measure<Voltage> armOverrideVoltage = Volts.of(4);
   }
 
   public static class FeederConstants {

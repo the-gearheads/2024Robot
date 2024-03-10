@@ -12,6 +12,7 @@ import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -42,10 +43,14 @@ public class FlywheelMotor {
   FlywheelSim sim;
   double simShooterPos = 0;
 
+  boolean inverted, brakeMode;
+
   public FlywheelMotor(String name, int id, double[] PID, SimpleMotorFeedforward ff, boolean inverted, boolean brakeMode) {
     pid = new PIDController(PID[0], PID[1], PID[2]);
     this.name = name;
     this.ff = ff;
+    this.inverted = inverted;
+    this.brakeMode = brakeMode;
     flex = new CANSparkFlex(id, CANSparkFlex.MotorType.kBrushless);
     HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
     flex.restoreFactoryDefaults();
@@ -53,7 +58,6 @@ public class FlywheelMotor {
 
     flex.setSmartCurrentLimit(80);
     flex.setInverted(inverted);
-    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
     if(brakeMode) {
       flex.setIdleMode(IdleMode.kBrake);
     } else {
@@ -64,9 +68,8 @@ public class FlywheelMotor {
 
     enc = flex.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
     // enc = flex.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
-    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
-    enc.setAverageDepth(1);
-    enc.setMeasurementPeriod(8);
+
+    configure();
 
     if(Robot.isSimulation()) {
       sim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(ff.kv, ff.ka), DCMotor.getNeoVortex(1), 1);
@@ -79,9 +82,27 @@ public class FlywheelMotor {
     this(name, id, PID, ff, true, false);
   }
 
+  public void configure() {
+    // we're just not gonna set the position or velocity conversion factors because they default to rot(/min)
+    flex.setSmartCurrentLimit(80);
+    flex.setInverted(inverted);
+    HandledSleep.sleep(100);
+    if(brakeMode) {
+      flex.setIdleMode(IdleMode.kBrake);
+    } else {
+      flex.setIdleMode(IdleMode.kCoast);
+    }
+    HandledSleep.sleep(100); 
+    enc.setAverageDepth(1);
+    enc.setMeasurementPeriod(8);
+  }
+
   public void setSpeed(double speed) {
     pid.setSetpoint(speed);
   }
+
+  double superSpeedCount = 0;
+  double lastReconfigured = Timer.getFPGATimestamp();
 
   public void periodic() {
     if(Robot.isSimulation()) {
@@ -104,6 +125,23 @@ public class FlywheelMotor {
       return;
     }
     setVolts(ff.calculate(pid.getSetpoint()) + pid.calculate(enc.getVelocity()));
+
+    if(Math.abs(enc.getVelocity()) > 8000) {
+      superSpeedCount++;
+    } else {
+      superSpeedCount = 0;
+    }
+
+    if(superSpeedCount > 10) {
+      DriverStation.reportWarning("FlywheelMotor " + name + " is like way too fast, reconfiguring", false);
+      if(Timer.getFPGATimestamp() - lastReconfigured > 1) {
+        superSpeedCount = 0;
+        lastReconfigured = Timer.getFPGATimestamp();
+        configure();
+      } else {
+        DriverStation.reportWarning("FlywheelMotor " + name + " reconfiguring, but we just did that, so not trying again", false);
+      }
+    }
   }
 
   public double getVolts() {
@@ -139,5 +177,7 @@ public class FlywheelMotor {
     Logger.recordOutput(name + "/VelocitySetpoint", getVelocitySetpoint());
     Logger.recordOutput(name + "/Volts", getVolts());
     Logger.recordOutput(name + "/VoltsSetpoint", targetVolts);
+    Logger.recordOutput(name + "/LastReconfigured", lastReconfigured);
+    Logger.recordOutput(name + "/SuperSpeedCount", superSpeedCount);
   }
 }

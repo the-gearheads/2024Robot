@@ -47,8 +47,8 @@ public class Shooter extends SubsystemBase {
     if(Robot.isSimulation()) {
       tolerance = 3000; // sim setpoint 4k rpm turns out to be like 6661 rpm
     }
-    boolean speedWithinTolerance = Math.abs(topMotor.getVelocity() - topMotor.getVelocitySetpoint()) < tolerance &&
-                             Math.abs(bottomMotor.getVelocity() - bottomMotor.getVelocitySetpoint()) < tolerance;
+    boolean speedWithinTolerance = ((Math.abs(topMotor.getVelocity() - topMotor.getVelocitySetpoint()) < tolerance) || topMotor.getVelocity() > topMotor.getVelocitySetpoint()) &&
+                             ((Math.abs(bottomMotor.getVelocity() - bottomMotor.getVelocitySetpoint()) < tolerance) || topMotor.getVelocity() > topMotor.getVelocitySetpoint());
     return speedDebouncer.calculate(speedWithinTolerance);
   }
   

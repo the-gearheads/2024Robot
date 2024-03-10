@@ -20,24 +20,30 @@
         "y": 7.4909829819659635
       },
       "prevControl": {
-        "x": 6.144635146413151,
-        "y": 7.051199245255634
+        "x": 6.317332748625611,
+        "y": 6.911245275482004
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "C5"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -169.52,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [
     {
-      "name": "IntakeCSlow",
-      "minWaypointRelativePos": 0.85,
+      "name": "low vel for intake",
+      "minWaypointRelativePos": 0.8,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 2.5,
-        "maxAcceleration": 3.5,
-        "maxAngularVelocity": 540.0,
+        "maxVelocity": 3.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 620.0,
         "maxAngularAcceleration": 720.0
       }
     }
@@ -45,13 +51,13 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.3,
-    "maxAcceleration": 3.5,
-    "maxAngularVelocity": 540.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 520.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -169.52,
+    "rotation": -168.69006752597983,
     "rotateFast": false
   },
   "reversed": false,

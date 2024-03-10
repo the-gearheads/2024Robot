@@ -5,11 +5,11 @@ import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.leds.LedState;
 import frc.robot.subsystems.leds.Leds;
 
-public class LedControl extends Command {
+public class TeleopLedControl extends Command {
   Leds leds;
   Feeder feeder;
 
-  public LedControl(Leds leds, Feeder feeder) {
+  public TeleopLedControl(Leds leds, Feeder feeder) {
     this.leds = leds;
     this.feeder = feeder;
     addRequirements(leds);
