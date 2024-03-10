@@ -324,8 +324,17 @@ public class Swerve extends SubsystemBase {
     // need to reshape the array such that you index it by time then module
     for (int time = 0; time < timestamps.length; time++) {
       reshapedPositions[time] = new SwerveModulePosition[modules.length];
+      boolean skipThisBatch = false;
       for (int mod = 0; mod < modules.length; mod++) {
+        if(modPositions[mod][time].distanceMeters == 0) {
+          skipThisBatch = true;
+          break;
+        }
         reshapedPositions[time][mod] = modPositions[mod][time];
+      }
+      Logger.recordOutput("Swerve/SkippedBecauseZero", skipThisBatch);
+      if(skipThisBatch) {
+        continue;
       }
       poseEstimator.updateWithTime(timestamps[time], getGyroRotation(), reshapedPositions[time]);
     }
