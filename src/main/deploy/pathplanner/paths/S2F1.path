@@ -3,35 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.65,
-        "y": 6.41
+        "x": 1.262771534552078,
+        "y": 5.565311310802802
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.504439219704649,
-        "y": 6.537032333323926
+        "x": 1.7449183616315946,
+        "y": 5.122039645788694
       },
       "isLocked": false,
-      "linkedName": "C5Shoot"
+      "linkedName": "S2"
     },
     {
       "anchor": {
-        "x": 8.27025654051308,
-        "y": 5.777939483806896
+        "x": 2.7143220000725723,
+        "y": 4.236583330309518
       },
       "prevControl": {
-        "x": 7.194394331808605,
-        "y": 6.256372626705367
+        "x": 1.6396709716496354,
+        "y": 4.630885159206216
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "F1"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.9,
-      "rotationDegrees": 158.79,
+      "waypointRelativePos": 0.8,
+      "rotationDegrees": 153.58,
       "rotateFast": false
     }
   ],
@@ -45,13 +45,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 158.79,
+    "rotation": 153.58,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -169.83404466884517,
+    "rotation": 179.93119398459572,
     "velocity": 0
   },
   "useDefaultConstraints": true
