@@ -56,6 +56,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.ShooterCalculations;
+import frc.robot.subsystems.leds.LedState;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.HandledSleep;
 
@@ -349,6 +350,12 @@ public class Swerve extends SubsystemBase {
     }
     if (backVision.isPresent() && isVisionEnabled()) {
       poseEstimator.addVisionMeasurement(backVision.get().estimatedPose.toPose2d(), backVision.get().timestampSeconds);
+    }
+
+    if ((backVision.isPresent() || frontVision.isPresent()) && DriverStation.isDisabled()) {
+      LedState.setRainbowSpeed(6);
+    } else {
+      LedState.resetRainbowSpeed();
     }
 
     Logger.recordOutput("Swerve/Pose", getPose());
