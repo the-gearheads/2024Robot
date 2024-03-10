@@ -352,7 +352,7 @@ public class Swerve extends SubsystemBase {
       poseEstimator.addVisionMeasurement(backVision.get().estimatedPose.toPose2d(), backVision.get().timestampSeconds);
     }
 
-    if (backVision.isPresent() || frontVision.isPresent() && DriverStation.isDisabled()) {
+    if ((backVision.isPresent() || frontVision.isPresent()) && DriverStation.isDisabled()) {
       LedState.setRainbowSpeed(6);
     } else {
       LedState.resetRainbowSpeed();
