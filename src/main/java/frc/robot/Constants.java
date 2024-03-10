@@ -79,8 +79,8 @@ public final class Constants {
     public static final SimpleMotorFeedforward DRIVE_FEEDFORWARD = new SimpleMotorFeedforward(0.25521, 2.0821, 0.10605);
 
 
-    public static final int DRIVE_CURRENT_LIMIT = 80;
-    public static final int STEER_CURRENT_LIMIT = 40;
+    public static final int DRIVE_CURRENT_LIMIT = 50;
+    public static final int STEER_CURRENT_LIMIT = 20;
 
     public static final double PATHPLANNER_MAX_MOD_SPEED = 5; // m/s I think
     // For desaturateWheelSpeeds 
