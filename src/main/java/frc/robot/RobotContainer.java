@@ -27,7 +27,7 @@ import frc.robot.commands.AutoArmHeight;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.AutonAutoArmHeight;
 import frc.robot.commands.IntakeNote;
-import frc.robot.commands.LedControl;
+import frc.robot.commands.TeleopLedControl;
 import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
@@ -77,7 +77,7 @@ public class RobotContainer {
 
     feeder.setDefaultCommand(Commands.run(feeder::stop, feeder));
     intake.setDefaultCommand(Commands.run(intake::stop, intake));
-    leds.setDefaultCommand(new LedControl(leds, feeder));
+    leds.setDefaultCommand(new TeleopLedControl(leds, feeder));
 
     sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");

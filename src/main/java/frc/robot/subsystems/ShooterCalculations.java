@@ -102,12 +102,15 @@ public class ShooterCalculations {
     return angle;
   }
 
-  public static double getShooterAngle(Translation2d robotPos) {
+  public static double getShooterAngle(Translation2d robotPos, boolean wantToShoot) {
     switch(ScoringState.goalMode) {
       case SPEAKER:
       getMathShooterAngleSpeaker(robotPos);
       return getShooterAngleSpeaker(robotPos);
       case AMP:
+        if(wantToShoot) {
+          return ShooterConstants.AMP_SCORE_ANGLE;
+        }
         if (getDistanceToAmp(robotPos) < 1) {
           return ShooterConstants.AMP_WAIT_ANGLE;
         }
@@ -115,6 +118,10 @@ public class ShooterCalculations {
       default:
         return ShooterConstants.STOW_ANGLE;
     }
+  }
+
+  public static double getShooterAngle(Translation2d robotPos) {
+    return getShooterAngle(robotPos, false);
   }
 
   public static Rotation2d getYaw(Translation2d robotPos) {

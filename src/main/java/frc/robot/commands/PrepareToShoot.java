@@ -34,13 +34,13 @@ public class PrepareToShoot extends Command {
   @Override
   public void execute() {
     ShooterCalculations.setShooterPower(shooter);
-    arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
+    arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation(), true));
   }
 
   @Override
   public boolean isFinished() {
     double targetYaw = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
-    double shooterAngle = ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation());
+    double shooterAngle = ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation(), true);
     ChassisSpeeds swerveSpeeds = swerve.getRobotRelativeSpeeds();
     boolean swerveStopped = swerveSpeeds.vxMetersPerSecond <= MAX_SHOOTING_SPEED_VX &&
                             swerveSpeeds.vyMetersPerSecond <= MAX_SHOOTING_SPEED_VY &&
