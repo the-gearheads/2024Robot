@@ -141,7 +141,7 @@ public final class Constants {
     public static final double[] SPLINE_DISTANCES = {1.201, 1.538, 2.026, 2.522, 3.017, 3.465, 4.00, 4.416, 5.17};
     public static final double[] SPLINE_ANGLES =    {0.893, 0.803, 0.692, 0.592, 0.507, 0.463, 0.416, 0.409, 0.380};
 
-    public static final Measure<Voltage> armOverrideVoltage = Volts.of(2);
+    public static final Measure<Voltage> armOverrideVoltage = Volts.of(4);
   }
 
   public static class FeederConstants {
