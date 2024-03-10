@@ -330,6 +330,9 @@ public class Swerve extends SubsystemBase {
       poseEstimator.updateWithTime(timestamps[time], getGyroRotation(), reshapedPositions[time]);
     }
 
+    if (getPose().getX() == Double.NaN) {
+      resetPose(new Pose2d());
+    }
     Optional<EstimatedRobotPose> frontVision = vision.getGlobalPoseFromFront();
     Optional<EstimatedRobotPose> backVision = vision.getGlobalPoseFromBack();
     if (frontVision.isPresent() && isVisionEnabled()) {

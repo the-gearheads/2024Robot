@@ -47,11 +47,13 @@ public class FlywheelMotor {
     this.name = name;
     this.ff = ff;
     flex = new CANSparkFlex(id, CANSparkFlex.MotorType.kBrushless);
+    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
     flex.restoreFactoryDefaults();
     HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
 
     flex.setSmartCurrentLimit(80);
     flex.setInverted(inverted);
+    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
     if(brakeMode) {
       flex.setIdleMode(IdleMode.kBrake);
     } else {
@@ -62,6 +64,7 @@ public class FlywheelMotor {
 
     enc = flex.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
     // enc = flex.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
+    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
     enc.setAverageDepth(1);
     enc.setMeasurementPeriod(8);
 
