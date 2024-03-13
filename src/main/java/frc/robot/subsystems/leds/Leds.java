@@ -27,7 +27,7 @@ public class Leds extends SubsystemBase {
   private LedState state;
   // Assuming that both strips are the same length - therefore we can use one buffer
 
-  private LedState defaultState = LedState.BLACK;
+  public LedState defaultState = LedState.BLACK;
 
   public Leds() {
     buffer = new AddressableLEDBuffer(LENGTH);
@@ -67,6 +67,13 @@ public class Leds extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    if(DriverStation.isDisabled()) {
+      defaultState = LedState.RAINBOW;
+    } else {
+      defaultState = LedState.BLACK;
+    }
+
     this.state.updateBuffer(buffer);
 
     /* Should overwrite what the above wrote to the buffer for the out-of-time warning */

@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.LedSetStateDisabled;
 import frc.robot.subsystems.leds.LedState;
 
 /**
@@ -97,16 +98,15 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {
     boolean output = brakeCoastButtonDebouncer.calculate(!brakeCoastButton.get());
-
+    // m_robotContainer.leds.setState(LedState.RAINBOW);
     if(output && !lastBrakeCoastButton) {
       isBraken = !isBraken;
       m_robotContainer.arm.setBrakeCoast(isBraken);
-      m_robotContainer.leds.setStateForTimeCommand(isBraken ? LedState.FLASH_RED : LedState.FLASH_GREEN, 2).schedule();
+      new LedSetStateDisabled(m_robotContainer.leds, isBraken ? LedState.FLASH_RED : LedState.FLASH_GREEN).withTimeout(1).schedule();
       System.out.println("Brake/Coast: " + (isBraken ? "Brake" : "Coast"));
     }
 
     lastBrakeCoastButton = output;
-    m_robotContainer.leds.setState(LedState.RAINBOW);
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */

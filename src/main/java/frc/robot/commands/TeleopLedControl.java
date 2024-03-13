@@ -20,7 +20,7 @@ public class TeleopLedControl extends Command {
     if (feeder.getBeamBreakSwitch().getAsBoolean()) {
       leds.setState(LedState.FLASH_NOTE);
     } else {
-      leds.setState(LedState.BLACK);
+      leds.setState(leds.defaultState);
     }
   }
 }
