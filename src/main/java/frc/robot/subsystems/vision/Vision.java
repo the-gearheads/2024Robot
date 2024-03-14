@@ -26,6 +26,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.subsystems.swerve.Swerve;
 
 import static frc.robot.Constants.VisionConstants.*;
 
@@ -36,10 +37,13 @@ public class Vision extends SubsystemBase {
   private PoseStrategy strategy;
   private PhotonPoseEstimator frontEstimator;
   private PhotonPoseEstimator backEstimator;
+  private VisionSim sim;
+  private Swerve swerve;
 
-  public Vision() {
+  public Vision(Swerve swerve) {
     cameraFront = new PhotonCamera(FRONT_CAM_NAME);
     cameraBack = new PhotonCamera(BACK_CAM_NAME);
+    this.swerve = swerve;
     // might want to remove this before comp
     if(Robot.isSimulation())
       PhotonCamera.setVersionCheckEnabled(false);
@@ -55,6 +59,7 @@ public class Vision extends SubsystemBase {
 
     frontEstimator = new PhotonPoseEstimator(field, strategy, cameraFront, FRONT_CAM_TRANSFORM);
     backEstimator = new PhotonPoseEstimator(field, strategy, cameraBack, BACK_CAM_TRANSFORM);
+    sim = new VisionSim(cameraFront, cameraBack);
   }
 
   final double MAX_PITCHROLL = Units.degreesToRadians(15);
@@ -148,5 +153,10 @@ public class Vision extends SubsystemBase {
     if(backPose.isPresent()) {
       updateSingleCamera(singleTagPoseEstimator, cameraBack, backPose.get(), "Back");
     }
+  }
+
+  @Override
+  public void periodic() {
+    sim.periodic(swerve.getPoseWheelsOnly());
   }
 }

@@ -86,7 +86,7 @@ public class Swerve extends SubsystemBase {
   };
 
   public Swerve() {
-    this.vision = new Vision();
+    this.vision = new Vision(this);
     gyro.zeroYaw();
     SmartDashboard.putData("Field", field);
     SmartDashboard.putData("Vision and Paths Field", vpField);
@@ -392,6 +392,10 @@ public class Swerve extends SubsystemBase {
 
   public Pose2d getPose() {
     return multitagPoseEstimator.getEstimatedPosition();
+  }
+
+  public Pose2d getPoseWheelsOnly() {
+    return wheelOdometry.getPoseMeters();
   }
 
   public boolean atYaw(double yaw) {
