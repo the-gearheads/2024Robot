@@ -1,14 +1,11 @@
 package frc.robot.subsystems.climber;
 
-import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Robot;
 import frc.robot.subsystems.FlywheelMotor;
 
 import static frc.robot.Constants.ClimberConstants.*;
-import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 import static edu.wpi.first.units.Units.*;
 
 import org.littletonrobotics.junction.Logger;
