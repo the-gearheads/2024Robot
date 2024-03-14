@@ -2,9 +2,12 @@ package frc.robot.subsystems.swerve.motors;
 
 import static frc.robot.Constants.SwerveConstants.*;
 
+import java.util.OptionalDouble;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
@@ -60,6 +63,15 @@ public class SteerMotor {
     return encoder.getPosition() - offset.getRadians();
   }
 
+  public OptionalDouble getAngleRadiansOptional() {
+    double val = getAngleRadians();
+    if(max.getLastError() == REVLibError.kOk) {
+      return OptionalDouble.of(val);
+    } else {
+      return OptionalDouble.empty();
+    }
+  }
+
   public void periodic() {
   }
 
@@ -85,6 +97,7 @@ public class SteerMotor {
   }
 
   public void configure() {
+    max.setCANTimeout(250);
     max.setSmartCurrentLimit(STEER_CURRENT_LIMIT);
 
     max.setIdleMode(IdleMode.kBrake);
@@ -117,5 +130,6 @@ public class SteerMotor {
     /* We -really- care about our duty cycle encoder readings though. THE DEFAULT WAS 200MS */
     max.setPeriodicFramePeriod(PeriodicFrame.kStatus5, (int)(1000.0 / ODOMETRY_FREQUENCY));
     max.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+    max.setCANTimeout(0);
   }
 }

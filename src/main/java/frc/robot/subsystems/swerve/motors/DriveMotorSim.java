@@ -11,6 +11,8 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
+import java.util.OptionalDouble;
+
 public class DriveMotorSim extends DriveMotor {
 
   FlywheelSim sim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(DRIVE_FEEDFORWARD.kv, DRIVE_FEEDFORWARD.ka), DCMotor.getNeoVortex(1), DRIVE_RATIO);
@@ -48,6 +50,11 @@ public class DriveMotorSim extends DriveMotor {
   @Override
   public double getPosition() {
     return pos;
+  }
+
+  @Override
+  public OptionalDouble getPositionOptional() {
+    return OptionalDouble.of(pos);
   }
 
   @Override

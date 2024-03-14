@@ -88,6 +88,8 @@ public class Leds extends SubsystemBase {
       }
     }
     this.ledStrip.setData(buffer);
+
+    state = defaultState; // reset state to default if not set by a command
   }
 }
 

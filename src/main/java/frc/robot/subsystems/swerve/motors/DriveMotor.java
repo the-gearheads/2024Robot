@@ -7,10 +7,13 @@ import org.littletonrobotics.junction.Logger;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
+import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+
+import java.util.OptionalDouble;
 
 public class DriveMotor {
 
@@ -70,6 +73,15 @@ public class DriveMotor {
     return encoder.getPosition();
   }
 
+  public OptionalDouble getPositionOptional() {
+    double val = getPosition();
+    if(flex.getLastError() == REVLibError.kOk) {
+      return OptionalDouble.of(val);
+    } else {
+      return OptionalDouble.empty();
+    }
+  }
+
   public double getVelocity() {
     return encoder.getVelocity();
   }
@@ -85,6 +97,7 @@ public class DriveMotor {
 
   /* then this, after a delay */
   public void configure() {
+    flex.setCANTimeout(250);
     flex.setSmartCurrentLimit(DRIVE_CURRENT_LIMIT);
     flex.setIdleMode(IdleMode.kBrake);
     flex.setInverted(IS_INVERTED[index]);
@@ -104,5 +117,6 @@ public class DriveMotor {
     /* Don't have a duty cycle encoder */
     flex.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500);
     flex.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500);
+    flex.setCANTimeout(0);
   }
 }

@@ -37,8 +37,8 @@ public class SwerveModule {
       steer = new SteerMotorSim(MOTOR_IDS[id][1], id, offset, modulePath);
     }
     timestampQueue = SparkMaxOdometryThread.getInstance().makeTimestampQueue();
-    drivePositionQueue = SparkMaxOdometryThread.getInstance().registerSignal(drive::getPosition);
-    turnPositionQueue = SparkMaxOdometryThread.getInstance().registerSignal(steer::getAngleRadians);
+    drivePositionQueue = SparkMaxOdometryThread.getInstance().registerSignal(drive::getPositionOptional);
+    turnPositionQueue = SparkMaxOdometryThread.getInstance().registerSignal(steer::getAngleRadiansOptional);
   }
 
   public void setState(SwerveModuleState state) {

@@ -65,6 +65,8 @@ public class Arm extends SubsystemBase {
   }
 
   public void configure() {
+    mainFlex.setCANTimeout(250);
+    followerFlex.setCANTimeout(250);
     HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
     setupStatusFrames();
     HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
@@ -79,6 +81,9 @@ public class Arm extends SubsystemBase {
     // followerFlex.enableVoltageCompensation(12);
 
     followerFlex.follow(mainFlex, true);
+
+    mainFlex.setCANTimeout(0);
+    followerFlex.setCANTimeout(0);
   }
 
   private double output = 0;

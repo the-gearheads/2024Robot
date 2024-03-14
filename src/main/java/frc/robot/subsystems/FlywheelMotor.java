@@ -84,6 +84,7 @@ public class FlywheelMotor {
 
   public void configure() {
     // we're just not gonna set the position or velocity conversion factors because they default to rot(/min)
+    flex.setCANTimeout(250);
     flex.setSmartCurrentLimit(80);
     flex.setInverted(inverted);
     HandledSleep.sleep(100);
@@ -95,6 +96,7 @@ public class FlywheelMotor {
     HandledSleep.sleep(100); 
     enc.setAverageDepth(1);
     enc.setMeasurementPeriod(8);
+    flex.setCANTimeout(0);
   }
 
   public void setSpeed(double speed) {
@@ -175,6 +177,7 @@ public class FlywheelMotor {
   public void log() {
     Logger.recordOutput(name + "/Velocty", getVelocity());
     Logger.recordOutput(name + "/VelocitySetpoint", getVelocitySetpoint());
+    Logger.recordOutput(name + "/Position", getPosition());
     Logger.recordOutput(name + "/Volts", getVolts());
     Logger.recordOutput(name + "/VoltsSetpoint", targetVolts);
     Logger.recordOutput(name + "/LastReconfigured", lastReconfigured);

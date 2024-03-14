@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swerve.motors;
 
+import java.util.OptionalDouble;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class SteerMotorSim extends SteerMotor {
@@ -19,6 +21,11 @@ public class SteerMotorSim extends SteerMotor {
   @Override
   public double getAngleRadians() {
     return targetAngle;
+  }
+
+  @Override
+  public OptionalDouble getAngleRadiansOptional() {
+    return OptionalDouble.of(targetAngle);
   }
 
   @Override
