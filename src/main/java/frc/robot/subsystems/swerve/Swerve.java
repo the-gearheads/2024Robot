@@ -64,7 +64,8 @@ public class Swerve extends SubsystemBase {
   static final Lock odometryLock = new ReentrantLock();
   AHRS gyro = new AHRS(SPI.Port.kMXP);
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
-  SwerveDrivePoseEstimator poseEstimator;
+  SwerveDrivePoseEstimator multitagPoseEstimator;
+  SwerveDrivePoseEstimator singleTagPoseEstimator;
   Vision vision;
   Field2d field = new Field2d();
   /* Want to put vision and path states on this field */
@@ -115,7 +116,8 @@ public class Swerve extends SubsystemBase {
 
     SparkMaxOdometryThread.getInstance().start();
 
-    poseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0, 0)));
+    multitagPoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0, 0)));
+    singleTagPoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0, 0)));
     resetPose(new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(180)));
 
     // Logging callback for current robot pose
@@ -337,7 +339,8 @@ public class Swerve extends SubsystemBase {
       if(skipThisBatch) {
         continue;
       }
-      poseEstimator.updateWithTime(timestamps[time], getGyroRotation(), reshapedPositions[time]);
+      multitagPoseEstimator.updateWithTime(timestamps[time], getGyroRotation(), reshapedPositions[time]);
+      singleTagPoseEstimator.updateWithTime(timestamps[time], getGyroRotation(), reshapedPositions[time]);
     }
 
     if (getPose().getX() == Double.NaN) {
@@ -346,11 +349,13 @@ public class Swerve extends SubsystemBase {
     Optional<EstimatedRobotPose> frontVision = vision.getGlobalPoseFromFront();
     Optional<EstimatedRobotPose> backVision = vision.getGlobalPoseFromBack();
     if (frontVision.isPresent() && isVisionEnabled()) {
-      poseEstimator.addVisionMeasurement(frontVision.get().estimatedPose.toPose2d(), frontVision.get().timestampSeconds);
+      multitagPoseEstimator.addVisionMeasurement(frontVision.get().estimatedPose.toPose2d(), frontVision.get().timestampSeconds);
     }
     if (backVision.isPresent() && isVisionEnabled()) {
-      poseEstimator.addVisionMeasurement(backVision.get().estimatedPose.toPose2d(), backVision.get().timestampSeconds);
+      multitagPoseEstimator.addVisionMeasurement(backVision.get().estimatedPose.toPose2d(), backVision.get().timestampSeconds);
     }
+
+    vision.updateSingleTagPoseEstimator(singleTagPoseEstimator);
 
     if ((backVision.isPresent() || frontVision.isPresent()) && DriverStation.isDisabled()) {
       LedState.setRainbowSpeed(6);
@@ -380,7 +385,7 @@ public class Swerve extends SubsystemBase {
   }
 
   public Pose2d getPose() {
-    return poseEstimator.getEstimatedPosition();
+    return multitagPoseEstimator.getEstimatedPosition();
   }
 
   public boolean atYaw(double yaw) {
@@ -389,7 +394,7 @@ public class Swerve extends SubsystemBase {
   }
 
   public Pose2d getPoseAllianceRelative() {
-    Pose2d pose = poseEstimator.getEstimatedPosition();
+    Pose2d pose = getPose();
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     if(isRed) {
       return GeometryUtil.flipFieldPose(pose);
@@ -401,7 +406,7 @@ public class Swerve extends SubsystemBase {
     for (SwerveModule module : modules) {
       module.resetEncoders();
     }
-    poseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);
+    multitagPoseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);
   }
 
   private void sysidSetVolts(Measure<Voltage> volts) {
