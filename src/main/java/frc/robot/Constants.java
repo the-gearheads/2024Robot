@@ -214,6 +214,18 @@ public final class Constants {
     public static final Pose2d AMP_SCORE_POSE = new Pose2d(new Translation2d(1.83, 7.68), Rotation2d.fromDegrees(-90));
 
   }
+
+  public static class ClimberConstants {
+    public static final int RIGHT_ID = 47;
+    public static final int LEFT_ID = 48;
+    public static final double[] PID = {0, 0, 0};
+    public static final double SPEED = 0;
+    public static final double GEAR_RATIO = 1d / 16d;
+    public static final double MAX_DIST = 4 / GEAR_RATIO;
+    public static final double MIN_DIST = 0;
+    public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0, 0);
+  }
+
   public static class Leds {
     public static final int PORT = 9;
     /* Rough estimate, refine later */
