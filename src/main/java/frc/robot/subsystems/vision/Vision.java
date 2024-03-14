@@ -126,7 +126,7 @@ public class Vision extends SubsystemBase {
       stdDevs
     );
 
-        // Log tag poses
+    // Log tag poses
     List<Transform3d> allTagPoses = new ArrayList<>();
     var currentPose = singleTagPoseEstimator.getEstimatedPosition();
     var currentPose3d = new Transform3d(new Translation3d(currentPose.getX(), currentPose.getY(), 0), new Rotation3d(0, 0, currentPose.getRotation().getRadians()));
@@ -135,7 +135,7 @@ public class Vision extends SubsystemBase {
       var tagPose = currentPose3d.plus(detection);
       allTagPoses.add(tagPose);
     }
-    Logger.recordOutput("AprilTagVision/TagPoses", allTagPoses.toArray(Transform3d[]::new));
+    Logger.recordOutput("Vision/" + name + "/TagPoses", allTagPoses.toArray(Transform3d[]::new));
   }
 
   public void updateSingleTagPoseEstimator(SwerveDrivePoseEstimator singleTagPoseEstimator) {
