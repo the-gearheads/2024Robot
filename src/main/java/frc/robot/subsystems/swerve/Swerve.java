@@ -380,6 +380,8 @@ public class Swerve extends SubsystemBase {
     ShooterCalculations.getShooterAngle(getPose().getTranslation());
     ShooterCalculations.getYaw(getPose().getTranslation());
     field.setRobotPose(getPose());
+    vpField.setRobotPose(getPose());
+    vpField.getObject("Better Pose").setPose(betterPoseEstimator.getEstimatedPosition());
 
     if(!DriverStation.isFMSAttached()) {
       var steer = SmartDashboard.getBoolean("Swerve/manualVoltageSteer", false);
