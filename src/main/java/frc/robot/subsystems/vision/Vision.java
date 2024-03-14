@@ -143,15 +143,18 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput("Vision/" + name + "/TagPoses", allTagPoses.toArray(Transform3d[]::new));
   }
 
-  public void updateSingleTagPoseEstimator(SwerveDrivePoseEstimator singleTagPoseEstimator) {
-    var frontPose = getGlobalPoseFromFront();
+  public void updateSingleTagPoseEstimator(SwerveDrivePoseEstimator singleTagPoseEstimator, Optional<EstimatedRobotPose> frontPose, Optional<EstimatedRobotPose> backPose) {
     if(frontPose.isPresent()) {
       updateSingleCamera(singleTagPoseEstimator, cameraFront, frontPose.get(), "Front");
+    } else {
+      Logger.recordOutput("Vision/Front/NumTargets", 0);
+      Logger.recordOutput("Vision/Front/TagPoses", new Transform3d[0]);
     }
-
-    var backPose = getGlobalPoseFromBack();
     if(backPose.isPresent()) {
       updateSingleCamera(singleTagPoseEstimator, cameraBack, backPose.get(), "Back");
+    } else {
+      Logger.recordOutput("Vision/Back/NumTargets", 0);
+      Logger.recordOutput("Vision/Back/TagPoses", new Transform3d[0]);
     }
   }
 

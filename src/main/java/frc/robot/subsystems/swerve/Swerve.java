@@ -359,7 +359,7 @@ public class Swerve extends SubsystemBase {
       multitagPoseEstimator.addVisionMeasurement(backVision.get().estimatedPose.toPose2d(), backVision.get().timestampSeconds);
     }
 
-    vision.updateSingleTagPoseEstimator(betterPoseEstimator);
+    vision.updateSingleTagPoseEstimator(betterPoseEstimator, frontVision, backVision);
 
     if ((backVision.isPresent() || frontVision.isPresent()) && DriverStation.isDisabled()) {
       LedState.setRainbowSpeed(6);

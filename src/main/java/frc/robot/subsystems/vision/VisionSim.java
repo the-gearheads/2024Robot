@@ -53,6 +53,8 @@ public class VisionSim {
 
     sim.addCamera(frontSim, FRONT_CAM_TRANSFORM);
     sim.addCamera(backSim, BACK_CAM_TRANSFORM);
+    frontSim.setMinTargetAreaPixels(1000);
+    backSim.setMinTargetAreaPixels(1000);
   }
 
   private void configCameraProp(SimCameraProperties camera) {
