@@ -27,7 +27,6 @@ import frc.robot.commands.AutoArmHeight;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.AutonAutoArmHeight;
 import frc.robot.commands.IntakeNote;
-import frc.robot.commands.TeleopLedControl;
 import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
@@ -38,6 +37,7 @@ import frc.robot.subsystems.NoteSimMgr.NoteState;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.leds.LedState;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
@@ -58,7 +58,7 @@ public class RobotContainer {
   public final Feeder feeder = new Feeder();
   public final Intake intake = new Intake();
   @SuppressWarnings("unused")
-  private final MechanismViz mechanismViz = new MechanismViz(arm::getAngle, shooter.topMotor::getPosition, shooter.bottomMotor::getPosition, intake.motor::getPosition, feeder.feederMotor::getPosition, feeder.beamBreakSwitch::getAsBoolean);
+  private final MechanismViz mechanismViz = new MechanismViz(arm::getAngle, shooter.topMotor::getPosition, shooter.bottomMotor::getPosition, intake.motor::getPosition, feeder.feederMotor::getPosition, feeder.getBeamBreakSwitch()::getAsBoolean);
   @SuppressWarnings("unused")
   private final NoteSimMgr noteSimMgr = new NoteSimMgr(swerve::getPose, shooter.topMotor::getVelocity, shooter.bottomMotor::getVelocity, intake.motor::getVelocity, feeder.feederMotor::getVelocity);
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
@@ -77,7 +77,6 @@ public class RobotContainer {
 
     feeder.setDefaultCommand(Commands.run(feeder::stop, feeder));
     intake.setDefaultCommand(Commands.run(intake::stop, intake));
-    leds.setDefaultCommand(new TeleopLedControl(leds, feeder));
 
     sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
@@ -126,6 +125,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("EnableVision", new InstantCommand(() -> {
       swerve.enableVision();
     }));
+
+    feeder.getBeamBreakSwitch().whileTrue(leds.setStateForTimeCommand(LedState.FLASH_LIME, 3));
   }
 
   public void updateControllers() {

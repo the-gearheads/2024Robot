@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.LedSetStateDisabled;
@@ -37,6 +38,8 @@ public class Robot extends LoggedRobot {
   /* Globals :( */
   public static double matchTime = -1;
   private static double matchTimeStart = 0;
+
+  public static final EventLoop triggerEventLoop = new EventLoop();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -76,6 +79,7 @@ public class Robot extends LoggedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+    triggerEventLoop.poll();
     CommandScheduler.getInstance().run();
     m_robotContainer.updateControllers();
     ScoringState.log();

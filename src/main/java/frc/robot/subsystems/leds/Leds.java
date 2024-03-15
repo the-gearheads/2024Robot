@@ -10,9 +10,8 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.AddressableLEDSim;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import static frc.robot.Constants.Leds.*;
 
@@ -53,11 +52,11 @@ public class Leds extends SubsystemBase {
   }
 
   public Command getSetStateCommand(LedState newState) {
-    return new InstantCommand(() -> setState(newState), this);
+    return Commands.run(() -> setState(newState), this);
   }
 
   public Command setStateForTimeCommand(LedState newState, double waitSecs) {
-    return getSetStateCommand(newState).andThen(new WaitCommand(waitSecs)).andThen(getSetStateCommand(defaultState));
+    return getSetStateCommand(newState).withTimeout(waitSecs);
   }
 
   // method to flush both strips
