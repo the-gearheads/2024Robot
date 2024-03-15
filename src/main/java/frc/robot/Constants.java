@@ -89,7 +89,7 @@ public final class Constants {
     public static final double MAX_ROBOT_TRANS_SPEED = DRIVE_FEEDFORWARD.maxAchievableVelocity(12, 0.1); // m/s
     public static final double MAX_ROBOT_ROT_SPEED = MAX_ROBOT_TRANS_SPEED / 0.4585738763; // rad/s, 0.45 is radius of robot, spd/r is rad/s
 
-    public static final double FACING_SPEAKER_TOLERANCE = (1.0 / 360.0) * (2 * Math.PI);
+    public static final double FACING_SPEAKER_TOLERANCE = (2.0 / 360.0) * (2 * Math.PI);
 
     public static final double AMP_YAW = (270d / 360d) * 2 * Math.PI;
   }
