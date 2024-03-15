@@ -1,6 +1,9 @@
 package frc.robot.commands;
 
+
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.leds.LedState;
 import frc.robot.subsystems.leds.Leds;
@@ -15,12 +18,15 @@ public class TeleopLedControl extends Command {
     addRequirements(leds);
   }
 
+
+  @Override
+  public void initialize() {
+
+  }
   @Override
   public void execute() {
-    if (feeder.getBeamBreakSwitch().getAsBoolean()) {
-      leds.setState(LedState.FLASH_NOTE);
-    } else {
-      leds.setState(leds.defaultState);
-    }
+    feeder.getBeamBreakSwitch().whileTrue(
+      Commands.deadline(new WaitCommand(2), Commands.run(()->leds.setState(LedState.FLASH_LIME), leds))
+    );
   }
 }
