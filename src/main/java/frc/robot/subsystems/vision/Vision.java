@@ -108,7 +108,7 @@ public class Vision extends SubsystemBase {
 
   private void updateSingleCamera(SwerveDrivePoseEstimator singleTagPoseEstimator, PhotonCamera camera, EstimatedRobotPose pose, String name) {
     var updated = camera.getLatestResult();
-    double numTargets = updated.targets.size();
+    int numTargets = updated.targets.size();
     double avgDistToTarget = 0;
     for(var target: updated.targets) {
       avgDistToTarget += target.getBestCameraToTarget().getTranslation().getNorm(); 
