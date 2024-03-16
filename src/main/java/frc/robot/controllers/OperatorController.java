@@ -63,11 +63,19 @@ public interface OperatorController {
     return new Trigger(()->false);
   }
 
-  public default Trigger getResetPoseBtn() {
+  // public default Trigger getResetPoseBtn() {
+  //   return new Trigger(()->false);
+  // }
+
+  // public default Trigger getDisableVisionBtn() {
+  //   return new Trigger(()->false);
+  // }
+
+  public default Trigger climberUp() {
     return new Trigger(()->false);
   }
 
-  public default Trigger getDisableVisionBtn() {
+  public default Trigger climberDown() {
     return new Trigger(()->false);
   }
 }

@@ -121,8 +121,8 @@ public final class Constants {
     public static final int FOLLOWER_ARM_ID = 9;
     public static final double MAX_ANGLE_DEG = 110.17978;
     public static final double MIN_ANGLE_DEG = 16.5;
-    public static final double ARM_OFFSET = -0.100539;
-    public static final double ARM_POS_FACTOR = 9.0/20.0 * 2 * Math.PI; // 20:9 artio between encoder and arm, also conv to radians
+    public static final double ARM_OFFSET = -0.189979;
+    public static final double ARM_POS_FACTOR = 9.0/20.0 * 2 * Math.PI * 0.981664; // 20:9 artio between encoder and arm, also conv to radians; 0.981664 is fudge factor 😋
     public static final double ARM_ANGLE_LIVE_FF_THRESHOLD = 10; //deg
     public static final double ARM_LENGTH = 0.6660; // meters, sim and mechanism2d only
     public static final double ARM_MOTOR_GEARING = 125; // sim only, gearing between motor and arm
@@ -216,10 +216,10 @@ public final class Constants {
   }
 
   public static class ClimberConstants {
-    public static final int RIGHT_ID = 47;
-    public static final int LEFT_ID = 48;
+    public static final int RIGHT_ID = 15;
+    public static final int LEFT_ID = 5;
     public static final double[] PID = {0, 0, 0};
-    public static final double SPEED = 0;
+    public static final double SPEED = 50;
     public static final double GEAR_RATIO = 1d / 16d;
     public static final double MAX_DIST = 4 / GEAR_RATIO;
     public static final double MIN_DIST = 0;

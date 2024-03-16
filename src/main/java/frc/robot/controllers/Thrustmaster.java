@@ -68,11 +68,11 @@ public class Thrustmaster implements OperatorController {
     return new Trigger(()->joy.getRawButton(2));
   }
 
-  public  Trigger getResetPoseBtn() {
+  public  Trigger climberDown() {
     return new Trigger(()->joy.getRawButton(9));
   }
 
-  public  Trigger getDisableVisionBtn() {
+  public  Trigger climberUp() {
     return new Trigger(()->joy.getRawButton(6));
   }
 }
