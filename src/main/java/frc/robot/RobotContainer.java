@@ -58,7 +58,7 @@ public class RobotContainer {
   public final Feeder feeder = new Feeder();
   public final Intake intake = new Intake();
   @SuppressWarnings("unused")
-  private final MechanismViz mechanismViz = new MechanismViz(arm::getAngle, shooter.topMotor::getPosition, shooter.bottomMotor::getPosition, intake.motor::getPosition, feeder.feederMotor::getPosition, feeder.getBeamBreakSwitch()::getAsBoolean);
+  private final MechanismViz mechanismViz = new MechanismViz(swerve, arm::getAngle, shooter.topMotor::getPosition, shooter.bottomMotor::getPosition, intake.motor::getPosition, feeder.feederMotor::getPosition, feeder.getBeamBreakSwitch()::getAsBoolean);
   @SuppressWarnings("unused")
   private final NoteSimMgr noteSimMgr = new NoteSimMgr(swerve::getPose, shooter.topMotor::getVelocity, shooter.bottomMotor::getVelocity, intake.motor::getVelocity, feeder.feederMotor::getVelocity);
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();

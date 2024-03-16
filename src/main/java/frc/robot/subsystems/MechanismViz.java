@@ -7,11 +7,16 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.swerve.Swerve;
 
 /* Not exactly a subsystem but we do in fact need a periodic function */
 public class MechanismViz extends SubsystemBase {
@@ -31,6 +36,32 @@ public class MechanismViz extends SubsystemBase {
   private final Color8Bit ARM_COLOR = new Color8Bit(255, 255, 0);
 
   private final Color8Bit ARM_NOTED_COLOR = new Color8Bit(244, 119, 2);
+
+
+  private final Translation3d ROBOT_ARM_TRANSLATION = new Translation3d(-0.202515 + 0.03, -0.1643, 0.196928);
+  private final double ROBOT_ARM_OFFSET = Units.degreesToRadians(90+22.3);
+  private final Translation3d NOTE_TRANSLATION = new Translation3d(0, 0, 0);
+  /* 
+    > 0.2316m + 4in
+      (0.2316 meter) + (4 inches) = 333.2 mm
+
+    > 332.2mm to in
+      332.2 millimeters = approx. 13.07874016 in
+
+    > 332.2mm to m
+      332.2 millimeters = 0.3322 m
+
+    > -0.202515 + 0.03
+      (-0.202515) + 0.03 = -0.172515
+
+    > 0.3322^2 + 0.172515^2
+      0.3322^2 + 0.172515^2 = approx. 0.1401182652
+
+    > sqrt( 0.1401182652)
+      sqrt(0.1401182652) = approx. 0.3743237438
+  */
+  private final double ARM_NOTE_PART_LENGTH = 0.3743237438;
+  private final double NOTE_HEIGHT_OFFSET = Units.inchesToMeters(2);
 
   Mechanism2d mech = new Mechanism2d(1, 1);
   // cad guesstimates cause ascope wants these in meters
@@ -56,7 +87,9 @@ public class MechanismViz extends SubsystemBase {
   Supplier<Double> feederPos;
   Supplier<Boolean> noteSwitch;
 
-  public MechanismViz(Supplier<Rotation2d> armAngle, Supplier<Double> topShooterPos, Supplier<Double> bottomShooterPos, Supplier<Double> intakePos, Supplier<Double> feederPos, Supplier<Boolean> noteSwitch) {
+  Swerve swerve;
+
+  public MechanismViz(Swerve swerve, Supplier<Rotation2d> armAngle, Supplier<Double> topShooterPos, Supplier<Double> bottomShooterPos, Supplier<Double> intakePos, Supplier<Double> feederPos, Supplier<Boolean> noteSwitch) {
     arm12Mech.setColor(ARM_COLOR);
     arm22Mech.setColor(ARM_COLOR);
     frontFloorMech.setColor(FLOOR_COLOR);
@@ -71,11 +104,11 @@ public class MechanismViz extends SubsystemBase {
     this.intakePos = intakePos;
     this.feederPos = feederPos;
     this.noteSwitch = noteSwitch;
+    this.swerve = swerve;
   }
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+  public void periodic() {    // This method will be called once per scheduler run
     var armPos = armAngle.get();
     arm12Mech.setAngle(armPos);
     topShooterMech.setAngle(topShooterPos.get() * 360.0); // rotations -> degrees
@@ -88,6 +121,29 @@ public class MechanismViz extends SubsystemBase {
       arm12Mech.setColor(ARM_COLOR);
     }
     Logger.recordOutput("Mechanism2d", mech);
+
+
+    Logger.recordOutput("ComponentPoses", new Transform3d[] {
+      new Transform3d(
+        ROBOT_ARM_TRANSLATION,
+        new Rotation3d(0, ROBOT_ARM_OFFSET-armPos.getRadians(), 0)
+      )
+    });
+
+    var robotPose2d = swerve.getPose();
+    var robotPose3d = new Transform3d(
+      new Translation3d(robotPose2d.getX(), robotPose2d.getY(), 0),
+      new Rotation3d(0, 0, robotPose2d.getRotation().getRadians())
+    );
+
+    if(noteSwitch.get()) {
+      Logger.recordOutput("RobotNote", new Transform3d(
+        NOTE_TRANSLATION.plus(robotPose3d.getTranslation()).plus(new Translation3d(0, 0, Math.sin(armPos.getRadians() + 0.03) * ARM_NOTE_PART_LENGTH + NOTE_HEIGHT_OFFSET)),
+        new Rotation3d(0, armPos.getRadians(), Math.PI).plus(robotPose3d.getRotation())
+      )); 
+    } else {
+      Logger.recordOutput("RobotNote", new Transform3d(new Translation3d(-100, -100, -100), new Rotation3d()));
+    }
   }
 
 }

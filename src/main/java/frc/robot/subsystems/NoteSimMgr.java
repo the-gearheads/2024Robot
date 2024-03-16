@@ -2,13 +2,17 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.FeederConstants.BEAMBREAK_SWITCH_ID;
 
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,6 +33,8 @@ public class NoteSimMgr extends SubsystemBase {
 
   NoteState noteState = NoteState.EMPTY;
 
+  private final Transform3d[] notePositionsTransform;
+  private final double NOTE_HEIGHT = Units.inchesToMeters(1);
 
   public NoteSimMgr(Supplier<Pose2d> robotPoseSupplier, Supplier<Double> shooterTopSpeedSupplier, Supplier<Double> shooterBottomSpeedSupplier, Supplier<Double> intakeSpeedSupplier, Supplier<Double> feederSpeedSupplier) {
     this.robotPoseSupplier = robotPoseSupplier;
@@ -37,6 +43,14 @@ public class NoteSimMgr extends SubsystemBase {
     this.intakeSpeedSupplier = intakeSpeedSupplier;
     this.feederSpeedSupplier = feederSpeedSupplier;
     noteSwitchSim.setIsInput(true);
+
+    ArrayList<Transform3d> notePositionsTransform = new ArrayList<Transform3d>();
+
+    for (Translation2d notePos : NOTE_POSITIONS) {
+      notePositionsTransform.add(new Transform3d(new Translation3d(notePos.getX(), notePos.getY(), NOTE_HEIGHT), new Rotation3d()));
+    }
+
+    this.notePositionsTransform = notePositionsTransform.toArray(new Transform3d[0]);
   }
 
   Debouncer regularShootingDebouncer = new Debouncer(0.5);
@@ -44,6 +58,9 @@ public class NoteSimMgr extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    Logger.recordOutput("FieldNotes", notePositionsTransform);
+    
     if(Robot.isReal()) return;
     double tShoot = shooterTopSpeedSupplier.get();
     double bShoot = shooterBottomSpeedSupplier.get();
