@@ -169,6 +169,15 @@ public class FlywheelMotor {
     flex.setVoltage(volts);
   }
 
+  public void setPosition(double position) {
+    enc.setPosition(position);
+  }
+
+  public void setBrakeCoast(boolean willBrake) {
+    flex.setIdleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    Logger.recordOutput(name + "/IsBraken", willBrake);
+  }
+
   public double getPosition() {
     if(Robot.isSimulation()) return simShooterPos;
     return enc.getPosition();

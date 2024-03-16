@@ -106,6 +106,7 @@ public class Robot extends LoggedRobot {
     if(output && !lastBrakeCoastButton) {
       isBraken = !isBraken;
       m_robotContainer.arm.setBrakeCoast(isBraken);
+      m_robotContainer.climber.setBrakeCoast(isBraken);
       new LedSetStateDisabled(m_robotContainer.leds, isBraken ? LedState.FLASH_RED : LedState.FLASH_GREEN).withTimeout(1).schedule();
       System.out.println("Brake/Coast: " + (isBraken ? "Brake" : "Coast"));
     }

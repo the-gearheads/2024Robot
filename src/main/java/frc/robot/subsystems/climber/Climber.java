@@ -13,11 +13,13 @@ import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
 
-  public FlywheelMotor leftMotor = new FlywheelMotor("Climber/Left", LEFT_ID, PID, FEEDFORWARD, true, false);
-  public FlywheelMotor rightMotor = new FlywheelMotor("Climber/Right", RIGHT_ID, PID, FEEDFORWARD, false, false);
+  public FlywheelMotor leftMotor = new FlywheelMotor("Climber/Left", LEFT_ID, PID, FEEDFORWARD, true, true);
+  public FlywheelMotor rightMotor = new FlywheelMotor("Climber/Right", RIGHT_ID, PID, FEEDFORWARD, false, true);
 
   public Climber() {
     this.setDefaultCommand(Commands.run(this::stop, this));
+    leftMotor.setPosition(0);
+    rightMotor.setPosition(0);
   }
 
   @Override
@@ -59,9 +61,14 @@ public class Climber extends SubsystemBase {
     setSpeed(-SPEED);
   }
 
+  public void setBrakeCoast(boolean willBrake) {
+    rightMotor.setBrakeCoast(willBrake);
+    leftMotor.setBrakeCoast(willBrake);
+  }
+
   public SysIdRoutine getSysIdRoutine() {
     return new SysIdRoutine(
-      new SysIdRoutine.Config(Volts.of(0.5).per(Seconds.of(1)), Volts.of(3.5), null, 
+      new SysIdRoutine.Config(null, null, null, 
           (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
       new SysIdRoutine.Mechanism(
         (voltage) -> { leftMotor.setVolts(voltage.in(Volts)); rightMotor.setVolts(voltage.in(Volts)); },
