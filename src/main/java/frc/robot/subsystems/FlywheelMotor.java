@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -93,7 +94,10 @@ public class FlywheelMotor {
     } else {
       flex.setIdleMode(IdleMode.kCoast);
     }
-    HandledSleep.sleep(100); 
+    HandledSleep.sleep(100);
+    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500);
+    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
     enc.setAverageDepth(1);
     enc.setMeasurementPeriod(8);
     flex.setCANTimeout(0);
