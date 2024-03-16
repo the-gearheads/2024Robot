@@ -3,32 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.2728556716020805,
-        "y": 6.142347676619344
+        "x": 4.110140112172116,
+        "y": 5.781606622595669
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.894367824771685,
-        "y": 6.5360051440823606
+        "x": 3.8235543137752943,
+        "y": 4.603862180697335
       },
       "isLocked": false,
       "linkedName": "C4Shoot"
-    },
-    {
-      "anchor": {
-        "x": 7.244094488188975,
-        "y": 5.500598388584165
-      },
-      "prevControl": {
-        "x": 6.273400654909417,
-        "y": 6.36035578377463
-      },
-      "nextControl": {
-        "x": 7.789540361816947,
-        "y": 5.017489186227961
-      },
-      "isLocked": false,
-      "linkedName": null
     },
     {
       "anchor": {
@@ -36,26 +20,20 @@
         "y": 4.104648209296419
       },
       "prevControl": {
-        "x": 7.678595537371254,
-        "y": 4.899692682268248
+        "x": 5.996059559686686,
+        "y": 4.104648209296419
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "C3"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.6,
-      "rotationDegrees": 124.21,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "IntakeCSlow",
-      "minWaypointRelativePos": 1.65,
-      "maxWaypointRelativePos": 2.0,
+      "minWaypointRelativePos": 0.85,
+      "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 5.3,
         "maxAcceleration": 3.5,
@@ -73,13 +51,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 124.21,
+    "rotation": -179.43829466743347,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": -177.22854554739496,
     "velocity": 0
   },
   "useDefaultConstraints": true
