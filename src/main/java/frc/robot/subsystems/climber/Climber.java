@@ -13,7 +13,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
 
-  public FlywheelMotor leftMotor = new FlywheelMotor("Climber/Left", LEFT_ID, PID, FEEDFORWARD, false, false);
+  public FlywheelMotor leftMotor = new FlywheelMotor("Climber/Left", LEFT_ID, PID, FEEDFORWARD, true, false);
   public FlywheelMotor rightMotor = new FlywheelMotor("Climber/Right", RIGHT_ID, PID, FEEDFORWARD, false, false);
 
   public Climber() {
@@ -24,13 +24,19 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     if (leftMotor.getPosition() >= MAX_DIST && leftMotor.getVelocitySetpoint() > 0
         || leftMotor.getPosition() <= MIN_DIST && leftMotor.getVelocitySetpoint() < 0){
+      Logger.recordOutput("Climber/Left/OutOfRange", true);
       leftMotor.setSpeed(0);
+    } else {
+      Logger.recordOutput("Climber/Left/OutOfRange", false);
     }
     leftMotor.periodic();
     if (rightMotor.getPosition() >= MAX_DIST && rightMotor.getVelocitySetpoint() > 0
         || rightMotor.getPosition() <= MIN_DIST && rightMotor.getVelocitySetpoint() < 0){
       rightMotor.setSpeed(0);
-    }  // life saving code, DO NOT DELETE <3
+      Logger.recordOutput("Climber/Right/OutOfRange", true);
+    } else {
+      Logger.recordOutput("Climber/Right/OutOfRange", false);
+    } // life saving code, DO NOT DELETE <3
     rightMotor.periodic();
     leftMotor.log();
     rightMotor.log();
@@ -55,7 +61,7 @@ public class Climber extends SubsystemBase {
 
   public SysIdRoutine getSysIdRoutine() {
     return new SysIdRoutine(
-      new SysIdRoutine.Config(null, null, null, 
+      new SysIdRoutine.Config(Volts.of(0.5).per(Seconds.of(1)), Volts.of(3.5), null, 
           (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
       new SysIdRoutine.Mechanism(
         (voltage) -> { leftMotor.setVolts(voltage.in(Volts)); rightMotor.setVolts(voltage.in(Volts)); },

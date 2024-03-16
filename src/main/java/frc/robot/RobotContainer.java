@@ -75,7 +75,6 @@ public class RobotContainer {
 
     feeder.setDefaultCommand(Commands.run(feeder::stop, feeder));
     intake.setDefaultCommand(Commands.run(intake::stop, intake));
-    climber.setDefaultCommand(Commands.run(climber::stop, climber));
     sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutineSteer(), "SwerveSteer");
@@ -83,6 +82,7 @@ public class RobotContainer {
     sysidAuto.addSysidRoutine(arm.getSysIdRoutine(), "Arm");
     sysidAuto.addSysidRoutine(intake.getSysIdRoutine(), "Intake");
     sysidAuto.addSysidRoutine(feeder.getSysIdRoutine(), "Feeder");
+    sysidAuto.addSysidRoutine(climber.getSysIdRoutine(), "Climber");
 
     NamedCommands.registerCommand("ShooterStart", Commands.run(()->{
       shooter.setSpeed(Constants.ShooterConstants.DEFAULT_SPEED);
@@ -267,5 +267,6 @@ public class RobotContainer {
     }
     ScoringState.goalMode = ScoringState.GoalMode.SPEAKER;
     return autoChooser.getSelected();
+    // return sysidAuto.get();
   }
 }
