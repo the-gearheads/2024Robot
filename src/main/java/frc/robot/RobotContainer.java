@@ -26,6 +26,7 @@ import frc.robot.commands.IntakeNote;
 import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
+import frc.robot.commands.NTControl.ShooterNTControl;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.NoteSimMgr;
@@ -71,7 +72,6 @@ public class RobotContainer {
     // arm.setDefaultCommand(new ArmNTControl(arm));
 
     shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
-    // shooter.setDefaultCommand(new ShooterNTControl(shooter));
 
     feeder.setDefaultCommand(Commands.run(feeder::stop, feeder));
     intake.setDefaultCommand(Commands.run(intake::stop, intake));
@@ -187,7 +187,7 @@ public class RobotContainer {
       arm.getDefaultCommand().cancel();
       shooter.getDefaultCommand().cancel();
       arm.setDefaultCommand(Commands.run(()->{}, arm));
-      shooter.setDefaultCommand(Commands.run(()->{shooter.setSpeed(0);}, shooter));
+      shooter.setDefaultCommand(new ShooterNTControl(shooter));
       Commands.runOnce(()->{}, shooter).schedule();
       Commands.runOnce(()->{}, arm).schedule();
       shooter.setSpeed(0);
