@@ -93,11 +93,16 @@
           }
         },
         "RealOutputs": {
-          "Arm": {
-            "open": true
-          },
           "Calculations": {
             "open": true
+          },
+          "Climber": {
+            "Left": {
+              "open": true
+            },
+            "Right": {
+              "open": true
+            }
           },
           "Feeder": {
             "open": true

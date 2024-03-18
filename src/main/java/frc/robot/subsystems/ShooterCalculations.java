@@ -19,6 +19,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.shooter.Shooter;
 
 import static frc.robot.Constants.ArmConstants.*;
+import static frc.robot.Constants.FieldConstants.*;
 import static frc.robot.Constants.ShooterConstants.AMP_SPEED;
 import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 import static frc.robot.Constants.ShooterConstants.SHOOTER_PIVOT_HEIGHT;
@@ -30,6 +31,7 @@ public class ShooterCalculations {
   // static Translation3d speakerPosition = new Translation3d(0.173, 5.543, 1.9);
   static Translation2d speakerBackPosition = new Translation2d(0.0, 5.55);
   static Translation2d ampPosition = new Translation2d(1.85, 8.15);
+  static Translation2d stageCenter = new Translation2d(4.89, 4.09);
   // Distance (m) -> Angle (rad)
   static PolynomialSplineFunction shooterAngleFunction = new SplineInterpolator().interpolate(SPLINE_DISTANCES, SPLINE_ANGLES);
   
@@ -49,6 +51,39 @@ public class ShooterCalculations {
     Logger.recordOutput("Calculations/YawToSpeaker", angle.getDegrees());
 
     return angle;
+  }
+
+  private static Rotation2d getYawStage(Translation2d robotPos) {
+    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+    Translation2d targetAngle = stageCenter;
+    Rotation2d stage1Snap = STAGE_1_SNAP;
+    Rotation2d stage2Snap = STAGE_2_SNAP;
+    Rotation2d stageCenterSnap = STAGE_CENTER_SNAP;
+    if(isRed) {
+      targetAngle = GeometryUtil.flipFieldPosition(targetAngle);
+      stage1Snap = GeometryUtil.flipFieldRotation(stage1Snap);
+      stage2Snap = GeometryUtil.flipFieldRotation(stage2Snap);
+      stageCenterSnap = GeometryUtil.flipFieldRotation(stageCenterSnap);
+    }
+
+    Rotation2d angle = targetAngle.minus(robotPos).getAngle();
+    Logger.recordOutput("Calculations/YawToStage", angle.getDegrees());
+    double diff1 = Math.abs(angle.minus(stage1Snap).getRadians());
+    double diff2 = Math.abs(angle.minus(stage2Snap).getRadians());
+    double diffCenter = Math.abs(angle.minus(stageCenterSnap).getRadians());
+
+    double minDiff = Math.min(diff1, Math.min(diff2, diffCenter));
+    Rotation2d closestAngle;
+    if (minDiff == diff1)
+        closestAngle = stage1Snap;
+    else if (minDiff == diff2)
+        closestAngle = stage2Snap;
+    else
+        closestAngle = stageCenterSnap;
+
+    
+    Logger.recordOutput("Calculations/YawToStageSnapped", closestAngle.getDegrees());
+    return closestAngle;
   }
 
   public static double getDistanceToSpeaker(Translation2d robotPos) {
@@ -115,6 +150,8 @@ public class ShooterCalculations {
           return ShooterConstants.AMP_WAIT_ANGLE;
         }
         return ShooterConstants.STOW_ANGLE;
+      case STAGE:
+        return ShooterConstants.STOW_ANGLE;
       default:
         return ShooterConstants.STOW_ANGLE;
     }
@@ -131,7 +168,7 @@ public class ShooterCalculations {
       case AMP:
         return new Rotation2d(AMP_YAW);
       default:
-        return new Rotation2d(AMP_YAW);
+        return getYawStage(robotPos);
     }
   }
 
@@ -145,8 +182,8 @@ public class ShooterCalculations {
         shooter.setSpeed(DEFAULT_SPEED);
         break;
       case STAGE:
-        // shooter.setSpeed(DEFAULT_SPEED);
-        // arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
+        shooter.setSpeed(0);
+        // arm.setAngle(ArmConstants.MIN_ANGLE);
         break;
     }
   }

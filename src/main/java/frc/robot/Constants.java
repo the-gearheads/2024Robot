@@ -213,6 +213,10 @@ public final class Constants {
     
     public static final Pose2d AMP_SCORE_POSE = new Pose2d(new Translation2d(1.83, 7.68), Rotation2d.fromDegrees(-90));
 
+    public static final Rotation2d STAGE_2_SNAP = Rotation2d.fromDegrees(-59.85);
+    public static final Rotation2d STAGE_CENTER_SNAP = Rotation2d.fromDegrees(180);
+    public static final Rotation2d STAGE_1_SNAP = Rotation2d.fromDegrees(59.85);
+
   }
 
   public static class ClimberConstants {
