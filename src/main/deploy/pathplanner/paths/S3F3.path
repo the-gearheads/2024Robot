@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9373707318843216,
-        "y": 6.7580100874487465
+        "x": 1.9376348662607235,
+        "y": 6.646941582171453
       },
       "isLocked": false,
       "linkedName": "S3"
@@ -20,8 +20,8 @@
         "y": 6.988995599612821
       },
       "prevControl": {
-        "x": 2.30385717914293,
-        "y": 6.772669545339091
+        "x": 2.325912399572547,
+        "y": 6.6931650980419075
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.6,
-      "rotationDegrees": -161.12,
+      "rotationDegrees": -152.33,
       "rotateFast": false
     }
   ],
@@ -45,7 +45,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -152.33219571703964,
+    "rotation": -152.33,
     "rotateFast": false
   },
   "reversed": false,
