@@ -25,31 +25,6 @@
           }
         },
         {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "S2F2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeAndShoot"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
-          }
-        },
-        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -60,13 +35,13 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "F2C4"
+                        "pathName": "S0C3"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C4Shoot"
+                        "pathName": "C3Shoot"
                       }
                     }
                   ]
@@ -75,13 +50,19 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShooterStart"
+                  "name": "IntakeNote"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
+                  "name": "AutonAutoArmHeight"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShooterStart"
                 }
               }
             ]
@@ -94,13 +75,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootWhenReady"
+                  "name": "AlignToSpeakerYaw"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "AlignToSpeakerYaw"
+                  "name": "ShootWhenReady"
                 }
               }
             ]
@@ -117,13 +98,13 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C4ShootC5"
+                        "pathName": "C3ShootC2"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C5Shoot"
+                        "pathName": "C2C3Shoot"
                       }
                     }
                   ]
@@ -132,13 +113,19 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShooterStart"
+                  "name": "AutonAutoArmHeight"
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "IntakeNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShooterStart"
                 }
               }
             ]
@@ -151,13 +138,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootWhenReady"
+                  "name": "AlignToSpeakerYaw"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "AlignToSpeakerYaw"
+                  "name": "ShootWhenReady"
                 }
               }
             ]
