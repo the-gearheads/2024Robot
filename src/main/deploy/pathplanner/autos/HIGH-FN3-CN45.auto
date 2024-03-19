@@ -25,13 +25,26 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "sequential",
                 "data": {
-                  "pathName": "S3F3"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "S3F3"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.1
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -39,14 +52,14 @@
                 "data": {
                   "name": "IntakeAndShoot"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
               }
             ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
           }
         },
         {
@@ -102,6 +115,12 @@
                 "data": {
                   "name": "ShooterStart"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
               }
             ]
           }
@@ -139,6 +158,12 @@
                 "type": "named",
                 "data": {
                   "name": "ShooterStart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
                 }
               }
             ]

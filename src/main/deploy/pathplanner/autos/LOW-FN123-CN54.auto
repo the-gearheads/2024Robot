@@ -49,17 +49,29 @@
                       "data": {
                         "pathName": "F2F3"
                       }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.1
+                      }
                     }
                   ]
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeAndShoot"
+                }
               }
             ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
           }
         },
         {
@@ -95,6 +107,12 @@
                 "type": "named",
                 "data": {
                   "name": "ShooterStart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
                 }
               }
             ]
@@ -152,6 +170,12 @@
                 "type": "named",
                 "data": {
                   "name": "ShooterStart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
                 }
               }
             ]

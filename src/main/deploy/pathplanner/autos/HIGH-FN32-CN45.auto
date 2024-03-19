@@ -43,6 +43,12 @@
                       "data": {
                         "pathName": "F3F2"
                       }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.1
+                      }
                     }
                   ]
                 }
@@ -52,14 +58,14 @@
                 "data": {
                   "name": "IntakeAndShoot"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
               }
             ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
           }
         },
         {
@@ -67,41 +73,40 @@
           "data": {
             "commands": [
               {
-                "type": "deadline",
+                "type": "sequential",
                 "data": {
                   "commands": [
                     {
-                      "type": "sequential",
+                      "type": "path",
                       "data": {
-                        "commands": [
-                          {
-                            "type": "path",
-                            "data": {
-                              "pathName": "F2C4"
-                            }
-                          },
-                          {
-                            "type": "path",
-                            "data": {
-                              "pathName": "C4Shoot"
-                            }
-                          }
-                        ]
+                        "pathName": "F2C4"
                       }
                     },
                     {
-                      "type": "named",
+                      "type": "path",
                       "data": {
-                        "name": "ShooterStart"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "IntakeNote"
+                        "pathName": "C4Shoot"
                       }
                     }
                   ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShooterStart"
                 }
               }
             ]
@@ -159,6 +164,12 @@
                 "type": "named",
                 "data": {
                   "name": "ShooterStart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
                 }
               }
             ]

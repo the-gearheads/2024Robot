@@ -12,63 +12,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootWhenReady"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "AlignToSpeakerYaw"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "S1F1"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "F1F2"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "F2F3"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.1
-                      }
-                    }
-                  ]
-                }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "AutonAutoArmHeight"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeAndShoot"
+                  "name": "ShootWhenReady"
                 }
               }
             ]
@@ -85,13 +35,13 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "F3C4"
+                        "pathName": "S0C1"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C4Shoot"
+                        "pathName": "C1Shoot"
                       }
                     }
                   ]
@@ -106,13 +56,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShooterStart"
+                  "name": "AutonAutoArmHeight"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "AutonAutoArmHeight"
+                  "name": "ShooterStart"
                 }
               }
             ]
@@ -148,16 +98,22 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C4ShootC5"
+                        "pathName": "C1ShootC2"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C5Shoot"
+                        "pathName": "C2Shoot"
                       }
                     }
                   ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
                 }
               },
               {
@@ -171,12 +127,6 @@
                 "data": {
                   "name": "ShooterStart"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutonAutoArmHeight"
-                }
               }
             ]
           }
@@ -188,13 +138,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootWhenReady"
+                  "name": "AlignToSpeakerYaw"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "AlignToSpeakerYaw"
+                  "name": "ShootWhenReady"
                 }
               }
             ]
