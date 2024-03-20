@@ -159,6 +159,7 @@ public class Arm extends SubsystemBase {
     Logger.recordOutput("Arm/SetpointOutOfRange", pid.getSetpoint().position < MIN_ANGLE || pid.getSetpoint().position > MAX_ANGLE);
     Logger.recordOutput("Arm/GoalOutOfRange", pid.getGoal().position < MIN_ANGLE || pid.getGoal().position > MAX_ANGLE);
     Logger.recordOutput("Arm/EncConnected", enc.isConnected());
+    Logger.recordOutput("Arm/WhatTheOffsetShouldBeIfTheArmIsAt90Deg", getAngle().getRadians() + ARM_OFFSET - Units.degreesToRadians(90));
   }
 
   public Rotation2d getAngle() {

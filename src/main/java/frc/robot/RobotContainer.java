@@ -10,11 +10,7 @@ import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.util.GeometryUtil;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,11 +26,13 @@ import frc.robot.commands.IntakeNote;
 import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
+import frc.robot.commands.NTControl.ShooterNTControl;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.NoteSimMgr;
 import frc.robot.subsystems.NoteSimMgr.NoteState;
 import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.leds.LedState;
@@ -57,8 +55,9 @@ public class RobotContainer {
   public final Arm arm = new Arm();
   public final Feeder feeder = new Feeder();
   public final Intake intake = new Intake();
+  public final Climber climber = new Climber();
   @SuppressWarnings("unused")
-  private final MechanismViz mechanismViz = new MechanismViz(arm::getAngle, shooter.topMotor::getPosition, shooter.bottomMotor::getPosition, intake.motor::getPosition, feeder.feederMotor::getPosition, feeder.getBeamBreakSwitch()::getAsBoolean);
+  private final MechanismViz mechanismViz = new MechanismViz(swerve, arm::getAngle, shooter.topMotor::getPosition, shooter.bottomMotor::getPosition, intake.motor::getPosition, feeder.feederMotor::getPosition, feeder.getBeamBreakSwitch()::getAsBoolean);
   @SuppressWarnings("unused")
   private final NoteSimMgr noteSimMgr = new NoteSimMgr(swerve::getPose, shooter.topMotor::getVelocity, shooter.bottomMotor::getVelocity, intake.motor::getVelocity, feeder.feederMotor::getVelocity);
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
@@ -73,11 +72,9 @@ public class RobotContainer {
     // arm.setDefaultCommand(new ArmNTControl(arm));
 
     shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
-    // shooter.setDefaultCommand(new ShooterNTControl(shooter));
 
     feeder.setDefaultCommand(Commands.run(feeder::stop, feeder));
     intake.setDefaultCommand(Commands.run(intake::stop, intake));
-
     sysidAuto.addSysidRoutine(shooter.getSysIdRoutine(), "Shooter");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutine(), "Swerve");
     sysidAuto.addSysidRoutine(swerve.getSysIdRoutineSteer(), "SwerveSteer");
@@ -85,6 +82,7 @@ public class RobotContainer {
     sysidAuto.addSysidRoutine(arm.getSysIdRoutine(), "Arm");
     sysidAuto.addSysidRoutine(intake.getSysIdRoutine(), "Intake");
     sysidAuto.addSysidRoutine(feeder.getSysIdRoutine(), "Feeder");
+    sysidAuto.addSysidRoutine(climber.getSysIdRoutine(), "Climber");
 
     NamedCommands.registerCommand("ShooterStart", Commands.run(()->{
       shooter.setSpeed(Constants.ShooterConstants.DEFAULT_SPEED);
@@ -146,16 +144,21 @@ public class RobotContainer {
     Controllers.driverController.getAlignBtn().whileTrue(swerve.goTo(AMP_SCORE_POSE));
     Controllers.driverController.enableVision().onTrue(new InstantCommand(() -> swerve.enableVision()));
     Controllers.operatorController.getIntakeNote().whileTrue(new IntakeNote(feeder, intake));
-    Controllers.operatorController.getResetPoseBtn().onTrue(new InstantCommand(() -> {
-        boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-        Pose2d pos = AMP_SCORE_POSE;
-        if(isRed) {
-          pos = GeometryUtil.flipFieldPose(pos);
-        }
-        swerve.resetPose(pos);
-    }));
-    Controllers.operatorController.getDisableVisionBtn().onTrue(new InstantCommand(() -> swerve.disableVision()));
-
+    // Controllers.operatorController.getResetPoseBtn().onTrue(new InstantCommand(() -> {
+    //     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+    //     Pose2d pos = AMP_SCORE_POSE;
+    //     if(isRed) {
+    //       pos = GeometryUtil.flipFieldPose(pos);
+    //     }
+    //     swerve.resetPose(pos);
+    // }));
+    // Controllers.operatorController.getDisableVisionBtn().onTrue(new InstantCommand(() -> swerve.disableVision()));
+    Controllers.operatorController.climberDown().whileTrue(Commands.run(() -> {
+      climber.down();
+    }, climber));
+    Controllers.operatorController.climberUp().whileTrue(Commands.run(() -> {
+      climber.up();
+    }, climber));
     Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {
        shooter.setSpeed(Constants.ShooterConstants.DEFAULT_SPEED);
       },
@@ -184,7 +187,7 @@ public class RobotContainer {
       arm.getDefaultCommand().cancel();
       shooter.getDefaultCommand().cancel();
       arm.setDefaultCommand(Commands.run(()->{}, arm));
-      shooter.setDefaultCommand(Commands.run(()->{shooter.setSpeed(0);}, shooter));
+      shooter.setDefaultCommand(new ShooterNTControl(shooter));
       Commands.runOnce(()->{}, shooter).schedule();
       Commands.runOnce(()->{}, arm).schedule();
       shooter.setSpeed(0);
@@ -264,5 +267,6 @@ public class RobotContainer {
     }
     ScoringState.goalMode = ScoringState.GoalMode.SPEAKER;
     return autoChooser.getSelected();
+    // return sysidAuto.get();
   }
 }

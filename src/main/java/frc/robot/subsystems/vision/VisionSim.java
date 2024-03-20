@@ -48,8 +48,8 @@ public class VisionSim {
     frontLeftSim = new PhotonCameraSim(frontLeftCamera, frontLeftCameraProp);
     frontRightSim = new PhotonCameraSim(frontRightCamera, frontRightCameraProp);
 
-    frontLeftSim.enableDrawWireframe(true); // apparently resource intensive
-    frontRightSim.enableDrawWireframe(true);
+    // frontLeftSim.enableDrawWireframe(true); // apparently resource intensive
+    // frontRightSim.enableDrawWireframe(true);
 
     sim.addCamera(frontLeftSim, FRONT_LEFT_TRANSFORM);
     sim.addCamera(frontRightSim, FRONT_RIGHT_TRANSFORM);
@@ -68,7 +68,7 @@ public class VisionSim {
     VecBuilder.fill(distCoeffs[0], distCoeffs[1], distCoeffs[2], distCoeffs[3], distCoeffs[4]));
 
     // Approximate detection noise with average and standard deviation error in pixels.
-    camera.setCalibError(0.2, 0.05);
+    camera.setCalibError(0.02, 0.05);
     // Set the camera image capture framerate (Note: this is limited by robot loop rate).
     camera.setFPS(30);
     // The average and standard deviation in milliseconds of image data latency.
