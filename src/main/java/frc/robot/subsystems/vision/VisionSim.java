@@ -21,18 +21,18 @@ public class VisionSim {
 
   VisionSystemSim sim = new VisionSystemSim("main");
 
-  SimCameraProperties frontCameraProp = new SimCameraProperties();
-  SimCameraProperties backCameraProp = new SimCameraProperties();
+  SimCameraProperties frontLeftCameraProp = new SimCameraProperties();
+  SimCameraProperties frontRightCameraProp = new SimCameraProperties();
   double fx = 737.6136442454854;
   double fy = 733.1927575565593;
   double cx = 662.3371068271363;
   double cy = 435.9984845786;
   double[] distCoeffs = {0.15288116557227518,-0.2878953642242236,-0.0010986978034486703,0.0011333394853758716,0.12276685039910991};
 
-  PhotonCameraSim frontSim;
-  PhotonCameraSim backSim;
+  PhotonCameraSim frontLeftSim;
+  PhotonCameraSim frontRightSim;
 
-  public VisionSim(PhotonCamera frontCamera, PhotonCamera backCamera) {
+  public VisionSim(PhotonCamera frontLeftCamera, PhotonCamera frontRightCamera) {
     if(Robot.isReal()) return;
     AprilTagFieldLayout tagLayout = null;
     try {
@@ -42,20 +42,20 @@ public class VisionSim {
     }
 
     sim.addAprilTags(tagLayout);
-    configCameraProp(frontCameraProp);
-    configCameraProp(backCameraProp);
+    configCameraProp(frontLeftCameraProp);
+    configCameraProp(frontRightCameraProp);
 
-    frontSim = new PhotonCameraSim(frontCamera, frontCameraProp);
-    backSim = new PhotonCameraSim(backCamera, backCameraProp);
+    frontLeftSim = new PhotonCameraSim(frontLeftCamera, frontLeftCameraProp);
+    frontRightSim = new PhotonCameraSim(frontRightCamera, frontRightCameraProp);
 
-    frontSim.enableDrawWireframe(true); // apparently resource intensive
-    backSim.enableDrawWireframe(true);
+    frontLeftSim.enableDrawWireframe(true); // apparently resource intensive
+    frontRightSim.enableDrawWireframe(true);
 
-    sim.addCamera(frontSim, FRONT_CAM_TRANSFORM);
-    sim.addCamera(backSim, BACK_CAM_TRANSFORM);
+    sim.addCamera(frontLeftSim, FRONT_LEFT_TRANSFORM);
+    sim.addCamera(frontRightSim, FRONT_RIGHT_TRANSFORM);
     
-    frontSim.setMinTargetAreaPixels(1000);
-    backSim.setMinTargetAreaPixels(1000);
+    frontLeftSim.setMinTargetAreaPixels(1000);
+    frontRightSim.setMinTargetAreaPixels(1000);
   }
 
   private void configCameraProp(SimCameraProperties camera) {

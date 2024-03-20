@@ -170,17 +170,30 @@ public final class Constants {
   }
 
   public static class VisionConstants {
-    public static final String FRONT_CAM_NAME = "front_spinel";
-    public static final String BACK_CAM_NAME = "rear_spinel";
+    // public static final String FRONT_CAM_NAME = "front_spinel";
+    // public static final String BACK_CAM_NAME = "rear_spinel";
+    public static final String FRONT_RIGHT_NAME = "FRONT_RIGHT";
+    public static final String FRONT_LEFT_NAME = "FRONT_LEFT";
+    public static final String BACK_LEFT_NAME = "BACK_LEFT";
     
-    public static final Transform3d FRONT_CAM_TRANSFORM = 
-      new Transform3d(new Translation3d(0.28575, 0.00635, 0.212725),
-      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-30), Units.degreesToRadians(0))
+    public static final Transform3d FRONT_LEFT_TRANSFORM = 
+      new Transform3d(new Translation3d(0.365125, 0.13335, 0.136525),
+      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(30))
     );
-    public static final Transform3d BACK_CAM_TRANSFORM = new Transform3d(
-      new Translation3d(-0.3683, 0.24765, 0.2413),
-      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-30), Units.degreesToRadians(180))
+
+    public static final Transform3d FRONT_RIGHT_TRANSFORM = new Transform3d(
+      new Translation3d(0.365125, -0.15875, 0.136525),
+      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(-30))
     );
+
+    // public static final Transform3d FRONT_CAM_TRANSFORM = 
+    //   new Transform3d(new Translation3d(0.28575, 0.00635, 0.212725),
+    //   new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(0))
+    // );
+    // public static final Transform3d BACK_CAM_TRANSFORM = new Transform3d(
+    //   new Translation3d(-0.3683, 0.24765, 0.2413),
+    //   new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(180))
+    // );
   }
   public static class Controllers {
     public static final double JOYSTICK_DEADBAND = 0.05;

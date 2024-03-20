@@ -31,18 +31,18 @@ import frc.robot.subsystems.swerve.Swerve;
 import static frc.robot.Constants.VisionConstants.*;
 
 public class Vision extends SubsystemBase {
-  private PhotonCamera cameraFront;
-  private PhotonCamera cameraBack;
+  private PhotonCamera cameraFrontLeft;
+  private PhotonCamera cameraFrontRight;
   private AprilTagFieldLayout field;
   private PoseStrategy strategy;
-  private PhotonPoseEstimator frontEstimator;
-  private PhotonPoseEstimator backEstimator;
+  private PhotonPoseEstimator frontLeftEstimator;
+  private PhotonPoseEstimator frontRightEstimator;
   private VisionSim sim;
   private Swerve swerve;
 
   public Vision(Swerve swerve) {
-    cameraFront = new PhotonCamera(FRONT_CAM_NAME);
-    cameraBack = new PhotonCamera(BACK_CAM_NAME);
+    cameraFrontLeft = new PhotonCamera(FRONT_LEFT_NAME);
+    cameraFrontRight = new PhotonCamera(FRONT_RIGHT_NAME);
     this.swerve = swerve;
     // might want to remove this before comp
     if(Robot.isSimulation())
@@ -57,45 +57,45 @@ public class Vision extends SubsystemBase {
     strategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
     // strategy = PoseStrategy.LOWEST_AMBIGUITY;
 
-    frontEstimator = new PhotonPoseEstimator(field, strategy, cameraFront, FRONT_CAM_TRANSFORM);
-    backEstimator = new PhotonPoseEstimator(field, strategy, cameraBack, BACK_CAM_TRANSFORM);
-    sim = new VisionSim(cameraFront, cameraBack);
+    frontLeftEstimator = new PhotonPoseEstimator(field, strategy, cameraFrontLeft, FRONT_LEFT_TRANSFORM);
+    frontRightEstimator = new PhotonPoseEstimator(field, strategy, cameraFrontRight, FRONT_RIGHT_TRANSFORM);
+    sim = new VisionSim(cameraFrontLeft, cameraFrontRight);
   }
 
   final double MAX_PITCHROLL = Units.degreesToRadians(15);
   final double MAX_Z = Units.inchesToMeters(24);
 
   public Optional<EstimatedRobotPose> getGlobalPoseFromFront() {
-    Logger.recordOutput("Vision/Front/RefPose", frontEstimator.getReferencePose());
-    var updated = frontEstimator.update();
+    Logger.recordOutput("Vision/FrontLeft/RefPose", frontLeftEstimator.getReferencePose());
+    var updated = frontLeftEstimator.update();
     if(updated.isPresent()) {
       double pitch = updated.get().estimatedPose.getRotation().getX();
       double roll = updated.get().estimatedPose.getRotation().getY();
       if(Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL || updated.get().estimatedPose.getTranslation().getZ() > MAX_Z) {
-        Logger.recordOutput("Vision/Front/EstPoseUnfiltered", updated.get().estimatedPose);
+        Logger.recordOutput("Vision/FrontLeft/EstPoseUnfiltered", updated.get().estimatedPose);
         return Optional.empty();
       }
 
-      Logger.recordOutput("Vision/Front/EstPoseUnfiltered", updated.get().estimatedPose);
-      Logger.recordOutput("Vision/Front/EstPose", updated.get().estimatedPose);
+      Logger.recordOutput("Vision/FrontLeft/EstPoseUnfiltered", updated.get().estimatedPose);
+      Logger.recordOutput("Vision/FrontLeft/EstPose", updated.get().estimatedPose);
     }
 
     return updated;
   }
 
   public Optional<EstimatedRobotPose> getGlobalPoseFromBack() {
-    Logger.recordOutput("Vision/Back/RefPose", backEstimator.getReferencePose());
-    var updated = backEstimator.update();
+    Logger.recordOutput("Vision/FrontRight/RefPose", frontRightEstimator.getReferencePose());
+    var updated = frontRightEstimator.update();
     if(updated.isPresent()) {
       double pitch = updated.get().estimatedPose.getRotation().getX();
       double roll = updated.get().estimatedPose.getRotation().getY();
       if(Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL || updated.get().estimatedPose.getTranslation().getZ() > MAX_Z) {
-        Logger.recordOutput("Vision/Back/EstPoseUnfiltered", updated.get().estimatedPose);
+        Logger.recordOutput("Vision/FrontRight/EstPoseUnfiltered", updated.get().estimatedPose);
         return Optional.empty();
       }
 
-      Logger.recordOutput("Vision/Back/EstPoseUnfiltered", updated.get().estimatedPose);
-      Logger.recordOutput("Vision/Back/EstPose", updated.get().estimatedPose);
+      Logger.recordOutput("Vision/FrontRight/EstPoseUnfiltered", updated.get().estimatedPose);
+      Logger.recordOutput("Vision/FrontRight/EstPose", updated.get().estimatedPose);
     }
 
     return updated;
@@ -145,16 +145,16 @@ public class Vision extends SubsystemBase {
 
   public void updateSingleTagPoseEstimator(SwerveDrivePoseEstimator singleTagPoseEstimator, Optional<EstimatedRobotPose> frontPose, Optional<EstimatedRobotPose> backPose) {
     if(frontPose.isPresent()) {
-      updateSingleCamera(singleTagPoseEstimator, cameraFront, frontPose.get(), "Front");
+      updateSingleCamera(singleTagPoseEstimator, cameraFrontLeft, frontPose.get(), "Front");
     } else {
-      Logger.recordOutput("Vision/Front/NumTargets", 0);
-      Logger.recordOutput("Vision/Front/TagPoses", new Transform3d[0]);
+      Logger.recordOutput("Vision/FrontLeft/NumTargets", 0);
+      Logger.recordOutput("Vision/FrontLeft/TagPoses", new Transform3d[0]);
     }
     if(backPose.isPresent()) {
-      updateSingleCamera(singleTagPoseEstimator, cameraBack, backPose.get(), "Back");
+      updateSingleCamera(singleTagPoseEstimator, cameraFrontRight, backPose.get(), "Back");
     } else {
-      Logger.recordOutput("Vision/Back/NumTargets", 0);
-      Logger.recordOutput("Vision/Back/TagPoses", new Transform3d[0]);
+      Logger.recordOutput("Vision/FrontRight/NumTargets", 0);
+      Logger.recordOutput("Vision/FrontRight/TagPoses", new Transform3d[0]);
     }
   }
 
