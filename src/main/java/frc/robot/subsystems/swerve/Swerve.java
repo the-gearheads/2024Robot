@@ -350,22 +350,23 @@ public class Swerve extends SubsystemBase {
     if (getPose().getX() == Double.NaN) {
       resetPose(new Pose2d());
     }
-    Optional<EstimatedRobotPose> frontVision = vision.getGlobalPoseFromFront();
-    Optional<EstimatedRobotPose> backVision = vision.getGlobalPoseFromBack();
-    if (frontVision.isPresent() && isVisionEnabled()) {
-      multitagPoseEstimator.addVisionMeasurement(frontVision.get().estimatedPose.toPose2d(), frontVision.get().timestampSeconds);
+    Optional<EstimatedRobotPose> frontLeftVision = vision.getGlobalPoseFrontLeft();
+    Optional<EstimatedRobotPose> frontRightVision = vision.getGlobalPoseFrontRight();
+    Optional<EstimatedRobotPose> backLeftVision = vision.getGlobalPoseBackLeft();
+    if (frontLeftVision.isPresent() && isVisionEnabled()) {
+      multitagPoseEstimator.addVisionMeasurement(frontLeftVision.get().estimatedPose.toPose2d(), frontLeftVision.get().timestampSeconds);
     }
-    if (backVision.isPresent() && isVisionEnabled()) {
-      multitagPoseEstimator.addVisionMeasurement(backVision.get().estimatedPose.toPose2d(), backVision.get().timestampSeconds);
+    if (frontRightVision.isPresent() && isVisionEnabled()) {
+      multitagPoseEstimator.addVisionMeasurement(frontRightVision.get().estimatedPose.toPose2d(), frontRightVision.get().timestampSeconds);
     }
-
-    vision.updateSingleTagPoseEstimator(betterPoseEstimator, frontVision, backVision);
-
-    if ((backVision.isPresent() || frontVision.isPresent()) && DriverStation.isDisabled()) {
+    if ((backLeftVision.isPresent() || backLeftVision.isPresent()) && DriverStation.isDisabled()) {
       LedState.setRainbowSpeed(6);
     } else {
       LedState.resetRainbowSpeed();
     }
+
+    vision.updateSingleTagPoseEstimator(betterPoseEstimator, frontLeftVision, frontRightVision, backLeftVision);
+
 
     Logger.recordOutput("Swerve/Pose", getPose());
     Logger.recordOutput("Swerve/BetterPose", betterPoseEstimator.getEstimatedPosition());

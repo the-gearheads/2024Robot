@@ -23,6 +23,7 @@ public class VisionSim {
 
   SimCameraProperties frontLeftCameraProp = new SimCameraProperties();
   SimCameraProperties frontRightCameraProp = new SimCameraProperties();
+  SimCameraProperties backLeftCameraProp = new SimCameraProperties();
   double fx = 737.6136442454854;
   double fy = 733.1927575565593;
   double cx = 662.3371068271363;
@@ -31,8 +32,9 @@ public class VisionSim {
 
   PhotonCameraSim frontLeftSim;
   PhotonCameraSim frontRightSim;
+  PhotonCameraSim backLeftSim;
 
-  public VisionSim(PhotonCamera frontLeftCamera, PhotonCamera frontRightCamera) {
+  public VisionSim(PhotonCamera frontLeftCamera, PhotonCamera frontRightCamera, PhotonCamera backLeftCamera) {
     if(Robot.isReal()) return;
     AprilTagFieldLayout tagLayout = null;
     try {
@@ -47,6 +49,7 @@ public class VisionSim {
 
     frontLeftSim = new PhotonCameraSim(frontLeftCamera, frontLeftCameraProp);
     frontRightSim = new PhotonCameraSim(frontRightCamera, frontRightCameraProp);
+    backLeftSim = new PhotonCameraSim(backLeftCamera, backLeftCameraProp);
 
     // frontLeftSim.enableDrawWireframe(true); // apparently resource intensive
     // frontRightSim.enableDrawWireframe(true);
