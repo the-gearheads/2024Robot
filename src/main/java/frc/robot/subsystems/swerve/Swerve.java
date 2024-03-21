@@ -47,7 +47,7 @@ import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -63,11 +63,11 @@ import frc.robot.util.HandledSleep;
 
 public class Swerve extends SubsystemBase {
   static final Lock odometryLock = new ReentrantLock();
-  AHRS gyro = new AHRS(SerialPort.Port.kUSB1);
+  AHRS gyro = new AHRS(Port.kMXP);
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDrivePoseEstimator multitagPoseEstimator;
   SwerveDrivePoseEstimator betterPoseEstimator;
-  SwerveDriveOdometry wheelOdometry;
+  SwerveDriveOdometry wheelOdometry; 
   Vision vision;
   Field2d field = new Field2d();
   /* Want to put vision and path states on this field */
@@ -359,7 +359,10 @@ public class Swerve extends SubsystemBase {
     if (frontRightVision.isPresent() && isVisionEnabled()) {
       multitagPoseEstimator.addVisionMeasurement(frontRightVision.get().estimatedPose.toPose2d(), frontRightVision.get().timestampSeconds);
     }
-    if ((backLeftVision.isPresent() || backLeftVision.isPresent()) && DriverStation.isDisabled()) {
+    if (backLeftVision.isPresent() && isVisionEnabled()) {
+      multitagPoseEstimator.addVisionMeasurement(backLeftVision.get().estimatedPose.toPose2d(), backLeftVision.get().timestampSeconds);
+    }
+    if ((frontRightVision.isPresent() || frontLeftVision.isPresent()) && DriverStation.isDisabled()) {
       LedState.setRainbowSpeed(6);
     } else {
       LedState.resetRainbowSpeed();

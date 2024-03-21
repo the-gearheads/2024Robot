@@ -178,16 +178,16 @@ public final class Constants {
     
     public static final Transform3d FRONT_LEFT_TRANSFORM = 
       new Transform3d(new Translation3d(0.365125, 0.13335, 0.22225),
-      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(30))
+      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(-30))
     );
 
     public static final Transform3d FRONT_RIGHT_TRANSFORM = new Transform3d(
       new Translation3d(0.365125, -0.15875, 0.22225),
-      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(-30))
+      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(30))
     );
 
     public static final Transform3d BACK_LEFT_TRANSFORM = new Transform3d(
-      new Translation3d(-0.36195, -0.26035, 0.231775),
+      new Translation3d(-0.36195, 0.26035, 0.231775),
       new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-21), Units.degreesToRadians(0))
     );
 
