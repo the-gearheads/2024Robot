@@ -31,6 +31,8 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -353,15 +355,9 @@ public class Swerve extends SubsystemBase {
     Optional<EstimatedRobotPose> frontLeftVision = vision.getGlobalPoseFrontLeft();
     Optional<EstimatedRobotPose> frontRightVision = vision.getGlobalPoseFrontRight();
     Optional<EstimatedRobotPose> backLeftVision = vision.getGlobalPoseBackLeft();
-    if (frontLeftVision.isPresent() && isVisionEnabled()) {
-      multitagPoseEstimator.addVisionMeasurement(frontLeftVision.get().estimatedPose.toPose2d(), frontLeftVision.get().timestampSeconds);
-    }
-    if (frontRightVision.isPresent() && isVisionEnabled()) {
-      multitagPoseEstimator.addVisionMeasurement(frontRightVision.get().estimatedPose.toPose2d(), frontRightVision.get().timestampSeconds);
-    }
-    if (backLeftVision.isPresent() && isVisionEnabled()) {
-      multitagPoseEstimator.addVisionMeasurement(backLeftVision.get().estimatedPose.toPose2d(), backLeftVision.get().timestampSeconds);
-    }
+    processVisionData(frontLeftVision);
+    processVisionData(frontRightVision);
+    processVisionData(backLeftVision);
     if ((frontRightVision.isPresent() || frontLeftVision.isPresent()) && DriverStation.isDisabled()) {
       LedState.setRainbowSpeed(6);
     } else {
@@ -482,6 +478,18 @@ public class Swerve extends SubsystemBase {
 
   public void enableVision() {
     this.visionEnabled = true;
+  }
+
+  private void processVisionData(Optional<EstimatedRobotPose> visionData) {
+    if (visionData.isPresent() && isVisionEnabled()) {
+        Pose2d estPose = visionData.get().estimatedPose.toPose2d();
+        if (visionData.get().targetsUsed.size() <= 1) {
+            var stddevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, Double.POSITIVE_INFINITY, 0.9, 0.9, Double.POSITIVE_INFINITY);
+            multitagPoseEstimator.addVisionMeasurement(estPose, visionData.get().timestampSeconds, stddevs);
+        } else {
+            multitagPoseEstimator.addVisionMeasurement(estPose, visionData.get().timestampSeconds);
+        }
+    }
   }
 
   /* Not really volts */
