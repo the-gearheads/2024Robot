@@ -1,9 +1,16 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.controller.ImplicitModelFollower;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -113,5 +120,46 @@ public class Teleop extends Command {
     } else {
       headingController.setSetpoint(swerve.getGyroRotation().getRadians());
     }
+  }
+
+
+  double kVLinear = 0.1;
+  double kVAngular = 0.1;
+  double kALinear = 0.1;
+  double kAAngular = 0.1;
+  LinearSystem<N2, N2, N2> identifyDrivetrainSystem(
+      double kVLinear, double kALinear, double kVAngular, double kAAngular) {
+    if (kVLinear <= 0.0) {
+      throw new IllegalArgumentException("Kv,linear must be greater than zero.");
+    }
+    if (kALinear <= 0.0) {
+      throw new IllegalArgumentException("Ka,linear must be greater than zero.");
+    }
+    if (kVAngular <= 0.0) {
+      throw new IllegalArgumentException("Kv,angular must be greater than zero.");
+    }
+    if (kAAngular <= 0.0) {
+      throw new IllegalArgumentException("Ka,angular must be greater than zero.");
+    }
+
+    final double A1 = 0.5 * -(kVLinear / kALinear + kVAngular / kAAngular);
+    final double A2 = 0.5 * -(kVLinear / kALinear - kVAngular / kAAngular);
+    final double B1 = 0.5 * (1.0 / kALinear + 1.0 / kAAngular);
+    final double B2 = 0.5 * (1.0 / kALinear - 1.0 / kAAngular);
+
+    return new LinearSystem<>(
+        MatBuilder.fill(Nat.N2(), Nat.N2(), A1, A2, A2, A1),
+        MatBuilder.fill(Nat.N2(), Nat.N2(), B1, B2, B2, B1),
+        // implicit model follower doesnt even really use these two
+        MatBuilder.fill(Nat.N2(), Nat.N2(), 1, 0, 0, 1),
+        MatBuilder.fill(Nat.N2(), Nat.N2(), 0, 0, 0, 0));
+  }
+
+  // ImplicitModelFollower
+
+  
+
+  // an attempt at implementing https://discord.com/channels/176186766946992128/368993897495527424/1220411851859300522
+  void implicitModelFollowing(ChassisSpeeds speeds) {
   }
 }
