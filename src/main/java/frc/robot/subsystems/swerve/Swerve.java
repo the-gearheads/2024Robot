@@ -66,8 +66,8 @@ public class Swerve extends SubsystemBase {
   AHRS gyro = new AHRS(Port.kMXP);
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDrivePoseEstimator multitagPoseEstimator;
-  SwerveDrivePoseEstimator 更好的姿势估计器;
-  SwerveDriveOdometry wheelOdometry;
+  SwerveDrivePoseEstimator betterPoseEstimator;
+  SwerveDriveOdometry wheelOdometry; 
   Vision vision;
   Field2d field = new Field2d();
   /* Want to put vision and path states on this field */
@@ -119,7 +119,7 @@ public class Swerve extends SubsystemBase {
     SparkMaxOdometryThread.getInstance().start();
 
     multitagPoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0, 0)));
-    更好的姿势估计器 = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0, 0)));
+    betterPoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0, 0)));
     wheelOdometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModulePositions());
     resetPose(new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(180)));
 
@@ -343,7 +343,7 @@ public class Swerve extends SubsystemBase {
         continue;
       }
       multitagPoseEstimator.updateWithTime(timestamps[time], getGyroRotation(), reshapedPositions[time]);
-      更好的姿势估计器.updateWithTime(timestamps[time], getGyroRotation(), reshapedPositions[time]);
+      betterPoseEstimator.updateWithTime(timestamps[time], getGyroRotation(), reshapedPositions[time]);
       wheelOdometry.update(getGyroRotation(), reshapedPositions[time]);
     }
 
@@ -368,11 +368,11 @@ public class Swerve extends SubsystemBase {
       LedState.resetRainbowSpeed();
     }
 
-    vision.updateSingleTagPoseEstimator(更好的姿势估计器, frontLeftVision, frontRightVision, backLeftVision);
+    vision.updateSingleTagPoseEstimator(betterPoseEstimator, frontLeftVision, frontRightVision, backLeftVision);
 
 
     Logger.recordOutput("Swerve/Pose", getPose());
-    Logger.recordOutput("Swerve/BetterPose", 更好的姿势估计器.getEstimatedPosition());
+    Logger.recordOutput("Swerve/BetterPose", betterPoseEstimator.getEstimatedPosition());
     Logger.recordOutput("Swerve/WheelOdom", wheelOdometry.getPoseMeters());
     /* Glass doesnt support struct fields really but they're nicer to use in AScope :( */
     Logger.recordOutput("Swerve/PoseX", getPose().getX());
@@ -385,7 +385,7 @@ public class Swerve extends SubsystemBase {
     ShooterCalculations.getYaw(getPose().getTranslation());
     field.setRobotPose(getPose());
     vpField.setRobotPose(getPose());
-    vpField.getObject("Better Pose").setPose(更好的姿势估计器.getEstimatedPosition());
+    vpField.getObject("Better Pose").setPose(betterPoseEstimator.getEstimatedPosition());
 
     if(!DriverStation.isFMSAttached()) {
       var steer = SmartDashboard.getBoolean("Swerve/manualVoltageSteer", false);
@@ -423,7 +423,7 @@ public class Swerve extends SubsystemBase {
       module.resetEncoders();
     }
     multitagPoseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);
-    更好的姿势估计器.resetPosition(getGyroRotation(), getModulePositions(), pose);
+    betterPoseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);
     wheelOdometry.resetPosition(getGyroRotation(), getModulePositions(), pose);
   }
 
