@@ -5,58 +5,35 @@
 package frc.robot.subsystems.vision;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
-import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.MatBuilder;
-import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.Swerve;
 
-import static frc.robot.Constants.FieldConstants.FIELD;
 import static frc.robot.Constants.VisionConstants.*;
 
 public class Vision extends SubsystemBase {
-  private PhotonCamera cameraFrontLeft;
-  private PhotonCamera cameraFrontRight;
-  private PhotonCamera cameraBackLeft;
   private AprilTagFieldLayout field;
-  private PoseStrategy strategy;
-  private PhotonPoseEstimator frontLeftEstimator;
-  private PhotonPoseEstimator frontRightEstimator;
-  private PhotonPoseEstimator backLeftEstimator;
   private VisionSim sim;
   private Swerve swerve;
 
-  private static final double MAX_PITCHROLL = Units.degreesToRadians(10);
-  private static final double MAX_Z = Units.inchesToMeters(12);
-  private static final double xyStdDevCoefficient = 0.005;
-  private static final double thetaStdDevCoefficient = 0.01;
-  private static final double coefficientFactor = 1.0;
+  private final Camera frontLeft, frontRight, backLeft;
+
+  CameraIntrinsics intrinsics = new CameraIntrinsics(
+    737.6136442454854, 733.1927575565593, 662.3371068271363, 435.9984845786,
+    new double[] {0.15288116557227518,-0.2878953642242236,-0.0010986978034486703,0.0011333394853758716,0.12276685039910991}
+  );
 
   public Vision(Swerve swerve) {
-    cameraFrontLeft = new PhotonCamera(FRONT_LEFT_NAME);
-    cameraFrontRight = new PhotonCamera(FRONT_RIGHT_NAME);
-    cameraBackLeft = new PhotonCamera(BACK_LEFT_NAME);
     this.swerve = swerve;
     // might want to remove this before comp
     if(Robot.isSimulation())
-      PhotonCamera.setVersionCheckEnabled(false);
+      PhotonCamera.setVersionCheckEnabled(false);  
 
     try {
       field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
@@ -64,107 +41,29 @@ public class Vision extends SubsystemBase {
       System.out.println("ERROR Opening apriltag field layout file");
       System.out.println(AprilTagFields.k2024Crescendo.m_resourceFile);
     }
-    strategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
-    // strategy = PoseStrategy.LOWEST_AMBIGUITY;
 
-    frontLeftEstimator = new PhotonPoseEstimator(field, strategy, cameraFrontLeft, FRONT_LEFT_TRANSFORM);
-    frontRightEstimator = new PhotonPoseEstimator(field, strategy, cameraFrontRight, FRONT_RIGHT_TRANSFORM);
-    backLeftEstimator = new PhotonPoseEstimator(field, strategy, cameraFrontRight, FRONT_RIGHT_TRANSFORM);
-    sim = new VisionSim(cameraFrontLeft, cameraFrontRight, cameraBackLeft);
+    frontLeft = new Camera(field, FRONT_LEFT_NAME, FRONT_LEFT_TRANSFORM, intrinsics);
+    frontRight = new Camera(field, FRONT_RIGHT_NAME, FRONT_RIGHT_TRANSFORM, intrinsics);
+    backLeft = new Camera(field, BACK_LEFT_NAME, BACK_LEFT_TRANSFORM, intrinsics);
+
+    sim = new VisionSim();
+    sim.addCamera(frontLeft);
+    sim.addCamera(frontRight);
+    sim.addCamera(backLeft);
   }
 
-  public Optional<EstimatedRobotPose> getGlobalPoseFrontLeft() {
-    return getGlobalPose(frontLeftEstimator, "FrontLeft");
-  }
-
-  public Optional<EstimatedRobotPose> getGlobalPoseFrontRight() {
-    return getGlobalPose(frontRightEstimator, "FrontRight");
-  }
-
-  public Optional<EstimatedRobotPose> getGlobalPoseBackLeft() {
-    return getGlobalPose(backLeftEstimator, "BackLeft");
-  }
-  
-  private Optional<EstimatedRobotPose> getGlobalPose(PhotonPoseEstimator estimator, String cameraName) {
-    Logger.recordOutput("Vision/" + cameraName + "/RefPose", estimator.getReferencePose());
-    var updated = estimator.update();
-    if (updated.isPresent()) {
-      double pitch = updated.get().estimatedPose.getRotation().getX();
-      double roll = updated.get().estimatedPose.getRotation().getY();
-      Logger.recordOutput("Vision/" + cameraName + "/EstPoseUnfiltered", updated.get().estimatedPose);
-
-      if (Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL || updated.get().estimatedPose.getTranslation().getZ() > MAX_Z) {
-        return Optional.empty();
-      }
-      if (!FIELD.contains(updated.get().estimatedPose.toPose2d())) {
-        return Optional.empty();
-      }
-
-      Logger.recordOutput("Vision/" + cameraName + "/EstPose", updated.get().estimatedPose);
-    }
-    return updated;
-  } 
-
-  private void updateSingleCamera(SwerveDrivePoseEstimator singleTagPoseEstimator, PhotonCamera camera, EstimatedRobotPose pose, String name) {
-    var updated = camera.getLatestResult();
-    int numTargets = updated.targets.size();
-    double avgDistToTarget = 0;
-    for(var target: updated.targets) {
-      avgDistToTarget += target.getBestCameraToTarget().getTranslation().getNorm(); 
-    }
-    avgDistToTarget /= numTargets;
-
-    double xyStdDev = xyStdDevCoefficient * Math.pow(avgDistToTarget, 2.0) / numTargets * coefficientFactor;
-    double thetaStdDev = thetaStdDevCoefficient * Math.pow(avgDistToTarget, 2.0) / numTargets * coefficientFactor;
-
-    Logger.recordOutput("Vision/" + name + "/XyStdDev", xyStdDev);
-    Logger.recordOutput("Vision/" + name + "/ThetaStdDev", thetaStdDev);
-    Logger.recordOutput("Vision/" + name + "/NumTargets", numTargets);
-    Logger.recordOutput("Vision/" + name + "/AvgDistToTarget", avgDistToTarget);
-
-    var stdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), xyStdDev, xyStdDev, thetaStdDev);
-
-    singleTagPoseEstimator.addVisionMeasurement(
-      pose.estimatedPose.toPose2d(),
-      updated.getTimestampSeconds(), 
-      stdDevs
-    );
-
-    // Log tag poses
-    List<Transform3d> allTagPoses = new ArrayList<>();
-    var currentPose = singleTagPoseEstimator.getEstimatedPosition();
-    var currentPose3d = new Transform3d(new Translation3d(currentPose.getX(), currentPose.getY(), 0), new Rotation3d(0, 0, currentPose.getRotation().getRadians()));
-    for (var detectionEntry: updated.targets) {
-      var detection = detectionEntry.getBestCameraToTarget();
-      var tagPose = currentPose3d.plus(detection);
-      allTagPoses.add(tagPose);
-    }
-    Logger.recordOutput("Vision/" + name + "/TagPoses", allTagPoses.toArray(Transform3d[]::new));
-  }
-
-  public void updateSingleTagPoseEstimator(SwerveDrivePoseEstimator singleTagPoseEstimator, Optional<EstimatedRobotPose> frontRightPose, Optional<EstimatedRobotPose> frontLeftPose, Optional<EstimatedRobotPose> backLeftPose) {
-    if(frontLeftPose.isPresent()) {
-      updateSingleCamera(singleTagPoseEstimator, cameraFrontLeft, frontLeftPose.get(), "FrontLeft");
-    } else {
-      Logger.recordOutput("Vision/FrontLeft/NumTargets", 0);
-      Logger.recordOutput("Vision/FrontLeft/TagPoses", new Transform3d[0]);
-    }
-    if(frontRightPose.isPresent()) {
-      updateSingleCamera(singleTagPoseEstimator, cameraFrontRight, frontRightPose.get(), "FrontRight");
-    } else {
-      Logger.recordOutput("Vision/FrontRight/NumTargets", 0);
-      Logger.recordOutput("Vision/FrontRight/TagPoses", new Transform3d[0]);
-    }
-    if(backLeftPose.isPresent()) {
-      updateSingleCamera(singleTagPoseEstimator, cameraFrontRight, backLeftPose.get(), "BackLeft");
-    } else {
-      Logger.recordOutput("Vision/BackLeft/NumTargets", 0);
-      Logger.recordOutput("Vision/BackLeft/TagPoses", new Transform3d[0]);
-    }
+  public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
+    boolean tfl = frontLeft.feedPoseEstimator(poseEstimator);
+    boolean tfr = frontRight.feedPoseEstimator(poseEstimator);
+    boolean tbl = backLeft.feedPoseEstimator(poseEstimator);
+    return tfl || tfr || tbl;
   }
 
   @Override
   public void periodic() {
     sim.periodic(swerve.getPoseWheelsOnly());
+    frontLeft.logCamTransform(swerve.getPose());
+    frontRight.logCamTransform(swerve.getPose());
+    backLeft.logCamTransform(swerve.getPose());
   }
 }

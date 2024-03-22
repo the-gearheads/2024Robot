@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -14,6 +16,8 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
@@ -191,6 +195,9 @@ public final class Constants {
       new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-21), Units.degreesToRadians(0))
     );
 
+    public static final Matrix<N3, N1> SINGLE_TAG_STD_DEVS = VecBuilder.fill(0.1, 0.1, Double.POSITIVE_INFINITY);
+    public static final Matrix<N3, N1> MULTI_TAG_STD_DEVS = VecBuilder.fill(0.1, 0.1, 0.1);
+
   }
   public static class Controllers {
     public static final double JOYSTICK_DEADBAND = 0.05;
@@ -237,7 +244,7 @@ public final class Constants {
     public static final int RIGHT_ID = 15;
     public static final int LEFT_ID = 5;
     public static final double[] PID = {0.00074427, 0, 0};
-    public static final double SPEED = 3500;
+    public static final double SPEED = 6000;
     public static final double GEAR_RATIO = 1d / 64d;
     public static final double MAX_DIST = 3.0375 / GEAR_RATIO;
     public static final double MIN_DIST = 0;
