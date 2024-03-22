@@ -11,7 +11,6 @@ import org.photonvision.PhotonCamera;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.Swerve;
@@ -22,9 +21,6 @@ public class Vision extends SubsystemBase {
   private AprilTagFieldLayout field;
   private VisionSim sim;
   private Swerve swerve;
-
-  private final double MAX_PITCHROLL = Units.degreesToRadians(10);
-  private final double MAX_Z = Units.inchesToMeters(12);
 
   private final Camera frontLeft, frontRight, backLeft;
 

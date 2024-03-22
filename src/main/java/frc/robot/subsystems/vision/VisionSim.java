@@ -1,7 +1,5 @@
 package frc.robot.subsystems.vision;
 
-import static frc.robot.Constants.VisionConstants.*;
-
 import java.io.IOException;
 import java.util.ArrayList;
 

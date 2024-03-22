@@ -1,6 +1,7 @@
 package frc.robot.subsystems.vision;
 
 import java.util.Optional;
+import java.util.ArrayList;
 
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
@@ -11,13 +12,13 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.*;
 import edu.wpi.first.math.util.Units;
 
@@ -34,14 +35,20 @@ public class Camera {
   public final PhotonCamera camera;
   public final PhotonPoseEstimator estimator;
 
-  private static final double MAX_PITCHROLL = Units.degreesToRadians(10);
-  private static final double MAX_Z = Units.inchesToMeters(12);
+  private final double MAX_PITCHROLL = Units.degreesToRadians(10);
+  private final double MAX_Z = Units.inchesToMeters(12);
+
+  // kinda ugly ik ik
+  private Pose2d lastRobotPose;
+
+  private final AprilTagFieldLayout field;
 
 
   public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics) {
     this.name = name;
     this.transform = transform;
     this.intrinsics = intrinsics;
+    this.field = field;
     path = "Vision/" + name;
 
     camera = new PhotonCamera(name);
@@ -70,10 +77,22 @@ public class Camera {
       return Optional.empty();
     }
     Logger.recordOutput(path + "/EstPose", estPose);
+
+
+    ArrayList<Pose3d> allTagPoses = new ArrayList<>();
+    var currentPose3d = new Pose3d(new Translation3d(lastRobotPose.getX(), lastRobotPose.getY(), 0), new Rotation3d(0, 0, lastRobotPose.getRotation().getRadians()));
+    for (var detectionEntry: result.targets) {
+      var detection = detectionEntry.getBestCameraToTarget();
+      var fieldToTag = currentPose3d.transformBy(transform).transformBy(detection);
+      allTagPoses.add(fieldToTag);
+    }
+    Logger.recordOutput("Vision/" + name + "/TagPoses", allTagPoses.toArray(Pose3d[]::new));
+
     return pose;
   }
 
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
+    lastRobotPose = poseEstimator.getEstimatedPosition();
     var pose = getGlobalPose();
     if(pose.isPresent()) {
         Pose2d estPose = pose.get().estimatedPose.toPose2d();
