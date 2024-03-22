@@ -20,6 +20,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -45,9 +46,6 @@ public class Vision extends SubsystemBase {
 
   private static final double MAX_PITCHROLL = Units.degreesToRadians(10);
   private static final double MAX_Z = Units.inchesToMeters(12);
-  private static final double xyStdDevCoefficient = 0.005;
-  private static final double thetaStdDevCoefficient = 0.01;
-  private static final double coefficientFactor = 1.0;
 
   public Vision(Swerve swerve) {
     cameraFrontLeft = new PhotonCamera(FRONT_LEFT_NAME);
@@ -88,79 +86,19 @@ public class Vision extends SubsystemBase {
   private Optional<EstimatedRobotPose> getGlobalPose(PhotonPoseEstimator estimator, String cameraName) {
     Logger.recordOutput("Vision/" + cameraName + "/RefPose", estimator.getReferencePose());
     var updated = estimator.update();
-    if (updated.isPresent()) {
-      double pitch = updated.get().estimatedPose.getRotation().getX();
-      double roll = updated.get().estimatedPose.getRotation().getY();
-      Logger.recordOutput("Vision/" + cameraName + "/EstPoseUnfiltered", updated.get().estimatedPose);
-
-      if (Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL || updated.get().estimatedPose.getTranslation().getZ() > MAX_Z) {
-        return Optional.empty();
-      }
-      if (!FIELD.contains(updated.get().estimatedPose.toPose2d())) {
-        return Optional.empty();
-      }
-
-      Logger.recordOutput("Vision/" + cameraName + "/EstPose", updated.get().estimatedPose);
+    if(!updated.isPresent()) return Optional.empty();
+    Pose3d estPose = updated.get().estimatedPose;
+    double pitch = estPose.getRotation().getX();
+    double roll = estPose.getRotation().getY();
+    Logger.recordOutput("Vision/" + cameraName + "/EstPoseUnfiltered", estPose);
+    if (Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL || estPose.getTranslation().getZ() > MAX_Z) {
+      return Optional.empty();
     }
+    if (!FIELD.contains(estPose.toPose2d())) {
+      return Optional.empty();
+    }
+    Logger.recordOutput("Vision/" + cameraName + "/EstPose", estPose);
     return updated;
-  } 
-
-  private void updateSingleCamera(SwerveDrivePoseEstimator singleTagPoseEstimator, PhotonCamera camera, EstimatedRobotPose pose, String name) {
-    var updated = camera.getLatestResult();
-    int numTargets = updated.targets.size();
-    double avgDistToTarget = 0;
-    for(var target: updated.targets) {
-      avgDistToTarget += target.getBestCameraToTarget().getTranslation().getNorm(); 
-    }
-    avgDistToTarget /= numTargets;
-
-    double xyStdDev = xyStdDevCoefficient * Math.pow(avgDistToTarget, 2.0) / numTargets * coefficientFactor;
-    double thetaStdDev = thetaStdDevCoefficient * Math.pow(avgDistToTarget, 2.0) / numTargets * coefficientFactor;
-
-    Logger.recordOutput("Vision/" + name + "/XyStdDev", xyStdDev);
-    Logger.recordOutput("Vision/" + name + "/ThetaStdDev", thetaStdDev);
-    Logger.recordOutput("Vision/" + name + "/NumTargets", numTargets);
-    Logger.recordOutput("Vision/" + name + "/AvgDistToTarget", avgDistToTarget);
-
-    var stdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), xyStdDev, xyStdDev, thetaStdDev);
-
-    singleTagPoseEstimator.addVisionMeasurement(
-      pose.estimatedPose.toPose2d(),
-      updated.getTimestampSeconds(), 
-      stdDevs
-    );
-
-    // Log tag poses
-    List<Transform3d> allTagPoses = new ArrayList<>();
-    var currentPose = singleTagPoseEstimator.getEstimatedPosition();
-    var currentPose3d = new Transform3d(new Translation3d(currentPose.getX(), currentPose.getY(), 0), new Rotation3d(0, 0, currentPose.getRotation().getRadians()));
-    for (var detectionEntry: updated.targets) {
-      var detection = detectionEntry.getBestCameraToTarget();
-      var tagPose = currentPose3d.plus(detection);
-      allTagPoses.add(tagPose);
-    }
-    Logger.recordOutput("Vision/" + name + "/TagPoses", allTagPoses.toArray(Transform3d[]::new));
-  }
-
-  public void updateSingleTagPoseEstimator(SwerveDrivePoseEstimator singleTagPoseEstimator, Optional<EstimatedRobotPose> frontRightPose, Optional<EstimatedRobotPose> frontLeftPose, Optional<EstimatedRobotPose> backLeftPose) {
-    if(frontLeftPose.isPresent()) {
-      updateSingleCamera(singleTagPoseEstimator, cameraFrontLeft, frontLeftPose.get(), "FrontLeft");
-    } else {
-      Logger.recordOutput("Vision/FrontLeft/NumTargets", 0);
-      Logger.recordOutput("Vision/FrontLeft/TagPoses", new Transform3d[0]);
-    }
-    if(frontRightPose.isPresent()) {
-      updateSingleCamera(singleTagPoseEstimator, cameraFrontRight, frontRightPose.get(), "FrontRight");
-    } else {
-      Logger.recordOutput("Vision/FrontRight/NumTargets", 0);
-      Logger.recordOutput("Vision/FrontRight/TagPoses", new Transform3d[0]);
-    }
-    if(backLeftPose.isPresent()) {
-      updateSingleCamera(singleTagPoseEstimator, cameraFrontRight, backLeftPose.get(), "BackLeft");
-    } else {
-      Logger.recordOutput("Vision/BackLeft/NumTargets", 0);
-      Logger.recordOutput("Vision/BackLeft/TagPoses", new Transform3d[0]);
-    }
   }
 
   @Override
