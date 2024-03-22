@@ -49,7 +49,7 @@ public class Camera {
     this.transform = transform;
     this.intrinsics = intrinsics;
     this.field = field;
-    path = "Vision/" + name;
+    path = "Vision/" + name.replace("_", "");
 
     camera = new PhotonCamera(name);
 
@@ -86,7 +86,7 @@ public class Camera {
       var fieldToTag = currentPose3d.transformBy(transform).transformBy(detection);
       allTagPoses.add(fieldToTag);
     }
-    Logger.recordOutput("Vision/" + name + "/TagPoses", allTagPoses.toArray(Pose3d[]::new));
+    Logger.recordOutput(path + "/TagPoses", allTagPoses.toArray(Pose3d[]::new));
 
     return pose;
   }
@@ -94,7 +94,7 @@ public class Camera {
   public void logCamTransform(Pose2d robotPose) {
     Pose3d camPose = new Pose3d(robotPose);
     camPose = camPose.transformBy(transform);
-    Logger.recordOutput("Vision/" + name + "/CamTransform", camPose);
+    Logger.recordOutput(path + "/CamTransform", camPose);
   }
 
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
