@@ -207,6 +207,10 @@ public final class Constants {
   }
 
   public static class FieldConstants {
+    public static final double[] FIELD_X = {0.10, 0.10, 16.45, 16.45, 14.75, 1.80};
+    public static final double[] FIELD_Y = {1.08, 8.14, 8.14, 1.08, 0.10, 0.10};
+    public static final Polygon FIELD = new Polygon(FIELD_X, FIELD_Y);
+
     public static final double[] STAGE_X = {2.95, 5.98, 5.80};
     public static final double[] STAGE_Y = {4.09, 5.88, 2.50};
 

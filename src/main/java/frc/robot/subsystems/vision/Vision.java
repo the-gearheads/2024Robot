@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.Swerve;
 
+import static frc.robot.Constants.FieldConstants.FIELD;
 import static frc.robot.Constants.VisionConstants.*;
 
 public class Vision extends SubsystemBase {
@@ -41,6 +42,12 @@ public class Vision extends SubsystemBase {
   private PhotonPoseEstimator backLeftEstimator;
   private VisionSim sim;
   private Swerve swerve;
+
+  private static final double MAX_PITCHROLL = Units.degreesToRadians(10);
+  private static final double MAX_Z = Units.inchesToMeters(12);
+  private static final double xyStdDevCoefficient = 0.005;
+  private static final double thetaStdDevCoefficient = 0.01;
+  private static final double coefficientFactor = 1.0;
 
   public Vision(Swerve swerve) {
     cameraFrontLeft = new PhotonCamera(FRONT_LEFT_NAME);
@@ -66,67 +73,37 @@ public class Vision extends SubsystemBase {
     sim = new VisionSim(cameraFrontLeft, cameraFrontRight, cameraBackLeft);
   }
 
-  final double MAX_PITCHROLL = Units.degreesToRadians(7);
-  final double MAX_Z = Units.inchesToMeters(6);
-
   public Optional<EstimatedRobotPose> getGlobalPoseFrontLeft() {
-    Logger.recordOutput("Vision/FrontLeft/RefPose", frontLeftEstimator.getReferencePose());
-    var updated = frontLeftEstimator.update();
-    if(updated.isPresent()) {
-      double pitch = updated.get().estimatedPose.getRotation().getX();
-      double roll = updated.get().estimatedPose.getRotation().getY();
-      if(Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL || updated.get().estimatedPose.getTranslation().getZ() > MAX_Z) {
-        Logger.recordOutput("Vision/FrontLeft/EstPoseUnfiltered", updated.get().estimatedPose);
-        return Optional.empty();
-      }
-
-      Logger.recordOutput("Vision/FrontLeft/EstPoseUnfiltered", updated.get().estimatedPose);
-      Logger.recordOutput("Vision/FrontLeft/EstPose", updated.get().estimatedPose);
-    }
-
-    return updated;
+    return getGlobalPose(frontLeftEstimator, FRONT_LEFT_NAME);
   }
 
   public Optional<EstimatedRobotPose> getGlobalPoseFrontRight() {
-    Logger.recordOutput("Vision/FrontRight/RefPose", frontRightEstimator.getReferencePose());
-    var updated = frontRightEstimator.update();
-    if(updated.isPresent()) {
-      double pitch = updated.get().estimatedPose.getRotation().getX();
-      double roll = updated.get().estimatedPose.getRotation().getY();
-      if(Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL || updated.get().estimatedPose.getTranslation().getZ() > MAX_Z) {
-        Logger.recordOutput("Vision/FrontRight/EstPoseUnfiltered", updated.get().estimatedPose);
-        return Optional.empty();
-      }
-
-      Logger.recordOutput("Vision/FrontRight/EstPoseUnfiltered", updated.get().estimatedPose);
-      Logger.recordOutput("Vision/FrontRight/EstPose", updated.get().estimatedPose);
-    }
-
-    return updated;
+    return getGlobalPose(frontRightEstimator, FRONT_LEFT_NAME);
   }
 
   public Optional<EstimatedRobotPose> getGlobalPoseBackLeft() {
-    Logger.recordOutput("Vision/BackLeft/RefPose", backLeftEstimator.getReferencePose());
-    var updated = backLeftEstimator.update();
-    if(updated.isPresent()) {
+    return getGlobalPose(backLeftEstimator, BACK_LEFT_NAME);
+  }
+  
+  private Optional<EstimatedRobotPose> getGlobalPose(PhotonPoseEstimator estimator, String cameraName) {
+    Logger.recordOutput("Vision/" + cameraName + "/RefPose", estimator.getReferencePose());
+    var updated = estimator.update();
+    if (updated.isPresent()) {
       double pitch = updated.get().estimatedPose.getRotation().getX();
       double roll = updated.get().estimatedPose.getRotation().getY();
-      if(Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL || updated.get().estimatedPose.getTranslation().getZ() > MAX_Z) {
-        Logger.recordOutput("Vision/BackLeft/EstPoseUnfiltered", updated.get().estimatedPose);
+      Logger.recordOutput("Vision/" + cameraName + "/EstPoseUnfiltered", updated.get().estimatedPose);
+
+      if (Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL || updated.get().estimatedPose.getTranslation().getZ() > MAX_Z) {
+        return Optional.empty();
+      }
+      if (!FIELD.contains(updated.get().estimatedPose.toPose2d())) {
         return Optional.empty();
       }
 
-      Logger.recordOutput("Vision/BackLeft/EstPoseUnfiltered", updated.get().estimatedPose);
-      Logger.recordOutput("Vision/BackLeft/EstPose", updated.get().estimatedPose);
+      Logger.recordOutput("Vision/" + cameraName + "/EstPose", updated.get().estimatedPose);
     }
-
     return updated;
-  }
-
-  private static final double xyStdDevCoefficient = 0.005;
-  private static final double thetaStdDevCoefficient = 0.01;
-  private static final double coefficientFactor = 1.0;
-  
+  } 
 
   private void updateSingleCamera(SwerveDrivePoseEstimator singleTagPoseEstimator, PhotonCamera camera, EstimatedRobotPose pose, String name) {
     var updated = camera.getLatestResult();

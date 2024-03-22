@@ -31,6 +31,8 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -66,7 +68,6 @@ public class Swerve extends SubsystemBase {
   AHRS gyro = new AHRS(Port.kMXP);
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDrivePoseEstimator multitagPoseEstimator;
-  SwerveDrivePoseEstimator betterPoseEstimator;
   SwerveDriveOdometry wheelOdometry; 
   Vision vision;
   Field2d field = new Field2d();
@@ -119,7 +120,6 @@ public class Swerve extends SubsystemBase {
     SparkMaxOdometryThread.getInstance().start();
 
     multitagPoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0, 0)));
-    betterPoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0, 0)));
     wheelOdometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModulePositions());
     resetPose(new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(180)));
 
@@ -343,7 +343,6 @@ public class Swerve extends SubsystemBase {
         continue;
       }
       multitagPoseEstimator.updateWithTime(timestamps[time], getGyroRotation(), reshapedPositions[time]);
-      betterPoseEstimator.updateWithTime(timestamps[time], getGyroRotation(), reshapedPositions[time]);
       wheelOdometry.update(getGyroRotation(), reshapedPositions[time]);
     }
 
@@ -353,26 +352,17 @@ public class Swerve extends SubsystemBase {
     Optional<EstimatedRobotPose> frontLeftVision = vision.getGlobalPoseFrontLeft();
     Optional<EstimatedRobotPose> frontRightVision = vision.getGlobalPoseFrontRight();
     Optional<EstimatedRobotPose> backLeftVision = vision.getGlobalPoseBackLeft();
-    if (frontLeftVision.isPresent() && isVisionEnabled()) {
-      multitagPoseEstimator.addVisionMeasurement(frontLeftVision.get().estimatedPose.toPose2d(), frontLeftVision.get().timestampSeconds);
-    }
-    if (frontRightVision.isPresent() && isVisionEnabled()) {
-      multitagPoseEstimator.addVisionMeasurement(frontRightVision.get().estimatedPose.toPose2d(), frontRightVision.get().timestampSeconds);
-    }
-    if (backLeftVision.isPresent() && isVisionEnabled()) {
-      multitagPoseEstimator.addVisionMeasurement(backLeftVision.get().estimatedPose.toPose2d(), backLeftVision.get().timestampSeconds);
-    }
+    processVisionData(frontLeftVision);
+    processVisionData(frontRightVision);
+    processVisionData(backLeftVision);
     if ((frontRightVision.isPresent() || frontLeftVision.isPresent()) && DriverStation.isDisabled()) {
       LedState.setRainbowSpeed(6);
     } else {
       LedState.resetRainbowSpeed();
     }
 
-    vision.updateSingleTagPoseEstimator(betterPoseEstimator, frontLeftVision, frontRightVision, backLeftVision);
-
 
     Logger.recordOutput("Swerve/Pose", getPose());
-    Logger.recordOutput("Swerve/BetterPose", betterPoseEstimator.getEstimatedPosition());
     Logger.recordOutput("Swerve/WheelOdom", wheelOdometry.getPoseMeters());
     /* Glass doesnt support struct fields really but they're nicer to use in AScope :( */
     Logger.recordOutput("Swerve/PoseX", getPose().getX());
@@ -385,7 +375,6 @@ public class Swerve extends SubsystemBase {
     ShooterCalculations.getYaw(getPose().getTranslation());
     field.setRobotPose(getPose());
     vpField.setRobotPose(getPose());
-    vpField.getObject("Better Pose").setPose(betterPoseEstimator.getEstimatedPosition());
 
     if(!DriverStation.isFMSAttached()) {
       var steer = SmartDashboard.getBoolean("Swerve/manualVoltageSteer", false);
@@ -423,7 +412,6 @@ public class Swerve extends SubsystemBase {
       module.resetEncoders();
     }
     multitagPoseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);
-    betterPoseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);
     wheelOdometry.resetPosition(getGyroRotation(), getModulePositions(), pose);
   }
 
@@ -482,6 +470,18 @@ public class Swerve extends SubsystemBase {
 
   public void enableVision() {
     this.visionEnabled = true;
+  }
+
+  private void processVisionData(Optional<EstimatedRobotPose> visionData) {
+    if (visionData.isPresent() && isVisionEnabled()) {
+        Pose2d estPose = visionData.get().estimatedPose.toPose2d();
+        if (visionData.get().targetsUsed.size() <= 1) {
+            var stddevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, Double.POSITIVE_INFINITY, 0.9, 0.9, Double.POSITIVE_INFINITY);
+            multitagPoseEstimator.addVisionMeasurement(estPose, visionData.get().timestampSeconds, stddevs);
+        } else {
+            multitagPoseEstimator.addVisionMeasurement(estPose, visionData.get().timestampSeconds);
+        }
+    }
   }
 
   /* Not really volts */
