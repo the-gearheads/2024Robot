@@ -120,7 +120,7 @@ public final class Constants {
     public static final int MAIN_ARM_ID = 10;
     public static final int FOLLOWER_ARM_ID = 9;
     public static final double MAX_ANGLE_DEG = 110.17978;
-    public static final double MIN_ANGLE_DEG = 16.5;
+    public static final double MIN_ANGLE_DEG = 21;
     public static final double ARM_OFFSET = -0.189979;
     public static final double ARM_POS_FACTOR = 9.0/20.0 * 2 * Math.PI * 0.981664; // 20:9 artio between encoder and arm, also conv to radians; 0.981664 is fudge factor 😋
     public static final double ARM_ANGLE_LIVE_FF_THRESHOLD = 10; //deg
@@ -178,12 +178,12 @@ public final class Constants {
     
     public static final Transform3d FRONT_LEFT_TRANSFORM = 
       new Transform3d(new Translation3d(0.365125, 0.13335, 0.22225),
-      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(-30))
+      new Rotation3d(Units.degreesToRadians(0), 0, 0).rotateBy(new Rotation3d(0, Units.degreesToRadians(-22), 0)).rotateBy(new Rotation3d(0, 0, Units.degreesToRadians(-34)))
     );
 
     public static final Transform3d FRONT_RIGHT_TRANSFORM = new Transform3d(
       new Translation3d(0.365125, -0.15875, 0.22225),
-      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(30))
+      new Rotation3d(0, 0, Units.degreesToRadians(-34)).rotateBy(new Rotation3d(0, Units.degreesToRadians(-19.5), Units.degreesToRadians(0))).rotateBy(new Rotation3d(Units.degreesToRadians(0), 0, 0))
     );
 
     public static final Transform3d BACK_LEFT_TRANSFORM = new Transform3d(

@@ -48,8 +48,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -62,10 +62,9 @@ import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.leds.LedState;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.HandledSleep;
-
 public class Swerve extends SubsystemBase {
   static final Lock odometryLock = new ReentrantLock();
-  AHRS gyro = new AHRS(Port.kMXP);
+  AHRS gyro = new AHRS(SPI.Port.kMXP);
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDrivePoseEstimator multitagPoseEstimator;
   SwerveDriveOdometry wheelOdometry; 
@@ -353,8 +352,8 @@ public class Swerve extends SubsystemBase {
     Optional<EstimatedRobotPose> frontRightVision = vision.getGlobalPoseFrontRight();
     Optional<EstimatedRobotPose> backLeftVision = vision.getGlobalPoseBackLeft();
     processVisionData(frontLeftVision);
-    processVisionData(frontRightVision);
-    processVisionData(backLeftVision);
+    // processVisionData(frontRightVision);
+    // processVisionData(backLeftVision);
     if ((frontRightVision.isPresent() || frontLeftVision.isPresent()) && DriverStation.isDisabled()) {
       LedState.setRainbowSpeed(6);
     } else {
@@ -476,7 +475,7 @@ public class Swerve extends SubsystemBase {
     if (visionData.isPresent() && isVisionEnabled()) {
         Pose2d estPose = visionData.get().estimatedPose.toPose2d();
         if (visionData.get().targetsUsed.size() <= 1) {
-            var stddevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, Double.POSITIVE_INFINITY, 0.9, 0.9, Double.POSITIVE_INFINITY);
+            var stddevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.9, Double.POSITIVE_INFINITY);
             multitagPoseEstimator.addVisionMeasurement(estPose, visionData.get().timestampSeconds, stddevs);
         } else {
             multitagPoseEstimator.addVisionMeasurement(estPose, visionData.get().timestampSeconds);

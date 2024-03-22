@@ -74,15 +74,15 @@ public class Vision extends SubsystemBase {
   }
 
   public Optional<EstimatedRobotPose> getGlobalPoseFrontLeft() {
-    return getGlobalPose(frontLeftEstimator, FRONT_LEFT_NAME);
+    return getGlobalPose(frontLeftEstimator, "FrontLeft");
   }
 
   public Optional<EstimatedRobotPose> getGlobalPoseFrontRight() {
-    return getGlobalPose(frontRightEstimator, FRONT_LEFT_NAME);
+    return getGlobalPose(frontRightEstimator, "FrontRight");
   }
 
   public Optional<EstimatedRobotPose> getGlobalPoseBackLeft() {
-    return getGlobalPose(backLeftEstimator, BACK_LEFT_NAME);
+    return getGlobalPose(backLeftEstimator, "BackLeft");
   }
   
   private Optional<EstimatedRobotPose> getGlobalPose(PhotonPoseEstimator estimator, String cameraName) {
