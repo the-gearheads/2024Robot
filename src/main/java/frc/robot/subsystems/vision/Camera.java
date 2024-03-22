@@ -91,6 +91,12 @@ public class Camera {
     return pose;
   }
 
+  public void logCamTransform(Pose2d robotPose) {
+    Pose3d camPose = new Pose3d(robotPose);
+    camPose = camPose.transformBy(transform);
+    Logger.recordOutput("Vision/" + name + "/CamTransform", camPose);
+  }
+
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
     lastRobotPose = poseEstimator.getEstimatedPosition();
     var pose = getGlobalPose();
