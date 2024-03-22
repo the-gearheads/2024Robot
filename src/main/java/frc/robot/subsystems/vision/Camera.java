@@ -16,9 +16,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.*;
 import edu.wpi.first.math.util.Units;
 
@@ -55,7 +53,7 @@ public class Camera {
 
     var strategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
-    estimator = new PhotonPoseEstimator(field, strategy, camera, transform);
+    estimator = new PhotonPoseEstimator(this.field, strategy, camera, transform);
   }
 
   public Optional<EstimatedRobotPose> getGlobalPose() {
@@ -80,7 +78,7 @@ public class Camera {
 
 
     ArrayList<Pose3d> allTagPoses = new ArrayList<>();
-    var currentPose3d = new Pose3d(new Translation3d(lastRobotPose.getX(), lastRobotPose.getY(), 0), new Rotation3d(0, 0, lastRobotPose.getRotation().getRadians()));
+    var currentPose3d = new Pose3d(lastRobotPose);
     for (var detectionEntry: result.targets) {
       var detection = detectionEntry.getBestCameraToTarget();
       var fieldToTag = currentPose3d.transformBy(transform).transformBy(detection);
