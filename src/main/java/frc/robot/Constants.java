@@ -233,7 +233,7 @@ public final class Constants {
     public static final int RIGHT_ID = 15;
     public static final int LEFT_ID = 5;
     public static final double[] PID = {0.00074427, 0, 0};
-    public static final double SPEED = 3500;
+    public static final double SPEED = 6000;
     public static final double GEAR_RATIO = 1d / 64d;
     public static final double MAX_DIST = 3.0375 / GEAR_RATIO;
     public static final double MIN_DIST = 0;

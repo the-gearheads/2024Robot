@@ -62,12 +62,12 @@ public class Vision extends SubsystemBase {
 
     frontLeftEstimator = new PhotonPoseEstimator(field, strategy, cameraFrontLeft, FRONT_LEFT_TRANSFORM);
     frontRightEstimator = new PhotonPoseEstimator(field, strategy, cameraFrontRight, FRONT_RIGHT_TRANSFORM);
-    backLeftEstimator = new PhotonPoseEstimator(field, strategy, cameraFrontRight, FRONT_RIGHT_TRANSFORM);
+    backLeftEstimator = new PhotonPoseEstimator(field, strategy, cameraBackLeft, FRONT_RIGHT_TRANSFORM);
     sim = new VisionSim(cameraFrontLeft, cameraFrontRight, cameraBackLeft);
   }
 
-  final double MAX_PITCHROLL = Units.degreesToRadians(15);
-  final double MAX_Z = Units.inchesToMeters(24);
+  final double MAX_PITCHROLL = Units.degreesToRadians(7);
+  final double MAX_Z = Units.inchesToMeters(6);
 
   public Optional<EstimatedRobotPose> getGlobalPoseFrontLeft() {
     Logger.recordOutput("Vision/FrontLeft/RefPose", frontLeftEstimator.getReferencePose());
