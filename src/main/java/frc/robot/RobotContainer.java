@@ -10,7 +10,14 @@ import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.util.GeometryUtil;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,6 +33,7 @@ import frc.robot.commands.IntakeNote;
 import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
+import frc.robot.commands.NTControl.ArmNTControl;
 import frc.robot.commands.NTControl.ShooterNTControl;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.MechanismViz;
@@ -68,8 +76,8 @@ public class RobotContainer {
     // Configure the trigger bindings
     updateControllers();
     swerve.setDefaultCommand(new Teleop(swerve));
-    arm.setDefaultCommand(new AutoArmHeight(arm, swerve));
-    // arm.setDefaultCommand(new ArmNTControl(arm));
+    // arm.setDefaultCommand(new AutoArmHeight(arm, swerve));
+    arm.setDefaultCommand(new ArmNTControl(arm));
 
     shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
 
@@ -150,15 +158,16 @@ public class RobotContainer {
     Controllers.driverController.getAlignBtn().whileTrue(swerve.goTo(AMP_SCORE_POSE));
     Controllers.driverController.enableVision().onTrue(new InstantCommand(() -> swerve.enableVision()));
     Controllers.operatorController.getIntakeNote().whileTrue(new IntakeNote(feeder, intake));
-    // Controllers.operatorController.getResetPoseBtn().onTrue(new InstantCommand(() -> {
-    //     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-    //     Pose2d pos = AMP_SCORE_POSE;
-    //     if(isRed) {
-    //       pos = GeometryUtil.flipFieldPose(pos);
-    //     }
-    //     swerve.resetPose(pos);
-    // }));
-    // Controllers.operatorController.getDisableVisionBtn().onTrue(new InstantCommand(() -> swerve.disableVision()));
+    Controllers.driverController.getResetPoseBtn().onTrue(new InstantCommand(() -> {
+        boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+        Pose2d pos = AMP_SCORE_POSE;
+        if(isRed) {
+          pos = GeometryUtil.flipFieldPose(pos);
+        }
+        swerve.resetPose(pos);
+    }));
+    Controllers.driverController.getDisableVisionBtn().onTrue(new InstantCommand(() -> swerve.disableVision()));
+    Controllers.driverController.getMoveForwardHalfMeterBtn().onTrue(swerve.goTo(swerve.getPose().plus(new Transform2d(new Translation2d(0.5, 0), new Rotation2d()))));
     Controllers.operatorController.climberDown().whileTrue(Commands.run(() -> {
       climber.down(1d-Controllers.operatorController.getClimberProportion());
     }, climber));
@@ -170,6 +179,7 @@ public class RobotContainer {
       },
       shooter
     ));
+
 
     Controllers.operatorController.getShooterRevOverride().whileTrue(Commands.run(() -> {
        shooter.setSpeed(-Constants.ShooterConstants.DEFAULT_SPEED);
@@ -192,7 +202,7 @@ public class RobotContainer {
     Controllers.operatorController.getArmAutosOff().onTrue(new InstantCommand(()->{
       arm.getDefaultCommand().cancel();
       shooter.getDefaultCommand().cancel();
-      arm.setDefaultCommand(Commands.run(()->{}, arm));
+      arm.setDefaultCommand(new ArmNTControl(arm));
       shooter.setDefaultCommand(new ShooterNTControl(shooter));
       Commands.runOnce(()->{}, shooter).schedule();
       Commands.runOnce(()->{}, arm).schedule();

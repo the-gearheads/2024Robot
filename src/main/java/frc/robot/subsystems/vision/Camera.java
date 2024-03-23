@@ -36,12 +36,12 @@ public class Camera {
   public final PhotonCamera camera;
   public final PhotonPoseEstimator estimator;
 
-  private final double MAX_PITCHROLL = Units.degreesToRadians(10);
-  private final double MAX_Z = Units.inchesToMeters(12);
+  private final double MAX_PITCHROLL = Units.degreesToRadians(5);
+  private final double MAX_Z = Units.inchesToMeters(7);
 
-  private final double xyStdDevCoefficient = 0.01;
-  private final double thetaStdDevCoefficient = 0.02;
-  private final double coefficientFactor = 1.0;
+  private final double xyStdDevCoefficient = 0.02;
+  private final double thetaStdDevCoefficient = 0.04;
+  private final double coefficientFactor = 6.0;
 
   // kinda ugly ik ik
   private Pose2d lastRobotPose;
@@ -75,7 +75,7 @@ public class Camera {
     double pitch = estPose.getRotation().getX();
     double roll = estPose.getRotation().getY();
     Logger.recordOutput(path + "/EstPoseUnfiltered", estPose);
-    if (Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL || estPose.getTranslation().getZ() > MAX_Z) {
+    if (Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL || Math.abs(estPose.getTranslation().getZ()) > MAX_Z) {
       return Optional.empty();
     }
     if (!FIELD.contains(estPose.toPose2d())) {

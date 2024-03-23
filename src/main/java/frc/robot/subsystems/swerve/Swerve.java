@@ -44,7 +44,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -60,7 +60,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.HandledSleep;
 public class Swerve extends SubsystemBase {
   static final Lock odometryLock = new ReentrantLock();
-  AHRS gyro = new AHRS(SPI.Port.kMXP);
+  AHRS gyro = new AHRS(SerialPort.Port.kUSB);
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDrivePoseEstimator multitagPoseEstimator;
   SwerveDriveOdometry wheelOdometry; 

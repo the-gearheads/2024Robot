@@ -71,5 +71,19 @@ public class DriverController {
   public Trigger reconfigureEverything() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getLeftBumper());
+  
+  }
+  public Trigger getDisableVisionBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getRawButton(7));
+  }
+  public Trigger getResetPoseBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getPOV() == 0);
+  }
+
+  public Trigger getMoveForwardHalfMeterBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getPOV() == 180);
   }
 }

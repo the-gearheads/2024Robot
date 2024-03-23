@@ -56,7 +56,7 @@ public final class Constants {
     public static final double[] WHEEL_OFFSETS = {90, 0, 0, 90}; // could be wrong, we get to find out {270, 0, 180, 90};
     public static final boolean[] IS_INVERTED = {true, false, true, false}; // left side inverted i think
 
-    public static final double WHEEL_DIAMETER = 0.076;
+    public static final double WHEEL_DIAMETER = 0.073800;
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
 
     public static final double DRIVE_PINION_TOOTH_COUNT = 14;
@@ -169,7 +169,7 @@ public final class Constants {
 
   public static class AutoConstants {
     public static final PathConstraints PATHFIND_CONSTRAINTS = new PathConstraints(
-            3.0, 4.0,
+            0.2, 0.5,
             Units.degreesToRadians(540), Units.degreesToRadians(720));
   }
 
@@ -184,27 +184,36 @@ public final class Constants {
     // Front Left, Front Right all measured from cad, except for pitch roll and yaw.
     public static final Transform3d FRONT_LEFT_TRANSFORM = 
       new Transform3d(new Translation3d(0.3509899, 0.1526159, 0.2167636),
-      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-24.45), Units.degreesToRadians(-31.0))
+      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-21), Units.degreesToRadians(-31.0))
     );
 
     public static final Transform3d FRONT_RIGHT_TRANSFORM = new Transform3d(
       new Translation3d(0.3509899, -0.15261844, 0.21686012),
-      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-24.5), Units.degreesToRadians(29.0))
+      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-25.5), Units.degreesToRadians(29.0))
     );
     // Front Left Front Right, measured IRl to high precicsey
     // public static final Transform3d FRONT_LEFT_TRANSFORM = 
     //   new Transform3d(new Translation3d(0.3631692, 0.225806, 0.2174875),
-    //   new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-24.45), Units.degreesToRadians(-31.0))
+    //   new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-21), Units.degreesToRadians(-31.0))
     // );
 
     // public static final Transform3d FRONT_RIGHT_TRANSFORM = new Transform3d(
     //   new Translation3d(0.3631184, -0.271272, 0.2174875),
-    //   new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-24.5), Units.degreesToRadians(29.0))
+    //   new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-25.5), Units.degreesToRadians(29.0))
+    // );
+    // public static final Transform3d FRONT_LEFT_TRANSFORM = 
+    //   new Transform3d(new Translation3d(0.3631692, 0.1526159, 0.2174875),
+    //   new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-21), Units.degreesToRadians(-31.0))
+    // );
+
+    // public static final Transform3d FRONT_RIGHT_TRANSFORM = new Transform3d(
+    //   new Translation3d(0.3631184, -0.15261844, 0.2174875),
+    //   new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-25.5), Units.degreesToRadians(29.0))
     // );
     // measured IRL, to very much precision
     public static final Transform3d BACK_LEFT_TRANSFORM = new Transform3d(
-      new Translation3d(-0.36195, 0.26035, 0.231775),
-      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-21), Units.degreesToRadians(0))
+      new Translation3d(-0.36195, 0.265049, 0.231775),
+      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-21.9), Units.degreesToRadians(180))
     );
 
     public static final Matrix<N3, N1> SINGLE_TAG_STD_DEVS = VecBuilder.fill(0.1, 0.1, Double.POSITIVE_INFINITY);
@@ -244,7 +253,7 @@ public final class Constants {
     public static final double[] AMP_UP_Y = {8.4, 8.4, 7.52, 7.52};
     public static final Polygon AMP_UP_ZONE = new Polygon(AMP_UP_X, AMP_UP_Y);
     
-    public static final Pose2d AMP_SCORE_POSE = new Pose2d(new Translation2d(1.83, 7.68), Rotation2d.fromDegrees(-90));
+    public static final Pose2d AMP_SCORE_POSE = new Pose2d(new Translation2d(1.83, 7.75), Rotation2d.fromDegrees(-90));
 
     public static final Rotation2d STAGE_2_SNAP = Rotation2d.fromDegrees(-59.85);
     public static final Rotation2d STAGE_CENTER_SNAP = Rotation2d.fromDegrees(180);
