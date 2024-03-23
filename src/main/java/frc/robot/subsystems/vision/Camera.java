@@ -13,7 +13,6 @@ import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.MatBuilder;
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -40,8 +39,8 @@ public class Camera {
   private final double MAX_PITCHROLL = Units.degreesToRadians(10);
   private final double MAX_Z = Units.inchesToMeters(12);
 
-  private final double xyStdDevCoefficient = 0.005;
-  private final double thetaStdDevCoefficient = 0.01;
+  private final double xyStdDevCoefficient = 0.01;
+  private final double thetaStdDevCoefficient = 0.02;
   private final double coefficientFactor = 1.0;
 
   // kinda ugly ik ik
@@ -107,13 +106,14 @@ public class Camera {
     lastRobotPose = poseEstimator.getEstimatedPosition();
     var pose = getGlobalPose();
     if(!pose.isPresent()) {
-      Logger.recordOutput(path + "/XyStdDev", -1);
-      Logger.recordOutput(path + "/ThetaStdDev", -1);
+      Logger.recordOutput(path + "/XyStdDev", -1d);
+      Logger.recordOutput(path + "/ThetaStdDev", -1d);
       Logger.recordOutput(path + "/NumTargets", 0);
-      Logger.recordOutput(path + "/AvgDistToTarget", -1);
+      Logger.recordOutput(path + "/AvgDistToTarget", -1d);
       Logger.recordOutput(path + "/EstPoseUnfiltered", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
       Logger.recordOutput(path + "/EstPose", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
       Logger.recordOutput(path + "/TagPoses", new Pose3d[0]);
+      return false;
     }
 
     Pose2d estPose = pose.get().estimatedPose.toPose2d();

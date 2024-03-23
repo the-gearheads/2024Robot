@@ -57,6 +57,7 @@ public class Vision extends SubsystemBase {
     boolean tfr = frontRight.feedPoseEstimator(poseEstimator);
     boolean tbl = backLeft.feedPoseEstimator(poseEstimator);
     return tfl || tfr || tbl;
+    // return tfr;
   }
 
   @Override
