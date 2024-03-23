@@ -132,4 +132,10 @@ public class SteerMotor {
     max.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
     max.setCANTimeout(0);
   }
+
+  public void setBrakeCoast(boolean willBrake) {
+    max.setCANTimeout(250);
+    max.setIdleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    max.setCANTimeout(0);
+  }
 }

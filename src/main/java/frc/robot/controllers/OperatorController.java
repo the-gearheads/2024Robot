@@ -78,4 +78,8 @@ public interface OperatorController {
   public default Trigger climberDown() {
     return new Trigger(()->false);
   }
+
+  public default double getClimberProportion() {
+    return 0;
+  }
 }

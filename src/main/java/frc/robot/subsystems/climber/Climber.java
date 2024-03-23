@@ -1,5 +1,6 @@
 package frc.robot.subsystems.climber;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -48,17 +49,44 @@ public class Climber extends SubsystemBase {
     leftMotor.setSpeed(speed);
     rightMotor.setSpeed(speed);
   }
+
+  public void up(double proportion) {
+    setSpeedProportional(proportion, SPEED);
+  }
   
   public void up() {
-    setSpeed(SPEED);
+    up(0);
   }
 
   public void stop() {
     setSpeed(0);
   }
 
+  /**
+   * @param proportion -1 to 1 (-1 only left moves, 1 only right moves)
+   */
+  public void setSpeedProportional(double proportion, double speed) {
+    proportion = MathUtil.clamp(proportion, -1, 1);
+
+    double leftMotorSpeed = speed * (1 + proportion); // This will range from 0 (at proportion = 1) to -2*SPEED (at proportion = -1)
+    double rightMotorSpeed = speed * (1 - proportion); // This will range from -2*SPEED (at proportion = 1) to 0 (at proportion = -1)
+
+    // Clamp speeds to not exceed SPEED in magnitude (might wanna fine tune this? could replace -SPEED with -SPEED*1.2)
+    leftMotorSpeed = MathUtil.clamp(leftMotorSpeed, -speed, speed);
+    rightMotorSpeed = MathUtil.clamp(rightMotorSpeed, -speed, speed);
+
+    leftMotor.setSpeed(leftMotorSpeed);
+    rightMotor.setSpeed(rightMotorSpeed);
+
+    Logger.recordOutput("Climber/Proportion", proportion);
+  }
+
+  public void down(double proportion) {
+    setSpeedProportional(proportion, -SPEED);
+  }
+
   public void down() {
-    setSpeed(-SPEED);
+    down(0);
   }
 
   public void setBrakeCoast(boolean willBrake) {
