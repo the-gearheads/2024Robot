@@ -12,11 +12,15 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.*;
 import edu.wpi.first.math.util.Units;
 
@@ -35,6 +39,10 @@ public class Camera {
 
   private final double MAX_PITCHROLL = Units.degreesToRadians(10);
   private final double MAX_Z = Units.inchesToMeters(12);
+
+  private final double xyStdDevCoefficient = 0.005;
+  private final double thetaStdDevCoefficient = 0.01;
+  private final double coefficientFactor = 1.0;
 
   // kinda ugly ik ik
   private Pose2d lastRobotPose;
@@ -98,13 +106,41 @@ public class Camera {
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
     lastRobotPose = poseEstimator.getEstimatedPosition();
     var pose = getGlobalPose();
-    if(pose.isPresent()) {
-        Pose2d estPose = pose.get().estimatedPose.toPose2d();
-        Matrix<N3, N1> stddevs = pose.get().targetsUsed.size() <= 1 ? SINGLE_TAG_STD_DEVS : MULTI_TAG_STD_DEVS;
-        poseEstimator.addVisionMeasurement(estPose, pose.get().timestampSeconds, stddevs);
-        return true;
-      }
-    return false;
+    if(!pose.isPresent()) {
+      Logger.recordOutput(path + "/XyStdDev", -1);
+      Logger.recordOutput(path + "/ThetaStdDev", -1);
+      Logger.recordOutput(path + "/NumTargets", 0);
+      Logger.recordOutput(path + "/AvgDistToTarget", -1);
+      Logger.recordOutput(path + "/EstPoseUnfiltered", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
+      Logger.recordOutput(path + "/EstPose", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
+      Logger.recordOutput(path + "/TagPoses", new Pose3d[0]);
+    }
+
+    Pose2d estPose = pose.get().estimatedPose.toPose2d();
+    // Matrix<N3, N1> stddevs = pose.get().targetsUsed.size() <= 1 ? SINGLE_TAG_STD_DEVS : MULTI_TAG_STD_DEVS;
+
+    var updated = camera.getLatestResult();
+    int numTargets = updated.targets.size();
+    double avgDistToTarget = 0;
+    for(var target: updated.targets) {
+      avgDistToTarget += target.getBestCameraToTarget().getTranslation().getNorm(); 
+    }
+    avgDistToTarget /= numTargets;
+
+    double xyStdDev = xyStdDevCoefficient * Math.pow(avgDistToTarget, 2.0) / numTargets * coefficientFactor;
+    double thetaStdDev = thetaStdDevCoefficient * Math.pow(avgDistToTarget, 2.0) / numTargets * coefficientFactor;
+
+    if(numTargets <= 1) thetaStdDev = Double.POSITIVE_INFINITY;
+
+    Logger.recordOutput(path + "/XyStdDev", xyStdDev);
+    Logger.recordOutput(path + "/ThetaStdDev", thetaStdDev);
+    Logger.recordOutput(path + "/NumTargets", numTargets);
+    Logger.recordOutput(path + "/AvgDistToTarget", avgDistToTarget);
+
+    var stddevs = MatBuilder.fill(Nat.N3(), Nat.N1(), xyStdDev, xyStdDev, thetaStdDev);
+
+    poseEstimator.addVisionMeasurement(estPose, pose.get().timestampSeconds, stddevs);
+    return true;
   }
 
   public SimCameraProperties getSimProperties() {
