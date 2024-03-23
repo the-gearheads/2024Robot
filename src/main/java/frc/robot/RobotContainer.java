@@ -8,6 +8,7 @@ import static frc.robot.Constants.ArmConstants.armOverrideVoltage;
 import static frc.robot.Constants.FieldConstants.AMP_SCORE_POSE;
 import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.GeometryUtil;
@@ -169,10 +170,10 @@ public class RobotContainer {
     Controllers.driverController.getDisableVisionBtn().onTrue(new InstantCommand(() -> swerve.disableVision()));
     Controllers.driverController.getMoveForwardHalfMeterBtn().onTrue(swerve.goTo(swerve.getPose().plus(new Transform2d(new Translation2d(0.5, 0), new Rotation2d()))));
     Controllers.operatorController.climberDown().whileTrue(Commands.run(() -> {
-      climber.down(1d-Controllers.operatorController.getClimberProportion());
+      climber.down(-Controllers.operatorController.getClimberProportion());
     }, climber));
     Controllers.operatorController.climberUp().whileTrue(Commands.run(() -> {
-      climber.up(1d-Controllers.operatorController.getClimberProportion());
+      climber.up(-Controllers.operatorController.getClimberProportion());
     }, climber));
     Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {
        shooter.setSpeed(Constants.ShooterConstants.DEFAULT_SPEED);

@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.FlywheelMotor;
 
 import static frc.robot.Constants.ClimberConstants.*;
@@ -25,6 +26,7 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
+    Logger.recordOutput("Climber/ControllerVal", Controllers.operatorController.getClimberProportion());
     if (leftMotor.getPosition() >= MAX_DIST && leftMotor.getVelocitySetpoint() > 0
         || leftMotor.getPosition() <= MIN_DIST && leftMotor.getVelocitySetpoint() < 0){
       Logger.recordOutput("Climber/Left/OutOfRange", true);

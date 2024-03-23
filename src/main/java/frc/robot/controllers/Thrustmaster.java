@@ -77,6 +77,6 @@ public class Thrustmaster implements OperatorController {
   }
 
   public double getClimberProportion() {
-    return Controllers.deadband(joy.getY());
+    return Controllers.deadband(joy.getX());
   }
 }
