@@ -180,16 +180,28 @@ public final class Constants {
     public static final String FRONT_LEFT_NAME = "FRONT_LEFT";
     public static final String BACK_LEFT_NAME = "BACK_LEFT";
     
+
+    // Front Left, Front Right all measured from cad, except for pitch roll and yaw.
     public static final Transform3d FRONT_LEFT_TRANSFORM = 
-      new Transform3d(new Translation3d(0.365125, 0.13335, 0.22225),
-      new Rotation3d(Units.degreesToRadians(0), 0, 0).rotateBy(new Rotation3d(0, Units.degreesToRadians(-22), 0)).rotateBy(new Rotation3d(0, 0, Units.degreesToRadians(-34)))
+      new Transform3d(new Translation3d(0.3509899, 0.1526159, 0.2167636),
+      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-24.45), Units.degreesToRadians(-31.0))
     );
 
     public static final Transform3d FRONT_RIGHT_TRANSFORM = new Transform3d(
-      new Translation3d(0.365125, -0.15875, 0.22225),
-      new Rotation3d(0, 0, Units.degreesToRadians(-34)).rotateBy(new Rotation3d(0, Units.degreesToRadians(-19.5), Units.degreesToRadians(0))).rotateBy(new Rotation3d(Units.degreesToRadians(0), 0, 0))
+      new Translation3d(0.3509899, -0.15261844, 0.21686012),
+      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-24.5), Units.degreesToRadians(29.0))
     );
+    // Front Left Front Right, measured IRl to high precicsey
+    // public static final Transform3d FRONT_LEFT_TRANSFORM = 
+    //   new Transform3d(new Translation3d(0.3631692, 0.225806, 0.2174875),
+    //   new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-24.45), Units.degreesToRadians(-31.0))
+    // );
 
+    // public static final Transform3d FRONT_RIGHT_TRANSFORM = new Transform3d(
+    //   new Translation3d(0.3631184, -0.271272, 0.2174875),
+    //   new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-24.5), Units.degreesToRadians(29.0))
+    // );
+    // measured IRL, to very much precision
     public static final Transform3d BACK_LEFT_TRANSFORM = new Transform3d(
       new Translation3d(-0.36195, 0.26035, 0.231775),
       new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-21), Units.degreesToRadians(0))
