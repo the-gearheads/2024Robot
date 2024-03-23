@@ -142,8 +142,8 @@ public final class Constants {
 
     // public static final double[] SPLINE_DISTANCES = {1.0959, 1.5100, 2.0153, 2.4980, 3.0284, 3.5106, 4.0048, 4.9951};  // old values
     // public static final double[] SPLINE_ANGLES =    {0.9564, 0.8569, 0.7608, 0.6672, 0.5920, 0.5588, 0.5090, 0.4762};  // old values
-    public static final double[] SPLINE_DISTANCES = {1.201, 1.538, 2.026, 2.522, 3.017, 3.465, 4.00, 4.416, 5.17};
-    public static final double[] SPLINE_ANGLES =    {0.893, 0.803, 0.692, 0.592, 0.507, 0.463, 0.416, 0.409, 0.380};
+    public static final double[] SPLINE_DISTANCES = {1.235, 1.980185, 2.248288, 2.77234, 3.21358, 3.762, 4.19844, 4.275393, 4.77155, 5.350909, 6.041493};
+    public static final double[] SPLINE_ANGLES =    {0.912, 0.712, 0.660, 0.570, 0.527, 0.478, 0.436, 0.4487, 0.4220, 0.39945, 0.375};
 
     public static final Measure<Voltage> armOverrideVoltage = Volts.of(4);
   }
