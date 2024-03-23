@@ -234,6 +234,7 @@ public class Swerve extends SubsystemBase {
     headingController.setTolerance(0.005);
 
     if(alignToAngle != null) {
+      Logger.recordOutput("Swerve/PoseRotPidAtSetpoint", headingController.atSetpoint());
       headingController.setSetpoint(alignToAngle);
       if(!headingController.atSetpoint()) {
         speeds.omegaRadiansPerSecond = commandedRot;
@@ -364,6 +365,7 @@ public class Swerve extends SubsystemBase {
     Logger.recordOutput("Swerve/PoseX", getPose().getX());
     Logger.recordOutput("Swerve/PoseY", getPose().getY());
     Logger.recordOutput("Swerve/PoseRotation", getPose().getRotation().getRadians());
+    Logger.recordOutput("Swerve/PoseRotationDegrees", getPose().getRotation().getDegrees());
     Logger.recordOutput("Swerve/CurrentSpeeds", getRobotRelativeSpeeds());
     Logger.recordOutput("Swerve/GyroAngle", -Units.degreesToRadians(gyro.getYaw()));
     Logger.recordOutput("Vision/VisionEnabled", isVisionEnabled());
