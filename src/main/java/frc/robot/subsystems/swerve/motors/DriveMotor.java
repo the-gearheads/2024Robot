@@ -119,4 +119,10 @@ public class DriveMotor {
     flex.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500);
     flex.setCANTimeout(0);
   }
+
+  public void setBrakeCoast(boolean willBrake) {
+    flex.setCANTimeout(250);
+    flex.setIdleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    flex.setCANTimeout(0);
+  }
 }

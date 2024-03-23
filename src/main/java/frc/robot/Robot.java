@@ -105,8 +105,7 @@ public class Robot extends LoggedRobot {
     // m_robotContainer.leds.setState(LedState.RAINBOW);
     if(output && !lastBrakeCoastButton) {
       isBraken = !isBraken;
-      m_robotContainer.arm.setBrakeCoast(isBraken);
-      m_robotContainer.climber.setBrakeCoast(isBraken);
+      m_robotContainer.setAllBrakeCoast(isBraken);
       new LedSetStateDisabled(m_robotContainer.leds, isBraken ? LedState.FLASH_RED : LedState.FLASH_GREEN).withTimeout(1).schedule();
       System.out.println("Brake/Coast: " + (isBraken ? "Brake" : "Coast"));
     }
@@ -125,7 +124,7 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.schedule();
     }
     CANSparkLowLevel.enableExternalUSBControl(false);
-    m_robotContainer.arm.setBrakeCoast(true);
+    m_robotContainer.setAllBrakeCoast(true);
   }
 
   /** This function is called periodically during autonomous. */
@@ -143,7 +142,7 @@ public class Robot extends LoggedRobot {
     }
 
     matchTimeStart = Timer.getFPGATimestamp();
-    m_robotContainer.arm.setBrakeCoast(true);
+    m_robotContainer.setAllBrakeCoast(true);
     CANSparkLowLevel.enableExternalUSBControl(false);
   }
 

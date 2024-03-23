@@ -201,9 +201,13 @@ public class Arm extends SubsystemBase {
   }
 
   public void setBrakeCoast(boolean willBrake) {
+    mainFlex.setCANTimeout(250);
+    followerFlex.setCANTimeout(250);
     mainFlex.setIdleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
     followerFlex.setIdleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
     Logger.recordOutput("Arm/IsBraken", willBrake);
+    mainFlex.setCANTimeout(0);
+    followerFlex.setCANTimeout(0);
   }
 
   public boolean atPoint(double angle) {

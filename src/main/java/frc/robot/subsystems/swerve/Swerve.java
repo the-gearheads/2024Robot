@@ -468,6 +468,13 @@ public class Swerve extends SubsystemBase {
     this.visionEnabled = true;
   }
 
+  public void setBrakeCoast(boolean willBrake) {
+    for(var module: modules) {
+      module.setBrakeCoast(willBrake);
+    }
+    Logger.recordOutput("Swerve/IsBraken", willBrake);
+  }
+
   /* Not really volts */
   public SysIdRoutine getSysIdRoutineAngular() {
     return new SysIdRoutine(

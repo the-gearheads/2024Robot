@@ -174,8 +174,10 @@ public class FlywheelMotor {
   }
 
   public void setBrakeCoast(boolean willBrake) {
+    flex.setCANTimeout(250);
     flex.setIdleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
     Logger.recordOutput(name + "/IsBraken", willBrake);
+    flex.setCANTimeout(0);
   }
 
   public double getPosition() {

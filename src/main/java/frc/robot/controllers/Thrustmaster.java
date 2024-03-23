@@ -75,4 +75,8 @@ public class Thrustmaster implements OperatorController {
   public  Trigger climberUp() {
     return new Trigger(()->joy.getRawButton(6));
   }
+
+  public double getClimberProportion() {
+    return Controllers.deadband(joy.getY());
+  }
 }

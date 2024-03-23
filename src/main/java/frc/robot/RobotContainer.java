@@ -127,6 +127,12 @@ public class RobotContainer {
     feeder.getBeamBreakSwitch().whileTrue(leds.setStateForTimeCommand(LedState.FLASH_LIME, 3));
   }
 
+  public void setAllBrakeCoast(boolean willBrake) {
+    arm.setBrakeCoast(willBrake);
+    climber.setBrakeCoast(willBrake);
+    swerve.setBrakeCoast(willBrake);
+  }
+
   public void updateControllers() {
     if (!Controllers.didControllersChange())
       return;
@@ -154,10 +160,10 @@ public class RobotContainer {
     // }));
     // Controllers.operatorController.getDisableVisionBtn().onTrue(new InstantCommand(() -> swerve.disableVision()));
     Controllers.operatorController.climberDown().whileTrue(Commands.run(() -> {
-      climber.down();
+      climber.down(1d-Controllers.operatorController.getClimberProportion());
     }, climber));
     Controllers.operatorController.climberUp().whileTrue(Commands.run(() -> {
-      climber.up();
+      climber.up(1d-Controllers.operatorController.getClimberProportion());
     }, climber));
     Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {
        shooter.setSpeed(Constants.ShooterConstants.DEFAULT_SPEED);
