@@ -15,8 +15,8 @@ import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
 
-  public FlywheelMotor leftMotor = new FlywheelMotor("Climber/Left", LEFT_ID, PID, FEEDFORWARD, true, true);
-  public FlywheelMotor rightMotor = new FlywheelMotor("Climber/Right", RIGHT_ID, PID, FEEDFORWARD, false, true);
+  public FlywheelMotor leftMotor = new FlywheelMotor("Climber/Left", LEFT_ID, PID, FEEDFORWARD, true, true, GEAR_RATIO);
+  public FlywheelMotor rightMotor = new FlywheelMotor("Climber/Right", RIGHT_ID, PID, FEEDFORWARD, false, true, GEAR_RATIO);
 
   public Climber() {
     this.setDefaultCommand(Commands.run(this::stop, this));
@@ -30,14 +30,14 @@ public class Climber extends SubsystemBase {
     if (leftMotor.getPosition() >= MAX_DIST && leftMotor.getVelocitySetpoint() > 0
         || leftMotor.getPosition() <= MIN_DIST && leftMotor.getVelocitySetpoint() < 0){
       Logger.recordOutput("Climber/Left/OutOfRange", true);
-      leftMotor.setSpeed(0);
+      // leftMotor.setSpeed(0);
     } else {
       Logger.recordOutput("Climber/Left/OutOfRange", false);
     }
     leftMotor.periodic();
     if (rightMotor.getPosition() >= MAX_DIST && rightMotor.getVelocitySetpoint() > 0
         || rightMotor.getPosition() <= MIN_DIST && rightMotor.getVelocitySetpoint() < 0){
-      rightMotor.setSpeed(0);
+      // rightMotor.setSpeed(0);
       Logger.recordOutput("Climber/Right/OutOfRange", true);
     } else {
       Logger.recordOutput("Climber/Right/OutOfRange", false);
@@ -74,11 +74,15 @@ public class Climber extends SubsystemBase {
     double rightMotorSpeed = speed * (1 - proportion); // This will range from -2*SPEED (at proportion = 1) to 0 (at proportion = -1)
 
     // Clamp speeds to not exceed SPEED in magnitude (might wanna fine tune this? could replace -SPEED with -SPEED*1.2)
-    leftMotorSpeed = MathUtil.clamp(leftMotorSpeed, -speed, speed);
-    rightMotorSpeed = MathUtil.clamp(rightMotorSpeed, -speed, speed);
+    double absSpeed = Math.abs(speed);
+    leftMotorSpeed = MathUtil.clamp(leftMotorSpeed, -absSpeed, absSpeed);
+    rightMotorSpeed = MathUtil.clamp(rightMotorSpeed, -absSpeed, absSpeed);
+
 
     leftMotor.setSpeed(leftMotorSpeed);
     rightMotor.setSpeed(rightMotorSpeed);
+
+    System.out.println("Left: " + leftMotorSpeed + " Right: " + rightMotorSpeed + " Proportion: " + proportion + " Speed: " + speed);
 
     Logger.recordOutput("Climber/Proportion", proportion);
   }

@@ -46,7 +46,7 @@ public class FlywheelMotor {
 
   boolean inverted, brakeMode;
 
-  public FlywheelMotor(String name, int id, double[] PID, SimpleMotorFeedforward ff, boolean inverted, boolean brakeMode) {
+  public FlywheelMotor(String name, int id, double[] PID, SimpleMotorFeedforward ff, boolean inverted, boolean brakeMode, double simGearRatio) {
     pid = new PIDController(PID[0], PID[1], PID[2]);
     this.name = name;
     this.ff = ff;
@@ -73,7 +73,7 @@ public class FlywheelMotor {
     configure();
 
     if(Robot.isSimulation()) {
-      sim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(ff.kv, ff.ka), DCMotor.getNeoVortex(1), 1);
+      sim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(ff.kv, ff.ka), DCMotor.getNeoVortex(1), simGearRatio);
     }
 
     SmartDashboard.putBoolean(name + "/manualVoltageOnly", false);
@@ -81,6 +81,10 @@ public class FlywheelMotor {
 
   public FlywheelMotor(String name, int id, double[] PID, SimpleMotorFeedforward ff) {
     this(name, id, PID, ff, true, false);
+  }
+
+  public FlywheelMotor(String name, int id, double[] PID, SimpleMotorFeedforward ff, boolean inverted, boolean brakeMode) {
+    this(name, id, PID, ff, inverted, brakeMode, 1);
   }
 
   public void configure() {
