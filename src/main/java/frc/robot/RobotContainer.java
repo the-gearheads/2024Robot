@@ -170,10 +170,10 @@ public class RobotContainer {
     Controllers.driverController.getDisableVisionBtn().onTrue(new InstantCommand(() -> swerve.disableVision()));
     Controllers.driverController.getMoveForwardHalfMeterBtn().onTrue(swerve.goTo(swerve.getPose().plus(new Transform2d(new Translation2d(0.5, 0), new Rotation2d()))));
     Controllers.operatorController.climberDown().whileTrue(Commands.run(() -> {
-      climber.down(-Controllers.operatorController.getClimberProportion());
+      climber.down(Controllers.operatorController.getClimberProportion());
     }, climber));
     Controllers.operatorController.climberUp().whileTrue(Commands.run(() -> {
-      climber.up(-Controllers.operatorController.getClimberProportion());
+      climber.up(Controllers.operatorController.getClimberProportion());
     }, climber));
     Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {
        shooter.setSpeed(Constants.ShooterConstants.DEFAULT_SPEED);
