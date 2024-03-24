@@ -342,7 +342,7 @@ public class Swerve extends SubsystemBase {
       wheelOdometry.update(getGyroRotation(), reshapedPositions[time]);
     }
 
-    if (getPose().getX() == Double.NaN) {
+    if (Double.isNaN(getPose().getX())) {
       DriverStation.reportWarning("We NaNed :(", false);
       resetPose(new Pose2d());
     }
