@@ -68,22 +68,21 @@ public class DriverController {
     return new Trigger(() -> controller.getStartButton());
   }
 
-  public Trigger reconfigureEverything() {
-    if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getLeftBumper());
-  
-  }
   public Trigger getDisableVisionBtn() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getRawButton(7));
   }
+
+
+  // dpad is oh shit btns, up is reset post, left is reconfigure
   public Trigger getResetPoseBtn() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getPOV() == 0);
   }
 
-  public Trigger getMoveForwardHalfMeterBtn() {
+  public Trigger reconfigureEverything() {
     if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getPOV() == 180);
+    return new Trigger(() -> controller.getPOV() == 270);
   }
+
 }

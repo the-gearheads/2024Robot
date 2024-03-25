@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.AutoArmHeight;
@@ -156,7 +157,19 @@ public class RobotContainer {
     // teleop controlls
     Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(Commands.run(feeder::run, feeder)));
     Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand());
-    Controllers.driverController.getAlignBtn().whileTrue(swerve.goTo(AMP_SCORE_POSE));
+    Controllers.driverController.getAlignBtn().whileTrue(new ProxyCommand(() -> {
+      switch(ScoringState.goalMode) {
+        case SPEAKER:
+          return new PrepareToShoot(shooter, swerve, arm).repeatedly();
+        case AMP:
+          return new InstantCommand(); // will set forced angle to AMP because of ShooterCalculation getYaw being called in teleop
+        case STAGE:
+          return new InstantCommand(); // will set forced angle to stage bc shootercalculations getYaw in teleop
+        default:
+          return new InstantCommand();
+      }
+    }));
+
     Controllers.driverController.enableVision().onTrue(new InstantCommand(() -> swerve.enableVision()));
     Controllers.operatorController.getIntakeNote().whileTrue(new IntakeNote(feeder, intake));
     Controllers.driverController.getResetPoseBtn().onTrue(new InstantCommand(() -> {
@@ -168,7 +181,6 @@ public class RobotContainer {
         swerve.resetPose(pos);
     }));
     Controllers.driverController.getDisableVisionBtn().onTrue(new InstantCommand(() -> swerve.disableVision()));
-    Controllers.driverController.getMoveForwardHalfMeterBtn().onTrue(swerve.goTo(swerve.getPose().plus(new Transform2d(new Translation2d(0.5, 0), new Rotation2d()))));
     Controllers.operatorController.climberDown().whileTrue(Commands.run(() -> {
       climber.down(Controllers.operatorController.getClimberProportion());
     }, climber));

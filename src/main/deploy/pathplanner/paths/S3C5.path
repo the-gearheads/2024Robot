@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.1164410900250379,
-        "y": 6.626074966435647
+        "x": 0.7191829879109114,
+        "y": 6.68952759078167
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.304278878828027,
-        "y": 5.611534826673257
+        "x": 3.907020776713901,
+        "y": 5.6749874510192795
       },
       "isLocked": false,
       "linkedName": "S3"
@@ -38,8 +38,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 5.3,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 520.0,
     "maxAngularAcceleration": 720.0
   },

@@ -20,11 +20,9 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.numbers.*;
 import edu.wpi.first.math.util.Units;
 
 import static frc.robot.Constants.FieldConstants.FIELD;
-import static frc.robot.Constants.VisionConstants.*;
 
 public class Camera {
 

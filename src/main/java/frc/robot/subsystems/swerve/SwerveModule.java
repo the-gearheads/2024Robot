@@ -86,7 +86,7 @@ public class SwerveModule {
   }
 
   public void resetEncoders() {
-    drive.resetEncoder();
+    drive.resetEncoder();    
   }
 
   public void periodic() {

@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 1.3509924162705473,
-      "y": 5.546821904454621
-    },
-    "rotation": 180.0
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -16,31 +10,6 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "S2I2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutonAutoArmHeight"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShooterStart"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
                 "type": "named",
                 "data": {
                   "name": "ShootWhenReady"
@@ -60,21 +29,9 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "I2F2"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShooterStart"
+                  "name": "IntakeAndShoot"
                 }
               },
               {
@@ -82,74 +39,24 @@
                 "data": {
                   "name": "AutonAutoArmHeight"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShootWhenReady"
-                }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "AlignToSpeakerYaw"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "F2F3"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeNote"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShooterStart"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutonAutoArmHeight"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShootWhenReady"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AlignToSpeakerYaw"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "S3F3"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.1
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -307,6 +214,12 @@
               {
                 "type": "named",
                 "data": {
+                  "name": "AutonAutoArmHeight"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
                   "name": "IntakeNote"
                 }
               },
@@ -314,12 +227,6 @@
                 "type": "named",
                 "data": {
                   "name": "ShooterStart"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutonAutoArmHeight"
                 }
               }
             ]

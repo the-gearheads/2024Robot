@@ -1,10 +1,41 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 0.7191829879109114,
+      "y": 6.68952759078167
+    },
+    "rotation": -121.07845897748322
+  },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S3I3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShooterStart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
+              }
+            ]
+          }
+        },
         {
           "type": "race",
           "data": {
@@ -29,9 +60,21 @@
           "data": {
             "commands": [
               {
+                "type": "path",
+                "data": {
+                  "pathName": "I3F3"
+                }
+              },
+              {
                 "type": "named",
                 "data": {
-                  "name": "IntakeAndShoot"
+                  "name": "IntakeNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShooterStart"
                 }
               },
               {
@@ -39,24 +82,24 @@
                 "data": {
                   "name": "AutonAutoArmHeight"
                 }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlignToSpeakerYaw"
+                }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "S3F3"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.1
-                      }
-                    }
-                  ]
+                  "name": "ShootWhenReady"
                 }
               }
             ]
@@ -73,7 +116,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "F3C5"
+                        "pathName": "F3PassC5"
                       }
                     },
                     {
@@ -88,13 +131,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
+                  "name": "ShooterStart"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ShooterStart"
+                  "name": "IntakeNote"
                 }
               },
               {
@@ -157,13 +200,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShooterStart"
+                  "name": "AutonAutoArmHeight"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "AutonAutoArmHeight"
+                  "name": "ShooterStart"
                 }
               }
             ]
@@ -214,7 +257,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutonAutoArmHeight"
+                  "name": "ShooterStart"
                 }
               },
               {
@@ -226,7 +269,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShooterStart"
+                  "name": "AutonAutoArmHeight"
                 }
               }
             ]
