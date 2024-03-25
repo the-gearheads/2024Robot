@@ -149,7 +149,7 @@ public final class Constants {
 
     public static final Measure<Voltage> armOverrideVoltage = Volts.of(4);
 
-    public static final double NOTE_FEEDING_ANGLE = (40.0 / 360.0) * (2 * Math.PI);
+    public static final double NOTE_FEEDING_ANGLE = (55.0 / 360.0) * (2 * Math.PI);
     public static final double NOTE_FEEDING_ANGLE_TOLERANCE = (4.0 / 360.0) * (2 * Math.PI);
   }
 
