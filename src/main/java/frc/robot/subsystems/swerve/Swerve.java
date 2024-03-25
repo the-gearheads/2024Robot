@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.SwerveConstants.DESATURATE;
 import static frc.robot.Constants.SwerveConstants.FACING_SPEAKER_TOLERANCE;
 import static frc.robot.Constants.SwerveConstants.MAX_MOD_SPEED;
+import static frc.robot.Constants.SwerveConstants.MAX_MOD_STEER_VEL;
+import static frc.robot.Constants.SwerveConstants.MAX_ROBOT_ACCEL;
 import static frc.robot.Constants.SwerveConstants.MAX_ROBOT_ROT_SPEED;
 import static frc.robot.Constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
 import static frc.robot.Constants.SwerveConstants.PATHPLANNER_MAX_MOD_SPEED;
@@ -45,6 +47,7 @@ import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -56,6 +59,9 @@ import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.leds.LedState;
+import frc.robot.subsystems.swerve.setpointgen.ModuleLimits;
+import frc.robot.subsystems.swerve.setpointgen.SwerveSetpoint;
+import frc.robot.subsystems.swerve.setpointgen.SwerveSetpointGenerator;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.HandledSleep;
 public class Swerve extends SubsystemBase {
@@ -73,6 +79,8 @@ public class Swerve extends SubsystemBase {
   int simGyro = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
   SimDouble simGyroAngle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(simGyro, "Yaw"));
   double rotSpdSetpoint = 0;
+
+  SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(kinematics, WHEEL_POSITIONS);
 
   SwerveModule[] modules = {
     new SwerveModule(0, "FL"),
@@ -225,6 +233,10 @@ public class Swerve extends SubsystemBase {
 
   PIDController headingController = new PIDController(5.2, 0, 0.5);
 
+  SwerveSetpoint lastSetpoint = new SwerveSetpoint(new ChassisSpeeds(), new SwerveModuleState[4]);
+  ModuleLimits limits = new ModuleLimits(MAX_ROBOT_TRANS_SPEED, MAX_ROBOT_ACCEL, MAX_MOD_STEER_VEL);
+  double lastTime = Timer.getFPGATimestamp();
+
   public void drive(ChassisSpeeds speeds, Double alignToAngle) {
 
     // always calculating so that the pid controller can calculate the derivative
@@ -243,15 +255,18 @@ public class Swerve extends SubsystemBase {
       }
     }
 
-    ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
-    rotSpdSetpoint = discretized.omegaRadiansPerSecond;
-    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(discretized);
-    if (SmartDashboard.getBoolean("Swerve/desaturateWheelSpeeds", DESATURATE)) {
-      SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, discretized, MAX_MOD_SPEED, MAX_ROBOT_TRANS_SPEED, MAX_ROBOT_ROT_SPEED);
-    }
-
     Logger.recordOutput("Swerve/Speeds", speeds);
-    Logger.recordOutput("Swerve/DiscretizedSpeeds", discretized);
+
+    lastSetpoint = setpointGenerator.generateSetpoint(limits, lastSetpoint, speeds, Timer.getFPGATimestamp() - lastTime);
+    speeds = lastSetpoint.chassisSpeeds();
+    lastTime = Timer.getFPGATimestamp();
+    rotSpdSetpoint = speeds.omegaRadiansPerSecond;
+
+    Logger.recordOutput("Swerve/SetpointGeneratedSpeeds", speeds);
+
+    SwerveModuleState[] moduleStates = lastSetpoint.moduleStates();
+
+    Logger.recordOutput("Swerve/DesiredModuleStates", moduleStates);
 
     for (int i = 0; i < modules.length; i++) {
       modules[i].setState(moduleStates[i]);
