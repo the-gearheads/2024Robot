@@ -214,7 +214,10 @@ public class Arm extends SubsystemBase {
     return MathUtil.isNear(getAngle().getRadians(), angle, 0.01);
   }
 
-  
+  public boolean atPoint(double angle, double tolerance) {
+    return MathUtil.isNear(getAngle().getRadians(), angle, tolerance);
+  }
+
   public void setupStatusFrames() {
     mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
     /* We don't care about our motor position, only what the encoder reads */

@@ -118,6 +118,8 @@ public final class Constants {
     public static final double MAX_SHOOTING_SPEED_VX = 0.3; // m/s, preparetoshoot command waits for the chassisspeeds to be below this number before finishing
     public static final double MAX_SHOOTING_SPEED_VY = 0.3;
     public static final double MAX_SHOOTING_SPEED_ROT = 0.05; // omega rad / s
+
+    public static final double NOTE_FEEDING_SPEED = 4000;
   }
 
   public static class ArmConstants {
@@ -146,6 +148,9 @@ public final class Constants {
     public static final double[] SPLINE_ANGLES =    {0.912, 0.712, 0.660, 0.570, 0.527, 0.478, 0.436, 0.4487, 0.4220, 0.39945, 0.375};
 
     public static final Measure<Voltage> armOverrideVoltage = Volts.of(4);
+
+    public static final double NOTE_FEEDING_ANGLE = (40.0 / 360.0) * (2 * Math.PI);
+    public static final double NOTE_FEEDING_ANGLE_TOLERANCE = (4.0 / 360.0) * (2 * Math.PI);
   }
 
   public static class FeederConstants {

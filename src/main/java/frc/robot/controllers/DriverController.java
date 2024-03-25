@@ -58,7 +58,13 @@ public class DriverController {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getAButton());
   }
+
   public Trigger getShootBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getXButton());
+  }
+
+  public Trigger getFeedBtn() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getBButton());
   }

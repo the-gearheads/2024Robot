@@ -14,9 +14,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.GeometryUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -33,6 +30,7 @@ import frc.robot.commands.AutoShooter;
 import frc.robot.commands.AutonAutoArmHeight;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.PrepareToShoot;
+import frc.robot.commands.ShootFeederNote;
 import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
 import frc.robot.commands.NTControl.ArmNTControl;
@@ -78,8 +76,8 @@ public class RobotContainer {
     // Configure the trigger bindings
     updateControllers();
     swerve.setDefaultCommand(new Teleop(swerve));
-    // arm.setDefaultCommand(new AutoArmHeight(arm, swerve));
-    arm.setDefaultCommand(new ArmNTControl(arm));
+    arm.setDefaultCommand(new AutoArmHeight(arm, swerve));
+    // arm.setDefaultCommand(new ArmNTControl(arm));
 
     shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
 
@@ -157,6 +155,7 @@ public class RobotContainer {
     // teleop controlls
     Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(Commands.run(feeder::run, feeder)));
     Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand());
+    Controllers.driverController.getFeedBtn().whileTrue(new ShootFeederNote(arm, feeder, shooter));
     Controllers.driverController.getAlignBtn().whileTrue(new ProxyCommand(() -> {
       switch(ScoringState.goalMode) {
         case SPEAKER:
