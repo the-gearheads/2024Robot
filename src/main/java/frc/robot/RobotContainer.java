@@ -168,11 +168,10 @@ public class RobotContainer {
         case SPEAKER:
           return new PrepareToShoot(shooter, swerve, arm).repeatedly();
         case AMP:
-          return new InstantCommand(); // will set forced angle to AMP because of ShooterCalculation getYaw being called in teleop
         case STAGE:
-          return new InstantCommand(); // will set forced angle to stage bc shootercalculations getYaw in teleop
         default:
-          return new InstantCommand();
+         // will set forced angle to AMP because of ShooterCalculation getYaw being called in teleop, will set forced angle to stage bc shootercalculations getYaw in teleop
+        return new InstantCommand();
       }
     }));
 

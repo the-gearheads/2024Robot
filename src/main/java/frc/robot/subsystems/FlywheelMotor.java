@@ -90,7 +90,7 @@ public class FlywheelMotor {
   public void configure() {
     // we're just not gonna set the position or velocity conversion factors because they default to rot(/min)
     flex.setCANTimeout(250);
-    flex.setSmartCurrentLimit(80);
+    flex.setSmartCurrentLimit(65);
     flex.setInverted(inverted);
     HandledSleep.sleep(100);
     if(brakeMode) {
