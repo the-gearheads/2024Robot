@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.WheelPositions;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -47,11 +48,12 @@ public final class Constants {
 
     // Again, FL, FR, BL, BR
     public static final Translation2d[] WHEEL_POSITIONS = {
-      new Translation2d(0.311, 0.337), // placeholders, note that +x is forward and +y is left
-      new Translation2d(0.311, -0.337),
-      new Translation2d(-0.311, 0.337),
-      new Translation2d(-0.311, -0.337)
+      new Translation2d(0.3305, 0.3313), // placeholders, note that +x is forward and +y is left
+      new Translation2d(0.3305, -0.3313),
+      new Translation2d(-0.3305, 0.3313),
+      new Translation2d(-0.3305, -0.3313)
     };
+    public static final double MODULE_RADIUS = WHEEL_POSITIONS[0].getNorm();
 
     public static final double[] WHEEL_OFFSETS = {90, 0, 0, 90}; // could be wrong, we get to find out {270, 0, 180, 90};
     public static final boolean[] IS_INVERTED = {true, false, true, false}; // left side inverted i think

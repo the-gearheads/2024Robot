@@ -7,6 +7,7 @@ import static frc.robot.Constants.SwerveConstants.FACING_SPEAKER_TOLERANCE;
 import static frc.robot.Constants.SwerveConstants.MAX_MOD_SPEED;
 import static frc.robot.Constants.SwerveConstants.MAX_ROBOT_ROT_SPEED;
 import static frc.robot.Constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
+import static frc.robot.Constants.SwerveConstants.MODULE_RADIUS;
 import static frc.robot.Constants.SwerveConstants.PATHPLANNER_MAX_MOD_SPEED;
 import static frc.robot.Constants.SwerveConstants.WHEEL_POSITIONS;
 
@@ -165,7 +166,7 @@ public class Swerve extends SubsystemBase {
                 new PIDConstants(5.7, 0.0, 0.0), // Translation PID constants
                 new PIDConstants(5.7, 0.0, 0.0), // Rotation PID constants
                 PATHPLANNER_MAX_MOD_SPEED, // Max module speed, in m/s
-                WHEEL_POSITIONS[0].getX(), // Drive base radius in meters. Distance from robot center to furthest module.
+                MODULE_RADIUS, // Drive base radius in meters. Distance from robot center to furthest module.
                 new ReplanningConfig() // Default path replanning config. See the API for the options here
         ),
         () -> {
