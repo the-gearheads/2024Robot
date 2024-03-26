@@ -14,6 +14,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -61,9 +62,9 @@ public class Camera {
     estimator = new PhotonPoseEstimator(this.field, strategy, camera, transform);
   }
 
-  public Optional<EstimatedRobotPose> getGlobalPose() {
+  public Pair<Optional<EstimatedRobotPose>, PhotonPipelineResult> getGlobalPose() {
     var pipelineResult = camera.getLatestResult();
-    return filterPose(estimator.update(pipelineResult), pipelineResult);
+    return Pair.of(filterPose(estimator.update(pipelineResult), pipelineResult), pipelineResult);
   }
 
   private Optional<EstimatedRobotPose> filterPose(Optional<EstimatedRobotPose> pose, PhotonPipelineResult result) {
@@ -102,7 +103,8 @@ public class Camera {
 
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
     lastRobotPose = poseEstimator.getEstimatedPosition();
-    var pose = getGlobalPose();
+    var result = getGlobalPose();
+    var pose = result.getFirst();
     if(!pose.isPresent()) {
       Logger.recordOutput(path + "/XyStdDev", -1d);
       Logger.recordOutput(path + "/ThetaStdDev", -1d);
@@ -115,9 +117,8 @@ public class Camera {
     }
 
     Pose2d estPose = pose.get().estimatedPose.toPose2d();
-    // Matrix<N3, N1> stddevs = pose.get().targetsUsed.size() <= 1 ? SINGLE_TAG_STD_DEVS : MULTI_TAG_STD_DEVS;
 
-    var updated = camera.getLatestResult();
+    var updated = result.getSecond();
     int numTargets = updated.targets.size();
     double avgDistToTarget = 0;
     for(var target: updated.targets) {
