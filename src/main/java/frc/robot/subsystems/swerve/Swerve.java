@@ -382,6 +382,10 @@ public class Swerve extends SubsystemBase {
         module.setSysidVoltageMode(drive, steer);
       }
     }
+
+    if(DriverStation.isDisabled()) {
+      drive(new ChassisSpeeds());
+    }
   }
 
   public Pose2d getPose() {

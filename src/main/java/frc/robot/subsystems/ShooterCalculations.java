@@ -29,7 +29,7 @@ public class ShooterCalculations {
   // not quite sure whether to have separate variables for red and blue but for now this is fine
   static Translation3d speakerPosition = new Translation3d(0.173, 5.543, 2.05);
   // static Translation3d speakerPosition = new Translation3d(0.173, 5.543, 1.9);
-  static Translation2d speakerBackPosition = new Translation2d(0.0, 5.55 + 0.127);  // 0.127 offset bc notes arc left in shooter
+  static Translation2d speakerBackPosition = new Translation2d(0.0, 5.55);  // 0.127 offset bc notes arc left in shooter
   static Translation2d ampPosition = new Translation2d(1.85, 8.15);
   static Translation2d stageCenter = new Translation2d(4.89, 4.09);
   // Distance (m) -> Angle (rad)
