@@ -37,9 +37,9 @@ public class Camera {
   private final double MAX_PITCHROLL = Units.degreesToRadians(5);
   private final double MAX_Z = Units.inchesToMeters(7);
 
-  private final double xyStdDevCoefficient = 0.02;
-  private final double thetaStdDevCoefficient = 0.04;
-  private final double coefficientFactor = 6.0;
+  private final double xyStdDevCoefficient = 0.08;
+  private final double thetaStdDevCoefficient = 0.16;
+  private final double coefficientFactor = 1.0;
 
   // kinda ugly ik ik
   private Pose2d lastRobotPose;

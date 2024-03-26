@@ -119,7 +119,7 @@ public final class Constants {
     public static final double MAX_SHOOTING_SPEED_VY = 0.3;
     public static final double MAX_SHOOTING_SPEED_ROT = 0.05; // omega rad / s
 
-    public static final double NOTE_FEEDING_SPEED = 4000;
+    public static final double NOTE_FEEDING_SPEED = 3000;
   }
 
   public static class ArmConstants {
@@ -142,14 +142,14 @@ public final class Constants {
     public static final double MAX_ANGLE = (MAX_ANGLE_DEG / 360.0) * (2 * Math.PI);
     public static final double MIN_ANGLE = (MIN_ANGLE_DEG / 360.0) * (2 * Math.PI);
 
-    // public static final double[] SPLINE_DISTANCES = {1.0959, 1.5100, 2.0153, 2.4980, 3.0284, 3.5106, 4.0048, 4.9951};  // old values
-    // public static final double[] SPLINE_ANGLES =    {0.9564, 0.8569, 0.7608, 0.6672, 0.5920, 0.5588, 0.5090, 0.4762};  // old values
-    public static final double[] SPLINE_DISTANCES = {1.235, 1.980185, 2.248288, 2.77234, 3.21358, 3.762, 4.19844, 4.275393, 4.77155, 5.350909, 6.041493};
-    public static final double[] SPLINE_ANGLES =    {0.912, 0.712, 0.660, 0.570, 0.527, 0.478, 0.436, 0.4487, 0.4220, 0.39945, 0.375};
+    public static final double[] SPLINE_DISTANCES = {1.0959, 1.5100, 2.0153, 2.4980, 3.0284, 3.5106, 4.0048, 4.9951, 5.350909, 6.011493};  // old values
+    public static final double[] SPLINE_ANGLES =    {0.9564, 0.8269, 0.7308, 0.6372, 0.5620, 0.5288, 0.4790, 0.4462, 0.39945,  0.355};  // old values
+    // public static final double[] SPLINE_DISTANCES = {1.235, 1.980185, 2.248288, 2.77234, 3.21358, 3.762, 4.275393, 4.77155, 5.350909, 6.041493};
+    // public static final double[] SPLINE_ANGLES =    {0.952, 0.752,    0.810,    0.580,   0.527,   0.498, 0.4687,   0.4220,  0.39945,  0.375};
 
     public static final Measure<Voltage> armOverrideVoltage = Volts.of(4);
 
-    public static final double NOTE_FEEDING_ANGLE = (55.0 / 360.0) * (2 * Math.PI);
+    public static final double NOTE_FEEDING_ANGLE = (45.0 / 360.0) * (2 * Math.PI);
     public static final double NOTE_FEEDING_ANGLE_TOLERANCE = (4.0 / 360.0) * (2 * Math.PI);
   }
 
