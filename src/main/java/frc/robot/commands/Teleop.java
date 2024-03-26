@@ -5,6 +5,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.ScoringState;
+import frc.robot.ScoringState.GoalMode;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.swerve.Swerve;
@@ -59,10 +61,12 @@ public class Teleop extends Command {
     var speeds = new ChassisSpeeds(x, y, rot);
 
     double calculatedForcedAngle = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
+    boolean shouldAlign = Controllers.driverController.getAlignBtn().getAsBoolean() || 
+                          Controllers.driverController.getAutoShootBtn().getAsBoolean() ||
+                          ScoringState.goalMode == GoalMode.STAGE;
 
     // i think the first condition should be removed tbh but i dont want to break anything
-    var forcedAngle = Controllers.driverController.getAlignBtn().getAsBoolean() || Controllers.driverController.getAutoShootBtn().getAsBoolean() ?
-                      calculatedForcedAngle : null;
+    var forcedAngle = shouldAlign ? calculatedForcedAngle : null;
     if(forcedAngle != null) headingController.setSetpoint(swerve.getGyroRotation().getRadians());
 
     if (SmartDashboard.getBoolean("Teleop/HeadingPID", true)) {
@@ -71,7 +75,7 @@ public class Teleop extends Command {
 
     Logger.recordOutput("Swerve/Teleop/Speeds", speeds);
     
-    if (SmartDashboard.getBoolean("Swerve/FieldRelative", true)) {
+    if (SmartDashboard.getBoolean("Swerve/FieldRelative", true) && ScoringState.goalMode != GoalMode.STAGE) {
       swerve.driveFieldRelative(speeds, forcedAngle);
     } else {
       swerve.drive(speeds, forcedAngle);

@@ -163,11 +163,12 @@ public class ShooterCalculations {
 
   public static Rotation2d getYaw(Translation2d robotPos) {
     switch(ScoringState.goalMode) {
+      default:
       case SPEAKER:
         return getYawSpeaker(robotPos);
       case AMP:
         return new Rotation2d(AMP_YAW);
-      default:
+      case STAGE:
         return getYawStage(robotPos);
     }
   }
