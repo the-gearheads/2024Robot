@@ -8,7 +8,6 @@ import static frc.robot.Constants.ArmConstants.armOverrideVoltage;
 import static frc.robot.Constants.FieldConstants.AMP_SCORE_POSE;
 import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
-import java.sql.Driver;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
