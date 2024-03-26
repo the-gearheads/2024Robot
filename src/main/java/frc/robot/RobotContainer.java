@@ -8,6 +8,7 @@ import static frc.robot.Constants.ArmConstants.armOverrideVoltage;
 import static frc.robot.Constants.FieldConstants.AMP_SCORE_POSE;
 import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
+import java.sql.Driver;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -133,6 +134,12 @@ public class RobotContainer {
     }));
 
     feeder.getBeamBreakSwitch().whileTrue(leds.setStateForTimeCommand(LedState.FLASH_LIME, 3));
+    feeder.getBeamBreakSwitch().whileTrue(new ProxyCommand(() -> {
+      if (DriverStation.isAutonomous()) {
+        return Commands.none();
+      }
+      return Controllers.driverController.setRumble();
+    }));
   }
 
   public void setAllBrakeCoast(boolean willBrake) {
@@ -280,7 +287,6 @@ public class RobotContainer {
       HandledSleep.sleep(100);
       intake.motor.configure();
     }));
-
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
