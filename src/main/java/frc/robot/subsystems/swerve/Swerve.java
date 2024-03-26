@@ -4,10 +4,8 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.SwerveConstants.DESATURATE;
 import static frc.robot.Constants.SwerveConstants.FACING_SPEAKER_TOLERANCE;
-import static frc.robot.Constants.SwerveConstants.MAX_MOD_SPEED;
 import static frc.robot.Constants.SwerveConstants.MAX_MOD_STEER_VEL;
 import static frc.robot.Constants.SwerveConstants.MAX_ROBOT_ACCEL;
-import static frc.robot.Constants.SwerveConstants.MAX_ROBOT_ROT_SPEED;
 import static frc.robot.Constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
 import static frc.robot.Constants.SwerveConstants.PATHPLANNER_MAX_MOD_SPEED;
 import static frc.robot.Constants.SwerveConstants.WHEEL_POSITIONS;
@@ -233,7 +231,7 @@ public class Swerve extends SubsystemBase {
 
   PIDController headingController = new PIDController(5.2, 0, 0.5);
 
-  SwerveSetpoint lastSetpoint = new SwerveSetpoint(new ChassisSpeeds(), new SwerveModuleState[4]);
+  SwerveSetpoint lastSetpoint = new SwerveSetpoint(new ChassisSpeeds(), getModuleStates());
   ModuleLimits limits = new ModuleLimits(MAX_ROBOT_TRANS_SPEED, MAX_ROBOT_ACCEL, MAX_MOD_STEER_VEL);
   double lastTime = Timer.getFPGATimestamp();
 
