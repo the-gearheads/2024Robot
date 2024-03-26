@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 0.7191829879109114,
-      "y": 6.68952759078167
-    },
-    "rotation": -121.07845897748322
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -16,31 +10,6 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "S3I3"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShooterStart"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutonAutoArmHeight"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
                 "type": "named",
                 "data": {
                   "name": "ShootWhenReady"
@@ -59,12 +28,6 @@
           "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "I3F3"
-                }
-              },
               {
                 "type": "named",
                 "data": {
@@ -74,13 +37,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShooterStart"
+                  "name": "AutonAutoArmHeight"
                 }
               },
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "AutonAutoArmHeight"
+                  "pathName": "S3F3"
                 }
               }
             ]
@@ -93,13 +56,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AlignToSpeakerYaw"
+                  "name": "ShootWhenReady"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootWhenReady"
+                  "name": "AlignToSpeakerYaw"
                 }
               }
             ]
@@ -116,7 +79,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "F3PassC5"
+                        "pathName": "F3C5"
                       }
                     },
                     {
@@ -131,13 +94,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShooterStart"
+                  "name": "IntakeNote"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
+                  "name": "ShooterStart"
                 }
               },
               {
@@ -200,13 +163,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutonAutoArmHeight"
+                  "name": "ShooterStart"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ShooterStart"
+                  "name": "AutonAutoArmHeight"
                 }
               }
             ]
@@ -257,7 +220,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShooterStart"
+                  "name": "AutonAutoArmHeight"
                 }
               },
               {
@@ -269,7 +232,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutonAutoArmHeight"
+                  "name": "ShooterStart"
                 }
               }
             ]

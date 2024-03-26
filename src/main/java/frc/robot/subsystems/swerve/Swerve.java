@@ -406,9 +406,6 @@ public class Swerve extends SubsystemBase {
   }
   
   public void resetPose(Pose2d pose) {
-    for (SwerveModule module : modules) {
-      module.resetEncoders();
-    }
     multitagPoseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);
     wheelOdometry.resetPosition(getGyroRotation(), getModulePositions(), pose);
   }
