@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7543128599770712,
-      "y": 6.822590942479183
+      "x": 1.4014420821634435,
+      "y": 6.988995599612821
     },
-    "rotation": -119.79196080936468
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
@@ -31,7 +31,7 @@
           }
         },
         {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -85,13 +85,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "F3C5"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "C5Shoot"
+                        "pathName": "F3C5&C5Shoot"
                       }
                     }
                   ]

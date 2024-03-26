@@ -115,6 +115,7 @@ public class RobotContainer {
       new WaitUntilCommand(feeder.getBeamBreakSwitch()),
       feeder.getRunFeederCommand()
     ));
+    NamedCommands.registerCommand("WaitForShot", new WaitUntilCommand(feeder.getBeamBreakSwitch()::getAsBoolean).withTimeout(5));
     NamedCommands.registerCommand("AlignToSpeakerYaw", new SwerveAlignToSpeaker(swerve));
     NamedCommands.registerCommand("IntakeAndShoot", Commands.run(()->{
       intake.run();

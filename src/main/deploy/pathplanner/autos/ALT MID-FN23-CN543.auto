@@ -45,9 +45,9 @@
                       }
                     },
                     {
-                      "type": "path",
+                      "type": "named",
                       "data": {
-                        "pathName": "F2IC"
+                        "name": "WaitForShot"
                       }
                     }
                   ]
@@ -56,88 +56,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShooterStart"
+                  "name": "IntakeAndShoot"
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "AutonAutoArmHeight"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShootWhenReady"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AlignToSpeakerYaw"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "ICF3"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeNote"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShooterStart"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutonAutoArmHeight"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShootWhenReady"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AlignToSpeakerYaw"
                 }
               }
             ]
@@ -154,13 +79,45 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "F3C5"
+                        "pathName": "F2F3"
                       }
                     },
                     {
+                      "type": "named",
+                      "data": {
+                        "name": "WaitForShot"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeAndShoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
                       "type": "path",
                       "data": {
-                        "pathName": "C5Shoot"
+                        "pathName": "F3C5&C5Shoot"
                       }
                     }
                   ]

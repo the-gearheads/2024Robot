@@ -141,13 +141,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "F3C5"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "C5Shoot"
+                        "pathName": "F3C5&C5Shoot"
                       }
                     }
                   ]
