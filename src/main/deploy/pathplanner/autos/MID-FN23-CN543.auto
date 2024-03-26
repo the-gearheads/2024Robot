@@ -16,31 +16,6 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "S2I2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutonAutoArmHeight"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShooterStart"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
                 "type": "named",
                 "data": {
                   "name": "ShootWhenReady"
@@ -62,7 +37,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "I2F2"
+                  "pathName": "S2F2"
                 }
               },
               {
