@@ -5,6 +5,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.ScoringState;
+import frc.robot.ScoringState.GoalMode;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.swerve.Swerve;
@@ -71,7 +73,7 @@ public class Teleop extends Command {
 
     Logger.recordOutput("Swerve/Teleop/Speeds", speeds);
     
-    if (SmartDashboard.getBoolean("Swerve/FieldRelative", true)) {
+    if (SmartDashboard.getBoolean("Swerve/FieldRelative", true) && ScoringState.goalMode != GoalMode.STAGE) {
       swerve.driveFieldRelative(speeds, forcedAngle);
     } else {
       swerve.drive(speeds, forcedAngle);
