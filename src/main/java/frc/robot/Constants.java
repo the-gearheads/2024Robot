@@ -92,8 +92,8 @@ public final class Constants {
     public static final double MAX_MOD_SPEED = DRIVE_FREE_SPD;  // m/s, placeholders
     public static final double MAX_ROBOT_TRANS_SPEED = DRIVE_FEEDFORWARD.maxAchievableVelocity(12, 0.1); // m/s
     public static final double MAX_ROBOT_ROT_SPEED = MAX_ROBOT_TRANS_SPEED / 0.4585738763; // rad/s, 0.45 is radius of robot, spd/r is rad/s
-    public static final double MAX_ROBOT_ACCEL = DRIVE_FEEDFORWARD.maxAchievableAcceleration(12, MAX_ROBOT_TRANS_SPEED-0.6); // m/s^2, 0.6 is a fudge factor
-    public static final double MAX_MOD_STEER_VEL = Units.degreesToRadians(300); // I think? Going from 0-90 went at ~200deg/s
+    public static final double MAX_ROBOT_ACCEL = DRIVE_FEEDFORWARD.maxAchievableAcceleration(12, MAX_ROBOT_TRANS_SPEED-3); // m/s^2, 0.6 is a fudge factor
+    public static final double MAX_MOD_STEER_VEL = Units.degreesToRadians(700); // I think? Going from 0-90 went at ~200deg/s
 
     public static final double FACING_SPEAKER_TOLERANCE = (2.0 / 360.0) * (2 * Math.PI);
 
@@ -121,7 +121,7 @@ public final class Constants {
     public static final double MAX_SHOOTING_SPEED_VY = 0.3;
     public static final double MAX_SHOOTING_SPEED_ROT = 0.05; // omega rad / s
 
-    public static final double NOTE_FEEDING_SPEED = 3000;
+    public static final double NOTE_FEEDING_SPEED = 4000;
   }
 
   public static class ArmConstants {
