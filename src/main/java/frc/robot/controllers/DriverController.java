@@ -38,6 +38,7 @@ public class DriverController {
 
   public double getRotateAxis() {
     if(isNull()) return 0;
+    // controller.setRumble(RumbleType.kBothRumble, Math.abs(controller.getRightX()));
     return Controllers.deadband(-controller.getRightX());
   }
 
