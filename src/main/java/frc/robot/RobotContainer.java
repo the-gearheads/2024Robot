@@ -33,6 +33,7 @@ import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.ShootFeederNote;
 import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
+import frc.robot.commands.NTControl.ArmNTControl;
 import frc.robot.commands.NTControl.ShooterNTControl;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.MechanismViz;
@@ -219,7 +220,7 @@ public class RobotContainer {
     Controllers.operatorController.getArmAutosOff().onTrue(new InstantCommand(()->{
       arm.getDefaultCommand().cancel();
       shooter.getDefaultCommand().cancel();
-      arm.setDefaultCommand(Commands.run(()->{}, arm));
+      arm.setDefaultCommand(new ArmNTControl(arm));
       shooter.setDefaultCommand(new ShooterNTControl(shooter));
       Commands.runOnce(()->{}, shooter).schedule();
       Commands.runOnce(()->{}, arm).schedule();
@@ -271,6 +272,8 @@ public class RobotContainer {
     Controllers.operatorController.getSetStageModeBtn().onTrue(new InstantCommand(()->{
       ScoringState.goalMode = ScoringState.GoalMode.STAGE;
     }));
+
+    Controllers.driverController.allowClimberOverride().whileTrue(leds.getSetStateCommand(LedState.WHITE));
   
     Controllers.driverController.reconfigureEverything().onTrue(new InstantCommand(()->{
       arm.configure();

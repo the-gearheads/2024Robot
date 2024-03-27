@@ -3,7 +3,7 @@ package frc.robot.controllers;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class DriverController {
@@ -38,7 +38,7 @@ public class DriverController {
 
   public double getRotateAxis() {
     if(isNull()) return 0;
-    // controller.setRumble(RumbleType.kBothRumble, Math.abs(controller.getRightX()));
+    // setRumble(Math.abs(controller.getRightX()));
     return Controllers.deadband(-controller.getRightX());
   }
 
@@ -94,11 +94,17 @@ public class DriverController {
     return new Trigger(() -> controller.getPOV() == 270);
   }
 
+  public Trigger allowClimberOverride() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getPOV() == 90);
+  }
+
   public void setRumble(double rumble) {
     controller.setRumble(RumbleType.kBothRumble, rumble);
   }
 
   public Command getRumbleCommand(double rumble, double seconds) {
-    return new InstantCommand(() -> {setRumble(rumble);}).withTimeout(seconds).finallyDo(() -> {setRumble(0);});
+    // return new InstantCommand(() -> {setRumble(rumble);}).withTimeout(seconds).finallyDo(() -> {setRumble(0);});
+    return Commands.runEnd(()->{setRumble(rumble);}, ()->{setRumble(0);}).withTimeout(1);
   }
 }
