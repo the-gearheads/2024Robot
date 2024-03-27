@@ -3,6 +3,7 @@ package frc.robot.commands;
 
 import static frc.robot.Constants.ShooterConstants.*;
 
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,6 +37,9 @@ public class PrepareToShoot extends Command {
   public void execute() {
     ShooterCalculations.setShooterPower(shooter);
     arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation(), true));
+    Logger.recordOutput("Arm/AngleTolerance", ShooterCalculations.getArmTolerance(swerve.getPose().getTranslation()));
+    Logger.recordOutput("Arm/AtAngle", arm.atPoint(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()), ShooterCalculations.getArmTolerance(swerve.getPose().getTranslation())));
+
   }
 
   @Override

@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.commands.AutoArmHeight;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.AutonAutoArmHeight;
@@ -160,7 +161,14 @@ public class RobotContainer {
     Controllers.updateActiveControllerInstance();
 
     // teleop controlls
-    Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(Commands.run(feeder::run, feeder)));
+    Controllers.driverController.getAutoShootBtn().whileTrue(new ProxyCommand(()->{
+      var cmd = new PrepareToShoot(shooter, swerve, arm).andThen(Commands.run(feeder::run, feeder));
+      if(!feeder.getBeamBreakSwitch().negate().getAsBoolean()) {
+        return cmd.withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+      } else {
+        return cmd.withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+      }
+    }));
     Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand());
     Controllers.driverController.getFeedBtn().whileTrue(new ShootFeederNote(arm, feeder, shooter));
     Controllers.driverController.getAlignBtn().whileTrue(new ProxyCommand(() -> {

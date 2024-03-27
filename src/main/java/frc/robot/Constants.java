@@ -162,11 +162,9 @@ public final class Constants {
 
     public static final double NOTE_FEEDING_ANGLE = (45.0 / 360.0) * (2 * Math.PI);
     public static final double NOTE_FEEDING_ANGLE_TOLERANCE = (4.0 / 360.0) * (2 * Math.PI);
-    public static final double LOWER_SHOOTING_TOLERANCE_CLAMP = 0.01;
-    public static final double UPPER_SHOOTING_TOLERANCE_CLAMP = (4 / 360) * (2 * Math.PI);
-    public static final double[] SHOOTING_TOLERANCES_DISTS = {1.5, 2, 3};
-    public static final double[] SHOOTING_TOLERANCES_ANGLES = {0.0872, 0.0349, 0.01};
-    public static final PolynomialSplineFunction armToleranceInterpolationTable = new LinearInterpolator().interpolate(SHOOTING_TOLERANCES_DISTS, SHOOTING_TOLERANCES_ANGLES);
+    public static final double[] SHOOTING_ARM_TOLERANCES_DISTS = {1.5, 2, 3};
+    public static final double[] SHOOTING_ARM_TOLERANCES_ANGLES = {0.0872, 0.0349, 0.01};
+    public static final PolynomialSplineFunction armToleranceInterpolationTable = new LinearInterpolator().interpolate(SHOOTING_ARM_TOLERANCES_DISTS, SHOOTING_ARM_TOLERANCES_ANGLES);
   }
 
   public static class FeederConstants {

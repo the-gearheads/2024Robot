@@ -28,6 +28,7 @@ import static frc.robot.Constants.SwerveConstants.AMP_YAW;
 import static frc.robot.Constants.SwerveConstants.FACING_AMP_TOLERANCE;
 import static frc.robot.Constants.SwerveConstants.FACING_STAGE_TOLERANCE;
 import static frc.robot.Constants.SwerveConstants.SHOOT_YAW_TOLERANCE_DISTS;
+import static frc.robot.Constants.SwerveConstants.SHOOT_YAW_TOLERANCE_YAWS;
 import static frc.robot.Constants.SwerveConstants.yawToleranceInterpolationTable;
 
 public class ShooterCalculations {
@@ -147,8 +148,8 @@ public class ShooterCalculations {
       case SPEAKER:
         double dist = getDistanceToSpeaker(robotPos);
         if (yawToleranceInterpolationTable.isValidPoint(dist)) return yawToleranceInterpolationTable.value(dist);
-        if (dist < SHOOT_YAW_TOLERANCE_DISTS[0]) return SHOOT_YAW_TOLERANCE_DISTS[0]; 
-        return SHOOT_YAW_TOLERANCE_DISTS[SHOOT_YAW_TOLERANCE_DISTS.length - 1]; 
+        if (dist < SHOOT_YAW_TOLERANCE_DISTS[0]) return SHOOT_YAW_TOLERANCE_YAWS[0]; 
+        return SHOOT_YAW_TOLERANCE_YAWS[SHOOT_YAW_TOLERANCE_YAWS.length - 1]; 
       case AMP:
         return FACING_AMP_TOLERANCE;
       case STAGE:
@@ -162,9 +163,9 @@ public class ShooterCalculations {
     switch(ScoringState.goalMode) {
       case SPEAKER:
         double dist = getDistanceToSpeaker(robotPos);
-        if (yawToleranceInterpolationTable.isValidPoint(dist)) return yawToleranceInterpolationTable.value(dist);
-        if (dist < SHOOTING_TOLERANCES_DISTS[0]) return UPPER_SHOOTING_TOLERANCE_CLAMP; 
-        return LOWER_SHOOTING_TOLERANCE_CLAMP; 
+        if (armToleranceInterpolationTable.isValidPoint(dist)) return armToleranceInterpolationTable.value(dist);
+        if (dist < SHOOTING_ARM_TOLERANCES_DISTS[0]) return SHOOTING_ARM_TOLERANCES_ANGLES[0]; 
+        return SHOOTING_ARM_TOLERANCES_ANGLES[SHOOTING_ARM_TOLERANCES_ANGLES.length - 1]; 
       case AMP:
         return AMP_ANGLE_TOLERANCE;
       case STAGE:
