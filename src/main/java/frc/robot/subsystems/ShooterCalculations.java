@@ -20,10 +20,15 @@ import frc.robot.subsystems.shooter.Shooter;
 
 import static frc.robot.Constants.ArmConstants.*;
 import static frc.robot.Constants.FieldConstants.*;
+import static frc.robot.Constants.ShooterConstants.AMP_ANGLE_TOLERANCE;
 import static frc.robot.Constants.ShooterConstants.AMP_SPEED;
 import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 import static frc.robot.Constants.ShooterConstants.SHOOTER_PIVOT_HEIGHT;
 import static frc.robot.Constants.SwerveConstants.AMP_YAW;
+import static frc.robot.Constants.SwerveConstants.FACING_AMP_TOLERANCE;
+import static frc.robot.Constants.SwerveConstants.FACING_STAGE_TOLERANCE;
+import static frc.robot.Constants.SwerveConstants.SHOOT_YAW_TOLERANCE_DISTS;
+import static frc.robot.Constants.SwerveConstants.yawToleranceInterpolationTable;
 
 public class ShooterCalculations {
   // not quite sure whether to have separate variables for red and blue but for now this is fine
@@ -136,7 +141,38 @@ public class ShooterCalculations {
     Logger.recordOutput("Calculations/atan2ShooterAngle", angle);
     return angle;
   }
+  
+  public static double getYawTolerance(Translation2d robotPos) {
+    switch(ScoringState.goalMode) {
+      case SPEAKER:
+        double dist = getDistanceToSpeaker(robotPos);
+        if (yawToleranceInterpolationTable.isValidPoint(dist)) return yawToleranceInterpolationTable.value(dist);
+        if (dist < SHOOT_YAW_TOLERANCE_DISTS[0]) return SHOOT_YAW_TOLERANCE_DISTS[0]; 
+        return SHOOT_YAW_TOLERANCE_DISTS[SHOOT_YAW_TOLERANCE_DISTS.length - 1]; 
+      case AMP:
+        return FACING_AMP_TOLERANCE;
+      case STAGE:
+        return FACING_STAGE_TOLERANCE;
+      default:
+        return 0.01;
+    }
+  }
 
+  public static double getArmTolerance(Translation2d robotPos) {
+    switch(ScoringState.goalMode) {
+      case SPEAKER:
+        double dist = getDistanceToSpeaker(robotPos);
+        if (yawToleranceInterpolationTable.isValidPoint(dist)) return yawToleranceInterpolationTable.value(dist);
+        if (dist < SHOOTING_TOLERANCES_DISTS[0]) return UPPER_SHOOTING_TOLERANCE_CLAMP; 
+        return LOWER_SHOOTING_TOLERANCE_CLAMP; 
+      case AMP:
+        return AMP_ANGLE_TOLERANCE;
+      case STAGE:
+        return AMP_ANGLE_TOLERANCE;
+      default:
+        return 0.01;
+    }
+  }
   public static double getShooterAngle(Translation2d robotPos, boolean wantToShoot) {
     switch(ScoringState.goalMode) {
       case SPEAKER:

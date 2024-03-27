@@ -3,6 +3,7 @@ package frc.robot.commands;
 
 import static frc.robot.Constants.ShooterConstants.*;
 
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ShooterCalculations;
@@ -40,13 +41,15 @@ public class PrepareToShoot extends Command {
   @Override
   public boolean isFinished() {
     double targetYaw = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
+    double yawTolerance = ShooterCalculations.getYawTolerance(swerve.getPose().getTranslation());
     double shooterAngle = ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation(), true);
+    double armTolerance = ShooterCalculations.getArmTolerance(swerve.getPose().getTranslation());
     ChassisSpeeds swerveSpeeds = swerve.getRobotRelativeSpeeds();
     boolean swerveStopped = swerveSpeeds.vxMetersPerSecond <= MAX_SHOOTING_SPEED_VX &&
                             swerveSpeeds.vyMetersPerSecond <= MAX_SHOOTING_SPEED_VY &&
                             swerveSpeeds.omegaRadiansPerSecond < MAX_SHOOTING_SPEED_ROT;
 
-    return shooter.atSpeed() && swerve.atYaw(targetYaw) && arm.atPoint(shooterAngle) && swerveStopped;
+    return shooter.atSpeed() && swerve.atYaw(targetYaw, yawTolerance) && arm.atPoint(shooterAngle, armTolerance) && swerveStopped;
   }
 
 }

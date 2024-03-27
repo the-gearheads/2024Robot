@@ -26,6 +26,10 @@ import frc.robot.util.Polygon;
 
 import static edu.wpi.first.units.Units.*;
 
+import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -94,9 +98,15 @@ public final class Constants {
     public static final double MAX_ROBOT_TRANS_SPEED = DRIVE_FEEDFORWARD.maxAchievableVelocity(12, 0.1); // m/s
     public static final double MAX_ROBOT_ROT_SPEED = MAX_ROBOT_TRANS_SPEED / 0.4585738763; // rad/s, 0.45 is radius of robot, spd/r is rad/s
 
-    public static final double FACING_SPEAKER_TOLERANCE = (2.5 / 360.0) * (2 * Math.PI);
-
+    
     public static final double AMP_YAW = (270d / 360d) * 2 * Math.PI;
+    
+    public static final double FACING_SPEAKER_TOLERANCE = (2.5 / 360.0) * (2 * Math.PI);
+    public static final double FACING_AMP_TOLERANCE = (1 / 360.0) * (2 * Math.PI);
+    public static final double FACING_STAGE_TOLERANCE = (1 / 360.0) * (2 * Math.PI);
+    public static final double[] SHOOT_YAW_TOLERANCE_DISTS = {1.5, 2, 3};
+    public static final double[] SHOOT_YAW_TOLERANCE_YAWS = {0.1, 0.07, 0.044};
+    public static final PolynomialSplineFunction yawToleranceInterpolationTable = new LinearInterpolator().interpolate(SHOOT_YAW_TOLERANCE_DISTS, SHOOT_YAW_TOLERANCE_YAWS);
   }
 
   public static class ShooterConstants {
@@ -107,7 +117,7 @@ public final class Constants {
     public static final double AMP_WAIT_ANGLE = 85d * 2d * Math.PI / 360;
     public static final double AMP_SCORE_ANGLE = 100d * 2d * Math.PI / 360;
     public static final double AMP_ANGLE_TOLERANCE = 1.2d * 2d * Math.PI / 360;
-    public static final double STOW_ANGLE = 20d * 2d * Math.PI / 360; 
+    public static final double STOW_ANGLE = 21d * 2d * Math.PI / 360; 
     public static final double SPEED_TOLERANCE = 240;
     
     public static final double[] PID = {0.0021693, 0, 0};
@@ -152,6 +162,11 @@ public final class Constants {
 
     public static final double NOTE_FEEDING_ANGLE = (45.0 / 360.0) * (2 * Math.PI);
     public static final double NOTE_FEEDING_ANGLE_TOLERANCE = (4.0 / 360.0) * (2 * Math.PI);
+    public static final double LOWER_SHOOTING_TOLERANCE_CLAMP = 0.01;
+    public static final double UPPER_SHOOTING_TOLERANCE_CLAMP = (4 / 360) * (2 * Math.PI);
+    public static final double[] SHOOTING_TOLERANCES_DISTS = {1.5, 2, 3};
+    public static final double[] SHOOTING_TOLERANCES_ANGLES = {0.0872, 0.0349, 0.01};
+    public static final PolynomialSplineFunction armToleranceInterpolationTable = new LinearInterpolator().interpolate(SHOOTING_TOLERANCES_DISTS, SHOOTING_TOLERANCES_ANGLES);
   }
 
   public static class FeederConstants {
@@ -287,5 +302,5 @@ public final class Constants {
   public static class BrakeCoastButton {
     public static final int PORT = 4;
   }
-  
+
 }

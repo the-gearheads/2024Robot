@@ -33,7 +33,6 @@ import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.ShootFeederNote;
 import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
-import frc.robot.commands.NTControl.ArmNTControl;
 import frc.robot.commands.NTControl.ShooterNTControl;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.MechanismViz;
@@ -134,12 +133,12 @@ public class RobotContainer {
     }));
 
     feeder.getBeamBreakSwitch().whileTrue(leds.setStateForTimeCommand(LedState.FLASH_LIME, 3));
-    feeder.getBeamBreakSwitch().whileTrue(new ProxyCommand(() -> {
-      if (DriverStation.isAutonomous()) {
-        return Commands.none();
-      }
-      return Controllers.driverController.setRumble();
-    }));
+    // feeder.getBeamBreakSwitch().whileTrue(new ProxyCommand(() -> {
+    //   if (DriverStation.isAutonomous()) {
+    //     return Commands.none();
+    //   }
+    //   return Controllers.driverController.setRumble();
+    // }));
   }
 
   public void setAllBrakeCoast(boolean willBrake) {
@@ -220,7 +219,7 @@ public class RobotContainer {
     Controllers.operatorController.getArmAutosOff().onTrue(new InstantCommand(()->{
       arm.getDefaultCommand().cancel();
       shooter.getDefaultCommand().cancel();
-      arm.setDefaultCommand(new ArmNTControl(arm));
+      arm.setDefaultCommand(Commands.run(()->{}, arm));
       shooter.setDefaultCommand(new ShooterNTControl(shooter));
       Commands.runOnce(()->{}, shooter).schedule();
       Commands.runOnce(()->{}, arm).schedule();

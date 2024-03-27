@@ -401,6 +401,11 @@ public class Swerve extends SubsystemBase {
     return difference < FACING_SPEAKER_TOLERANCE;
   }
 
+  public boolean atYaw(double yaw, double tolerance) {
+    var difference = Math.abs(new Rotation2d(yaw).minus(getPose().getRotation()).getRadians());
+    return difference < tolerance;
+  }
+
   public Pose2d getPoseAllianceRelative() {
     Pose2d pose = getPose();
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
