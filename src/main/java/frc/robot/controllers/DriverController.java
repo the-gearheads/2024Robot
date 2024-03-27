@@ -92,13 +92,12 @@ public class DriverController {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getPOV() == 270);
   }
-  
-  public Command setRumble(double rumble, double seconds) {
-    if(isNull()) return new InstantCommand();
-    return new InstantCommand(() -> {controller.setRumble(RumbleType.kBothRumble, rumble);}).withTimeout(seconds).finallyDo(() -> {controller.setRumble(RumbleType.kBothRumble, 0);});
+
+  public void setRumble(double rumble) {
+    controller.setRumble(RumbleType.kBothRumble, rumble);
   }
 
-  public Command setRumble() {
-    return setRumble(0.8, 1.5);
+  public Command getRumbleCommand(double rumble, double seconds) {
+    return new InstantCommand(() -> {setRumble(rumble);}).withTimeout(seconds).finallyDo(() -> {setRumble(0);});
   }
 }

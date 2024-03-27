@@ -138,7 +138,7 @@ public class RobotContainer {
       if (DriverStation.isAutonomous()) {
         return Commands.none();
       }
-      return Controllers.driverController.setRumble();
+      return Controllers.driverController.getRumbleCommand(0.6, 1);
     }));
   }
 
