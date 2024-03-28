@@ -38,8 +38,8 @@ public class MechanismViz extends SubsystemBase {
   private final Color8Bit ARM_NOTED_COLOR = new Color8Bit(244, 119, 2);
 
 
-  private final Translation3d ROBOT_ARM_TRANSLATION = new Translation3d(-0.202515 + 0.03, -0.1643, 0.196928);
-  private final double ROBOT_ARM_OFFSET = Units.degreesToRadians(90+22.3);
+  private final Translation3d ROBOT_ARM_TRANSLATION = new Translation3d(-0.202515, -0.1643, 0.196928);
+  private final double ROBOT_ARM_OFFSET = Units.degreesToRadians(90+19.5);
   private final Translation3d NOTE_TRANSLATION = new Translation3d(0, 0, 0);
   /* 
     > 0.2316m + 4in
