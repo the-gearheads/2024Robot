@@ -228,7 +228,7 @@ public class RobotContainer {
     Controllers.operatorController.getArmAutosOff().onTrue(new InstantCommand(()->{
       arm.getDefaultCommand().cancel();
       shooter.getDefaultCommand().cancel();
-      arm.setDefaultCommand(new ArmNTControl(arm));
+      arm.setDefaultCommand(Commands.run(()->{}, arm));
       shooter.setDefaultCommand(new ShooterNTControl(shooter));
       Commands.runOnce(()->{}, shooter).schedule();
       Commands.runOnce(()->{}, arm).schedule();

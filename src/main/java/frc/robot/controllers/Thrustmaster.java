@@ -15,6 +15,10 @@ public class Thrustmaster implements OperatorController {
     return new Trigger(()->joy.getRawButton(1));
   }
 
+  public Trigger getBabyBird() {
+    return new Trigger(()->{return joy.getPOV() == 0;});
+  }
+
   // scoring modes, controls teleop controls, 3 buttons on top of thrust stick
   public Trigger getSetAmpModeBtn() {
     return new Trigger(()->joy.getRawButton(3));
