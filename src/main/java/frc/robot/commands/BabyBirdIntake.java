@@ -1,13 +1,11 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.feeder.Feeder;
-import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 
 public class BabyBirdIntake extends Command {
@@ -24,7 +22,7 @@ public class BabyBirdIntake extends Command {
     addRequirements(feeder, arm, shooter);
   }
 
-  public BabyBirdIntake(Arm arm, Shooter shooter, Feeder feeder, Intake intake) {
+  public BabyBirdIntake(Arm arm, Shooter shooter, Feeder feeder) {
     this(arm, shooter, feeder, true);
   }
 

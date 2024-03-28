@@ -29,12 +29,12 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.commands.AutoArmHeight;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.AutonAutoArmHeight;
+import frc.robot.commands.BabyBirdIntake;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.ShootFeederNote;
 import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
-import frc.robot.commands.NTControl.ArmNTControl;
 import frc.robot.commands.NTControl.ShooterNTControl;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.MechanismViz;
@@ -255,7 +255,8 @@ public class RobotContainer {
       intake::stop,
       intake
     ));
-
+    
+    Controllers.operatorController.getBabyBird().whileTrue(new BabyBirdIntake(arm, shooter, feeder));
 
     Controllers.operatorController.getFeederOverride().whileTrue(Commands.startEnd(
       feeder::run,
