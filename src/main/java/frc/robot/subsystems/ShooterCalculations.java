@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.ScoringState;
+import frc.robot.controllers.Controllers;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.shooter.Shooter;
 
@@ -25,6 +26,7 @@ import static frc.robot.Constants.ShooterConstants.AMP_SPEED;
 import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 import static frc.robot.Constants.ShooterConstants.SHOOTER_PIVOT_HEIGHT;
 import static frc.robot.Constants.SwerveConstants.AMP_YAW;
+import static frc.robot.Constants.SwerveConstants.BABY_BIRD_YAW;
 import static frc.robot.Constants.SwerveConstants.FACING_AMP_TOLERANCE;
 import static frc.robot.Constants.SwerveConstants.FACING_STAGE_TOLERANCE;
 import static frc.robot.Constants.SwerveConstants.SHOOT_YAW_TOLERANCE_DISTS;
@@ -199,6 +201,14 @@ public class ShooterCalculations {
   }
 
   public static Rotation2d getYaw(Translation2d robotPos) {
+    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+    if(Controllers.operatorController.getBabyBird().getAsBoolean()) { // Baby Bird mode (feed directly from source)
+      var yaw = new Rotation2d(BABY_BIRD_YAW);
+      if(isRed) {
+        return GeometryUtil.flipFieldRotation(yaw);
+      }
+      return yaw;
+    }
     switch(ScoringState.goalMode) {
       default:
       case SPEAKER:

@@ -100,6 +100,7 @@ public final class Constants {
 
     
     public static final double AMP_YAW = (270d / 360d) * 2 * Math.PI;
+    public static final double BABY_BIRD_YAW = (300d / 360d) * 2 * Math.PI; // 60 degrees in -some- direction, idk which but i think it's this one
     
     public static final double FACING_SPEAKER_TOLERANCE = (2.5 / 360.0) * (2 * Math.PI);
     public static final double FACING_AMP_TOLERANCE = (1 / 360.0) * (2 * Math.PI);
