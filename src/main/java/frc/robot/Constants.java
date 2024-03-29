@@ -134,7 +134,7 @@ public final class Constants {
     public static final double MAX_SHOOTING_SPEED_VY = 0.3;
     public static final double MAX_SHOOTING_SPEED_ROT = 0.05; // omega rad / s
 
-    public static final double NOTE_FEEDING_SPEED = 3500;
+    public static final double NOTE_FEEDING_SPEED = 3250;
   }
 
   public static class ArmConstants {
