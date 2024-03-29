@@ -203,12 +203,14 @@ public class ShooterCalculations {
     }
 
     var sourceCenter = SOURCE_CENTER;
+    var sourceYaw = new Rotation2d(SOURCE_YAW);
     if(isRed) {
       sourceCenter = GeometryUtil.flipFieldPosition(sourceCenter);
+      sourceYaw = GeometryUtil.flipFieldRotation(sourceYaw);
     }
 
     if(robotPos.getDistance(sourceCenter) < SOURCE_RADIUS) {
-      return new Rotation2d(SOURCE_YAW);
+      return sourceYaw;
     }
 
     switch(ScoringState.goalMode) {

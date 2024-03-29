@@ -270,8 +270,8 @@ public final class Constants {
     public static final Rotation2d STAGE_CENTER_SNAP = Rotation2d.fromDegrees(180);
     public static final Rotation2d STAGE_1_SNAP = Rotation2d.fromDegrees(59.85);
 
-    public static final Translation2d SOURCE_CENTER = new Translation2d(15.69, 0.85);
-    public static final double SOURCE_RADIUS = 1.6;
+    public static final Translation2d SOURCE_CENTER = new Translation2d(15.70, 0.54);
+    public static final double SOURCE_RADIUS = 2.2; // consider 1.9-1.6ish if you want it more sensitive (more towards 1.9)?
 
   }
 
