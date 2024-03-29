@@ -86,8 +86,6 @@ public class Climber extends SubsystemBase {
     leftMotor.setSpeed(leftMotorSpeed);
     rightMotor.setSpeed(rightMotorSpeed);
 
-    System.out.println("Left: " + leftMotorSpeed + " Right: " + rightMotorSpeed + " Proportion: " + proportion + " Speed: " + speed);
-
     Logger.recordOutput("Climber/Proportion", proportion);
   }
 
