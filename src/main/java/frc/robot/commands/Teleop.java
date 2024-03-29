@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -68,6 +69,7 @@ public class Teleop extends Command {
                           ScoringState.goalMode == GoalMode.STAGE || babyBirdMode;
     // i think the first condition should be removed tbh but i dont want to break anything
     var forcedAngle = shouldAlign ? calculatedForcedAngle : null;
+    if (DriverStation.isAutonomous()) forcedAngle = null;
     if(forcedAngle != null) headingController.setSetpoint(swerve.getGyroRotation().getRadians());
 
     if (SmartDashboard.getBoolean("Teleop/HeadingPID", true)) {

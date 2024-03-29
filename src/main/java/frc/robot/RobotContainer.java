@@ -258,7 +258,7 @@ public class RobotContainer {
       intake
     ));
     
-    Controllers.operatorController.getBabyBird().whileTrue(new BabyBirdIntake(arm, shooter, feeder));
+    Controllers.operatorController.getBabyBird().and(DriverStation::isTeleopEnabled).whileTrue(new BabyBirdIntake(arm, shooter, feeder));
 
     Controllers.operatorController.getFeederOverride().whileTrue(Commands.startEnd(
       feeder::run,
