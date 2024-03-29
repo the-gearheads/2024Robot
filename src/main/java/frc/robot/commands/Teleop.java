@@ -64,8 +64,8 @@ public class Teleop extends Command {
     double calculatedForcedAngle = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
     boolean shouldAlign = Controllers.driverController.getAlignBtn().getAsBoolean() || 
                           Controllers.driverController.getAutoShootBtn().getAsBoolean() ||
+                          Controllers.driverController.getAimAndFeedBtn().getAsBoolean() ||
                           ScoringState.goalMode == GoalMode.STAGE || babyBirdMode;
-
     // i think the first condition should be removed tbh but i dont want to break anything
     var forcedAngle = shouldAlign ? calculatedForcedAngle : null;
     if(forcedAngle != null) headingController.setSetpoint(swerve.getGyroRotation().getRadians());

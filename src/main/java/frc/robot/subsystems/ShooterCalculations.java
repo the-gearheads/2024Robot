@@ -40,6 +40,8 @@ public class ShooterCalculations {
   static Translation2d speakerBackPosition = new Translation2d(0.0, 5.55);  // 0.127 offset bc notes arc left in shooter
   static Translation2d ampPosition = new Translation2d(1.85, 8.15);
   static Translation2d stageCenter = new Translation2d(4.89, 4.09);
+
+  static Translation2d feedPosition = new Translation2d(1.95, 6.68);
   // Distance (m) -> Angle (rad)
   static PolynomialSplineFunction shooterAngleFunction = new SplineInterpolator().interpolate(SPLINE_DISTANCES, SPLINE_ANGLES);
   
@@ -57,6 +59,19 @@ public class ShooterCalculations {
 
 
     Logger.recordOutput("Calculations/YawToSpeaker", angle.getDegrees());
+
+    return angle;
+  }
+  
+  private static Rotation2d getYawFeed(Translation2d robotPos) {
+    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+    Translation2d targetAngle = feedPosition;
+    if(isRed) {
+      targetAngle = GeometryUtil.flipFieldPosition(feedPosition);
+    }
+
+    Rotation2d angle = targetAngle.minus(robotPos).getAngle();
+    Logger.recordOutput("Calculations/YawToFeed", angle.getDegrees());
 
     return angle;
   }
@@ -208,6 +223,9 @@ public class ShooterCalculations {
         return GeometryUtil.flipFieldRotation(yaw);
       }
       return yaw;
+    }
+    if(Controllers.driverController.getAimAndFeedBtn().getAsBoolean()) {
+      return getYawFeed(robotPos);
     }
     switch(ScoringState.goalMode) {
       default:
