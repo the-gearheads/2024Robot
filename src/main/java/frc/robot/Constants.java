@@ -101,7 +101,8 @@ public final class Constants {
     
     public static final double AMP_YAW = (270d / 360d) * 2 * Math.PI;
     public static final double BABY_BIRD_YAW = (300d / 360d) * 2 * Math.PI; // 60 degrees in -some- direction, idk which but i think it's this one
-    
+    public static final double SOURCE_YAW = (120d / 360d) * 2 * Math.PI;
+
     public static final double FACING_SPEAKER_TOLERANCE = (2.5 / 360.0) * (2 * Math.PI);
     public static final double FACING_AMP_TOLERANCE = (1 / 360.0) * (2 * Math.PI);
     public static final double FACING_STAGE_TOLERANCE = (1 / 360.0) * (2 * Math.PI);
@@ -262,23 +263,15 @@ public final class Constants {
 
     public static final double[] STAGE_X = {2.95, 5.98, 5.80};
     public static final double[] STAGE_Y = {4.09, 5.88, 2.50};
-
-    public static final double[] WING_X = {0, 0, 5.85, 5.85};
-    public static final double[] WING_Y = {0, 8.15, 8.15, 0};
-
-    public static final double[] SHOOTER_SPIN_X = {0, 0, 6.40, 6.40};
-    public static final double[] SHOOTER_SPIN_Y = {0, 8.15, 8.15, 0};
-    public static final Polygon SHOOTER_SPIN_ZONE = new Polygon(SHOOTER_SPIN_X, SHOOTER_SPIN_Y);
-
-    public static final double[] AMP_UP_X = {0.65, 3.25, 2.77, 0.95};
-    public static final double[] AMP_UP_Y = {8.4, 8.4, 7.52, 7.52};
-    public static final Polygon AMP_UP_ZONE = new Polygon(AMP_UP_X, AMP_UP_Y);
     
     public static final Pose2d AMP_SCORE_POSE = new Pose2d(new Translation2d(1.83, 7.75), Rotation2d.fromDegrees(-90));
 
     public static final Rotation2d STAGE_2_SNAP = Rotation2d.fromDegrees(-59.85);
     public static final Rotation2d STAGE_CENTER_SNAP = Rotation2d.fromDegrees(180);
     public static final Rotation2d STAGE_1_SNAP = Rotation2d.fromDegrees(59.85);
+
+    public static final Translation2d SOURCE_CENTER = new Translation2d(15.69, 0.85);
+    public static final double SOURCE_RADIUS = 1.6;
 
   }
 
