@@ -37,10 +37,12 @@ public class MechanismViz extends SubsystemBase {
 
   private final Color8Bit ARM_NOTED_COLOR = new Color8Bit(244, 119, 2);
 
+  private final double ARM_NOTE_PART_LENGTH = 0.3743237438;
+  private final double NOTE_HEIGHT_OFFSET = Units.inchesToMeters(2.5);
 
-  private final Translation3d ROBOT_ARM_TRANSLATION = new Translation3d(-0.202515, -0.1643, 0.196928);
+  private final Translation3d ROBOT_ARM_TRANSLATION = new Translation3d(-0.202515, -0.1843, 0.196928);
   private final double ROBOT_ARM_OFFSET = Units.degreesToRadians(90+19.5);
-  private final Translation3d NOTE_TRANSLATION = new Translation3d(0, 0, 0);
+  private final Translation3d NOTE_TRANSLATION = new Translation3d(0.202515, 0, 0.196928);
   /* 
     > 0.2316m + 4in
       (0.2316 meter) + (4 inches) = 333.2 mm
@@ -60,8 +62,6 @@ public class MechanismViz extends SubsystemBase {
     > sqrt( 0.1401182652)
       sqrt(0.1401182652) = approx. 0.3743237438
   */
-  private final double ARM_NOTE_PART_LENGTH = 0.3743237438;
-  private final double NOTE_HEIGHT_OFFSET = Units.inchesToMeters(2);
 
   Mechanism2d mech = new Mechanism2d(1, 1);
   // cad guesstimates cause ascope wants these in meters
@@ -138,8 +138,8 @@ public class MechanismViz extends SubsystemBase {
 
     if(noteSwitch.get()) {
       Logger.recordOutput("RobotNote", new Transform3d(
-        NOTE_TRANSLATION.plus(robotPose3d.getTranslation()).plus(new Translation3d(0, 0, Math.sin(armPos.getRadians() + 0.03) * ARM_NOTE_PART_LENGTH + NOTE_HEIGHT_OFFSET)),
-        new Rotation3d(0, armPos.getRadians(), Math.PI).plus(robotPose3d.getRotation())
+        NOTE_TRANSLATION.rotateBy(new Rotation3d(0, -armPos.getRadians()-0.17, 0)).plus(new Translation3d(0, 0, NOTE_HEIGHT_OFFSET)).rotateBy(robotPose3d.getRotation()).plus(robotPose3d.getTranslation()),
+        new Rotation3d(0, armPos.getRadians() + 0.17, Math.PI).plus(robotPose3d.getRotation())
       )); 
     } else {
       Logger.recordOutput("RobotNote", new Transform3d(new Translation3d(-100, -100, -100), new Rotation3d()));

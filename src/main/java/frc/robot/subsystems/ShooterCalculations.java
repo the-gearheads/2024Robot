@@ -19,19 +19,11 @@ import frc.robot.controllers.Controllers;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.shooter.Shooter;
 
+// Not the biggest fan of this but we legit need like 80 different constants from each subclass
 import static frc.robot.Constants.ArmConstants.*;
 import static frc.robot.Constants.FieldConstants.*;
-import static frc.robot.Constants.ShooterConstants.AMP_ANGLE_TOLERANCE;
-import static frc.robot.Constants.ShooterConstants.AMP_SPEED;
-import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
-import static frc.robot.Constants.ShooterConstants.SHOOTER_PIVOT_HEIGHT;
-import static frc.robot.Constants.SwerveConstants.AMP_YAW;
-import static frc.robot.Constants.SwerveConstants.BABY_BIRD_YAW;
-import static frc.robot.Constants.SwerveConstants.FACING_AMP_TOLERANCE;
-import static frc.robot.Constants.SwerveConstants.FACING_STAGE_TOLERANCE;
-import static frc.robot.Constants.SwerveConstants.SHOOT_YAW_TOLERANCE_DISTS;
-import static frc.robot.Constants.SwerveConstants.SHOOT_YAW_TOLERANCE_YAWS;
-import static frc.robot.Constants.SwerveConstants.yawToleranceInterpolationTable;
+import static frc.robot.Constants.SwerveConstants.*;
+import static frc.robot.Constants.ShooterConstants.*;
 
 public class ShooterCalculations {
   // not quite sure whether to have separate variables for red and blue but for now this is fine
@@ -227,6 +219,18 @@ public class ShooterCalculations {
     if(Controllers.driverController.getAimAndFeedBtn().getAsBoolean()) {
       return getYawFeed(robotPos);
     }
+
+    var sourceCenter = SOURCE_CENTER;
+    var sourceYaw = new Rotation2d(SOURCE_YAW);
+    if(isRed) {
+      sourceCenter = GeometryUtil.flipFieldPosition(sourceCenter);
+      sourceYaw = GeometryUtil.flipFieldRotation(sourceYaw);
+    }
+
+    if(robotPos.getDistance(sourceCenter) < SOURCE_RADIUS) {
+      return sourceYaw;
+    }
+
     switch(ScoringState.goalMode) {
       default:
       case SPEAKER:
