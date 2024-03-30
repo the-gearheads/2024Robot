@@ -62,10 +62,12 @@ public class Teleop extends Command {
     var speeds = new ChassisSpeeds(x, y, rot);
 
     double calculatedForcedAngle = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
+    /* I don't like this anymore */
     boolean shouldAlign = Controllers.driverController.getAlignBtn().getAsBoolean() || 
                           Controllers.driverController.getAutoShootBtn().getAsBoolean() ||
                           Controllers.driverController.getAimAndFeedBtn().getAsBoolean() ||
-                          ScoringState.goalMode == GoalMode.STAGE || ScoringState.babyBirdMode;
+                          ScoringState.goalMode == GoalMode.STAGE || 
+                          (ScoringState.babyBirdMode && ShooterCalculations.isInSource(swerve.getPose().getTranslation()));
     // i think the first condition should be removed tbh but i dont want to break anything
     var forcedAngle = shouldAlign ? calculatedForcedAngle : null;
     if (DriverStation.isAutonomous()) forcedAngle = null;
