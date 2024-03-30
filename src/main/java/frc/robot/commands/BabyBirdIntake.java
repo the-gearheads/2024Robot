@@ -38,6 +38,7 @@ public class BabyBirdIntake extends Command {
   @Override
   public void execute() {
     ScoringState.babyBirdMode = true;
+    ScoringState.feedBabyBirdMode();
   }
 
   @Override
@@ -49,7 +50,7 @@ public class BabyBirdIntake extends Command {
   public void end(boolean interrupted) {
     ScoringState.babyBirdMode = false;
     if(stopAtEnd) {
-      feeder.stop();     
+      feeder.stop();
     }
   }
 }

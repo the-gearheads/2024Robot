@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.ScoringState;
 import frc.robot.controllers.Controllers;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.ScoringState.GoalMode;
 import frc.robot.subsystems.shooter.Shooter;
 
 // Not the biggest fan of this but we legit need like 80 different constants from each subclass
@@ -209,7 +210,7 @@ public class ShooterCalculations {
 
   public static Rotation2d getYaw(Translation2d robotPos) {
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-    if(ScoringState.babyBirdMode && DriverStation.isTeleopEnabled()) { // Baby Bird mode (feed directly from source)
+    if(ScoringState.babyBirdMode && DriverStation.isTeleopEnabled() && ScoringState.goalMode != GoalMode.STAGE) { // Baby Bird mode (feed directly from source)
       var yaw = new Rotation2d(BABY_BIRD_YAW);
       if(isRed) {
         return GeometryUtil.flipFieldRotation(yaw);

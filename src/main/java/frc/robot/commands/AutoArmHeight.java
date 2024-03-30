@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.ScoringState;
 import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.swerve.Swerve;
@@ -18,6 +19,7 @@ public class AutoArmHeight extends Command {
 
   @Override
   public void execute() {
+    ScoringState.babyBirdMode = false; // If this command is running we never want this
     arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
   }
 }
