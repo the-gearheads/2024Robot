@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -24,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.LedSetStateDisabled;
 import frc.robot.subsystems.leds.LedState;
+import frc.robot.util.TriConsumer;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -61,6 +66,38 @@ public class Robot extends LoggedRobot {
 
     Logger.registerURCL(URCL.startExternal());
     Logger.start();
+
+    /* Log all commands running, both uniquely and by name. */
+    Map<String, Integer> commandCounts = new HashMap<>();
+    TriConsumer<Command, Boolean, String> logCommandFunction = (Command command, Boolean active, String reason) -> {
+      String name = command.getName();
+      int count = commandCounts.getOrDefault(name, 0) + (active ? 1 : -1);
+      commandCounts.put(name, count);
+      final boolean[] isDefault = {false}; // I hate copilot for suggesting this as a workaround but it does in fact work
+      String reqs = command.getRequirements()
+        .stream()
+        .map(subsystem -> {
+          if(subsystem.getDefaultCommand() == command) {
+            isDefault[0] = true;
+          }
+          return subsystem.getName();
+        })
+        .collect(Collectors.joining("_"));
+      Logger.recordOutput("RunningCommands/Unique/" + name + (isDefault[0] ? "_DEFAULT_" : "_") + reqs + "_" + Integer.toHexString(command.hashCode()), reason);
+      Logger.recordOutput("RunningCommands/All/" + name, count > 0);
+    };
+
+    CommandScheduler.getInstance().onCommandInitialize((Command command) -> {
+      logCommandFunction.accept(command, true, "RUNNING");
+    });
+
+    CommandScheduler.getInstance().onCommandFinish((Command command) -> {
+      logCommandFunction.accept(command, false, "FINISHED");
+    });
+
+    CommandScheduler.getInstance().onCommandInterrupt((Command command) -> {
+        logCommandFunction.accept(command, false, "INTERRUPTED");
+    });
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
