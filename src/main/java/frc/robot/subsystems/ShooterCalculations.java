@@ -209,7 +209,7 @@ public class ShooterCalculations {
 
   public static Rotation2d getYaw(Translation2d robotPos) {
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-    if(Controllers.operatorController.getBabyBird().getAsBoolean() && DriverStation.isTeleopEnabled()) { // Baby Bird mode (feed directly from source)
+    if(ScoringState.babyBirdMode && DriverStation.isTeleopEnabled()) { // Baby Bird mode (feed directly from source)
       var yaw = new Rotation2d(BABY_BIRD_YAW);
       if(isRed) {
         return GeometryUtil.flipFieldRotation(yaw);

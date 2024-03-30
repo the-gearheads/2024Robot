@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.ScoringState;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -31,6 +32,12 @@ public class BabyBirdIntake extends Command {
     feeder.runAtSpeed(-FeederConstants.SPEED);
     shooter.setSpeed(-ShooterConstants.DEFAULT_SPEED);
     arm.setAngle(ArmConstants.BABY_BIRD_ANGLE);
+    ScoringState.babyBirdMode = true;
+  }
+
+  @Override
+  public void execute() {
+    ScoringState.babyBirdMode = true;
   }
 
   @Override
@@ -40,6 +47,7 @@ public class BabyBirdIntake extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    ScoringState.babyBirdMode = false;
     if(stopAtEnd) {
       feeder.stop();     
     }
