@@ -11,12 +11,14 @@ import com.revrobotics.REVLibError;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class SteerMotor {
 
@@ -73,6 +75,9 @@ public class SteerMotor {
   }
 
   public void periodic() {
+    if(max.getFault(FaultID.kSensorFault)) {
+      DriverStation.reportError("Steer (" + modulePath + "):" + "you have a sensor fault fix your robot", false);
+    }
   }
 
   /* meant for sysid and stuff */
