@@ -109,7 +109,6 @@ public class DriverController {
   }
 
   public Command getRumbleCommand(double rumble, double seconds) {
-    // return new InstantCommand(() -> {setRumble(rumble);}).withTimeout(seconds).finallyDo(() -> {setRumble(0);});
-    return Commands.runEnd(()->{setRumble(rumble);}, ()->{setRumble(0);}).withTimeout(1);
+    return Commands.runEnd(()->{setRumble(rumble);}, ()->{setRumble(0);}).withTimeout(seconds);
   }
 }
