@@ -134,7 +134,7 @@ public final class Constants {
     public static final double MAX_SHOOTING_SPEED_VY = 0.3;
     public static final double MAX_SHOOTING_SPEED_ROT = 0.05; // omega rad / s
 
-    public static final double NOTE_FEEDING_SPEED = 3500;
+    public static final double NOTE_FEEDING_SPEED = 3250;
   }
 
   public static class ArmConstants {
@@ -283,7 +283,7 @@ public final class Constants {
     public static final double[] PID = {0.00074427, 0, 0};
     public static final double SPEED = 6000;
     public static final double GEAR_RATIO = 1d / 64d;
-    public static final double MAX_DIST = 2.734375 / GEAR_RATIO;
+    public static final double MAX_DIST = 3.0625 / GEAR_RATIO; // was 2.734375 (aka 175 rotations), now is at 196 rotations
     public static final double MIN_DIST = 10;
     public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.19684, 0.0016759, 3.5906e-05);
   }

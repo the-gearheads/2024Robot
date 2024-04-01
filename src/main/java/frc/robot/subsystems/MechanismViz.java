@@ -37,31 +37,13 @@ public class MechanismViz extends SubsystemBase {
 
   private final Color8Bit ARM_NOTED_COLOR = new Color8Bit(244, 119, 2);
 
+  @SuppressWarnings("unused")
   private final double ARM_NOTE_PART_LENGTH = 0.3743237438;
   private final double NOTE_HEIGHT_OFFSET = Units.inchesToMeters(2.5);
 
   private final Translation3d ROBOT_ARM_TRANSLATION = new Translation3d(-0.202515, -0.1843, 0.196928);
   private final double ROBOT_ARM_OFFSET = Units.degreesToRadians(90+19.5);
   private final Translation3d NOTE_TRANSLATION = new Translation3d(0.202515, 0, 0.196928);
-  /* 
-    > 0.2316m + 4in
-      (0.2316 meter) + (4 inches) = 333.2 mm
-
-    > 332.2mm to in
-      332.2 millimeters = approx. 13.07874016 in
-
-    > 332.2mm to m
-      332.2 millimeters = 0.3322 m
-
-    > -0.202515 + 0.03
-      (-0.202515) + 0.03 = -0.172515
-
-    > 0.3322^2 + 0.172515^2
-      0.3322^2 + 0.172515^2 = approx. 0.1401182652
-
-    > sqrt( 0.1401182652)
-      sqrt(0.1401182652) = approx. 0.3743237438
-  */
 
   Mechanism2d mech = new Mechanism2d(1, 1);
   // cad guesstimates cause ascope wants these in meters

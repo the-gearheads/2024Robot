@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.ScoringState;
 import frc.robot.controllers.Controllers;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.ScoringState.GoalMode;
 import frc.robot.subsystems.shooter.Shooter;
 
 // Not the biggest fan of this but we legit need like 80 different constants from each subclass
@@ -207,28 +208,32 @@ public class ShooterCalculations {
     return getShooterAngle(robotPos, false);
   }
 
+  public static boolean isInSource(Translation2d robotPos) {
+    var sourceCenter = SOURCE_CENTER;
+    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+    if(isRed) {
+      sourceCenter = GeometryUtil.flipFieldPosition(sourceCenter);
+    }
+    return robotPos.getDistance(sourceCenter) < SOURCE_RADIUS;
+  }
+
   public static Rotation2d getYaw(Translation2d robotPos) {
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-    if(Controllers.operatorController.getBabyBird().getAsBoolean()) { // Baby Bird mode (feed directly from source)
-      var yaw = new Rotation2d(BABY_BIRD_YAW);
-      if(isRed) {
-        return GeometryUtil.flipFieldRotation(yaw);
-      }
-      return yaw;
-    }
+
     if(Controllers.driverController.getAimAndFeedBtn().getAsBoolean()) {
       return getYawFeed(robotPos);
     }
 
-    var sourceCenter = SOURCE_CENTER;
     var sourceYaw = new Rotation2d(SOURCE_YAW);
+    var sourceBabyBirdYaw = new Rotation2d(BABY_BIRD_YAW);
     if(isRed) {
-      sourceCenter = GeometryUtil.flipFieldPosition(sourceCenter);
       sourceYaw = GeometryUtil.flipFieldRotation(sourceYaw);
+      sourceBabyBirdYaw = GeometryUtil.flipFieldRotation(sourceBabyBirdYaw);
     }
 
-    if(robotPos.getDistance(sourceCenter) < SOURCE_RADIUS) {
-      return sourceYaw;
+    // Baby Bird mode (feed directly from source)
+    if(isInSource(robotPos) && DriverStation.isTeleopEnabled() && ScoringState.goalMode != GoalMode.STAGE) {
+        return ScoringState.babyBirdMode ? sourceBabyBirdYaw : sourceYaw;
     }
 
     switch(ScoringState.goalMode) {

@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -60,14 +61,16 @@ public class Teleop extends Command {
 
     var speeds = new ChassisSpeeds(x, y, rot);
 
-    boolean babyBirdMode = Controllers.operatorController.getBabyBird().getAsBoolean();
     double calculatedForcedAngle = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
+    /* I don't like this anymore */
     boolean shouldAlign = Controllers.driverController.getAlignBtn().getAsBoolean() || 
                           Controllers.driverController.getAutoShootBtn().getAsBoolean() ||
                           Controllers.driverController.getAimAndFeedBtn().getAsBoolean() ||
-                          ScoringState.goalMode == GoalMode.STAGE || babyBirdMode;
+                          ScoringState.goalMode == GoalMode.STAGE || 
+                          (ScoringState.babyBirdMode && ShooterCalculations.isInSource(swerve.getPose().getTranslation()));
     // i think the first condition should be removed tbh but i dont want to break anything
     var forcedAngle = shouldAlign ? calculatedForcedAngle : null;
+    if (DriverStation.isAutonomous()) forcedAngle = null;
     if(forcedAngle != null) headingController.setSetpoint(swerve.getGyroRotation().getRadians());
 
     if (SmartDashboard.getBoolean("Teleop/HeadingPID", true)) {
