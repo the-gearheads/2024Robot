@@ -68,6 +68,14 @@ public class Climber extends SubsystemBase {
     setSpeed(0);
   }
 
+  public double getLeftCurrent() {
+    return leftMotor.getMotorCurrent();
+  }
+
+  public double getRightCurrent() {
+    return rightMotor.getMotorCurrent();
+  }
+
   /**
    * @param proportion -1 to 1 (-1 only left moves, 1 only right moves)
    */

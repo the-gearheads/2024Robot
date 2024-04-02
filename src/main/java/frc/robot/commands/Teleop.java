@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -20,6 +21,8 @@ import org.littletonrobotics.junction.Logger;
 public class Teleop extends Command {
 
   Swerve swerve;
+
+  PIDController noteTransController = new PIDController(0.5, 0, 0);
   
   public Teleop(Swerve swerve) {
     addRequirements(swerve);
@@ -75,6 +78,14 @@ public class Teleop extends Command {
 
     if (SmartDashboard.getBoolean("Teleop/HeadingPID", true)) {
       headingPid(attemptingToRotate, speeds);
+    }
+
+    if(Controllers.driverController.getNoteAlign().getAsBoolean()) {
+      var noteYaw = swerve.noteCamera.getNoteYaw();
+      if(noteYaw.isPresent()) {
+        var out = -noteTransController.calculate(noteYaw.get(), -20);
+        speeds.vyMetersPerSecond = out;
+      }
     }
 
     Logger.recordOutput("Swerve/Teleop/Speeds", speeds);

@@ -57,6 +57,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.leds.LedState;
+import frc.robot.subsystems.vision.NoteCamera;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.HandledSleep;
 public class Swerve extends SubsystemBase {
@@ -66,6 +67,7 @@ public class Swerve extends SubsystemBase {
   SwerveDrivePoseEstimator multitagPoseEstimator;
   SwerveDriveOdometry wheelOdometry; 
   Vision vision;
+  public final NoteCamera noteCamera = new NoteCamera("Microsoft_LifeCam_HD-3000");
   Field2d field = new Field2d();
   /* Want to put vision and path states on this field */
   Field2d vpField = new Field2d();
@@ -305,6 +307,7 @@ public class Swerve extends SubsystemBase {
       module.periodic();
     }
 
+    noteCamera.getNoteYaw();
 
     double[] timestamps;
     // indexed by module then time

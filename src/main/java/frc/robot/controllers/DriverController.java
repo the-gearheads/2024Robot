@@ -82,6 +82,12 @@ public class DriverController {
     return new Trigger(() -> controller.getStartButton());
   }
 
+
+  public Trigger getNoteAlign() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getLeftBumper());
+  }
+
   public Trigger getDisableVisionBtn() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getRawButton(7));
