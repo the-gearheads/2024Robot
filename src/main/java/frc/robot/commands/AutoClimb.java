@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.subsystems.climber.Climber;
@@ -10,28 +9,24 @@ import frc.robot.subsystems.climber.Climber;
 public class AutoClimb extends Command {
   Climber climber;
   public AutoClimb(Climber climber) {
+    this.climber = climber;
     addRequirements(climber);
   }
 
   @Override
   public void initialize() {
-
+    leftCurrentSpike = false;
+    rightCurrentSpike = false;
   }
 
   boolean leftCurrentSpike, rightCurrentSpike;
 
-  LinearFilter leftFilter = LinearFilter.movingAverage(5);
-  LinearFilter rightFilter = LinearFilter.movingAverage(5);
-
-  public final double MAX_CURRENT = 22;
+  public final double MAX_CURRENT = 28;
 
   @Override
   public void execute() {
-    double leftVal = leftFilter.calculate(climber.getLeftCurrent());
-    double rightVal = rightFilter.calculate(climber.getRightCurrent());
-
-    Logger.recordOutput("AutoClimb/LeftCurrentFiltered", leftVal);
-    Logger.recordOutput("AutoClimb/RightCurrentFiltered", rightVal);
+    double leftVal = climber.leftFilter.lastValue();
+    double rightVal = climber.rightFilter.lastValue();
     
     leftCurrentSpike = leftVal > MAX_CURRENT ? true : leftCurrentSpike;
     rightCurrentSpike = rightVal > MAX_CURRENT ? true : rightCurrentSpike;

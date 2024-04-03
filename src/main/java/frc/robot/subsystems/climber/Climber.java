@@ -1,6 +1,7 @@
 package frc.robot.subsystems.climber;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -18,10 +19,16 @@ public class Climber extends SubsystemBase {
   public FlywheelMotor leftMotor = new FlywheelMotor("Climber/Left", LEFT_ID, PID, FEEDFORWARD, true, true, GEAR_RATIO);
   public FlywheelMotor rightMotor = new FlywheelMotor("Climber/Right", RIGHT_ID, PID, FEEDFORWARD, false, true, GEAR_RATIO);
 
+  public LinearFilter leftFilter = LinearFilter.movingAverage(10);
+  public LinearFilter rightFilter = LinearFilter.movingAverage(10);
+
+
   public Climber() {
     this.setDefaultCommand(Commands.run(this::stop, this));
     leftMotor.setPosition(0);
     rightMotor.setPosition(0);
+    leftFilter.calculate(0); // lastValue no work if its never been called before.
+    rightFilter.calculate(0);
   }
 
   @Override
@@ -49,6 +56,12 @@ public class Climber extends SubsystemBase {
     rightMotor.periodic();
     leftMotor.log();
     rightMotor.log();
+
+
+    leftFilter.calculate(getLeftCurrent());
+    rightFilter.calculate(getRightCurrent());
+    Logger.recordOutput("Climber/Left/FilteredCurrent", leftFilter.lastValue());
+    Logger.recordOutput("Climber/Right/FilteredCurrent", rightFilter.lastValue()); 
   }
 
   public void setSpeed(double speed) {

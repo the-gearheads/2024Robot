@@ -26,6 +26,7 @@ public class NoteCamera {
     var best = numTargets > 0 ? res.getTargets().get(0) : null;
 
     if(best != null) {
+      Logger.recordOutput(path + "/Note", best.getBestCameraToTarget());
       Logger.recordOutput(path + "/Yaw", best.getYaw());
       Logger.recordOutput(path + "/Pitch", best.getPitch());
       Logger.recordOutput(path + "/Area", best.getArea());
