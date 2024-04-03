@@ -41,7 +41,7 @@ public class Shooter extends SubsystemBase {
     bottomMotor.setSpeed(speed);
   }
 
-  Debouncer speedDebouncer = new Debouncer(0.4);
+  Debouncer speedDebouncer = new Debouncer(0.2);
   public boolean atSpeed(double overrideTopSetpoint, double overrideBottomSetpoint) {
     double tolerance = SPEED_TOLERANCE;
     overrideTopSetpoint = Math.signum(topMotor.getVelocitySetpoint()) * Math.abs(overrideTopSetpoint);
