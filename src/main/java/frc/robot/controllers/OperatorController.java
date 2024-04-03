@@ -68,6 +68,10 @@ public interface OperatorController {
     return new Trigger(()->false);
   }
 
+  public default Trigger getAutoClimb() {
+    return new Trigger(()->false);
+  }
+
   // public default Trigger getResetPoseBtn() {
   //   return new Trigger(()->false);
   // }
