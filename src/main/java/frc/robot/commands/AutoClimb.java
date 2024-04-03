@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.subsystems.climber.Climber;
@@ -20,17 +21,18 @@ public class AutoClimb extends Command {
   }
 
   boolean leftCurrentSpike, rightCurrentSpike;
+  Debouncer leftDebouncer = new Debouncer(0.1);
+  Debouncer rightDebouncer = new Debouncer(0.1);
 
   public final double MAX_CURRENT = 28;
 
   @Override
   public void execute() {
-    double leftVal = climber.leftFilter.lastValue();
-    double rightVal = climber.rightFilter.lastValue();
+    double leftCur = climber.getFilteredLeftCurrent();
+    double rightCur = climber.getFilteredRightCurrent();
     
-    leftCurrentSpike = leftVal > MAX_CURRENT ? true : leftCurrentSpike;
-    rightCurrentSpike = rightVal > MAX_CURRENT ? true : rightCurrentSpike;
-
+    leftCurrentSpike = leftDebouncer.calculate(leftCur > MAX_CURRENT) ? true : leftCurrentSpike;
+    rightCurrentSpike = rightDebouncer.calculate(rightCur > MAX_CURRENT) ? true : rightCurrentSpike;
 
     if(leftCurrentSpike && rightCurrentSpike) {
       climber.down(); // both move down equally now

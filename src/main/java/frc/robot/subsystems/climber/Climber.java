@@ -19,9 +19,11 @@ public class Climber extends SubsystemBase {
   public FlywheelMotor leftMotor = new FlywheelMotor("Climber/Left", LEFT_ID, PID, FEEDFORWARD, true, true, GEAR_RATIO);
   public FlywheelMotor rightMotor = new FlywheelMotor("Climber/Right", RIGHT_ID, PID, FEEDFORWARD, false, true, GEAR_RATIO);
 
-  public LinearFilter leftFilter = LinearFilter.movingAverage(10);
-  public LinearFilter rightFilter = LinearFilter.movingAverage(10);
+  LinearFilter leftFilter = LinearFilter.movingAverage(10);
+  LinearFilter rightFilter = LinearFilter.movingAverage(10);
 
+  double lastFilteredLeftCurrent = 0;
+  double lastFilteredRightCurrent = 0;
 
   public Climber() {
     this.setDefaultCommand(Commands.run(this::stop, this));
@@ -58,10 +60,10 @@ public class Climber extends SubsystemBase {
     rightMotor.log();
 
 
-    leftFilter.calculate(getLeftCurrent());
-    rightFilter.calculate(getRightCurrent());
-    Logger.recordOutput("Climber/Left/FilteredCurrent", leftFilter.lastValue());
-    Logger.recordOutput("Climber/Right/FilteredCurrent", rightFilter.lastValue()); 
+    lastFilteredLeftCurrent = leftFilter.calculate(getLeftCurrent());
+    lastFilteredRightCurrent = rightFilter.calculate(getRightCurrent());
+    Logger.recordOutput("Climber/Left/FilteredCurrent", lastFilteredLeftCurrent);
+    Logger.recordOutput("Climber/Right/FilteredCurrent", lastFilteredRightCurrent); 
   }
 
   public void setSpeed(double speed) {
@@ -87,6 +89,14 @@ public class Climber extends SubsystemBase {
 
   public double getRightCurrent() {
     return rightMotor.getMotorCurrent();
+  }
+
+  public double getFilteredLeftCurrent() {
+    return lastFilteredLeftCurrent;
+  }
+
+  public double getFilteredRightCurrent() {
+    return lastFilteredRightCurrent;
   }
 
   /**
