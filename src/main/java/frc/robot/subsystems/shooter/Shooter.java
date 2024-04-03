@@ -42,14 +42,20 @@ public class Shooter extends SubsystemBase {
   }
 
   Debouncer speedDebouncer = new Debouncer(0.4);
-  public boolean atSpeed() {
+  public boolean atSpeed(double overrideTopSetpoint, double overrideBottomSetpoint) {
     double tolerance = SPEED_TOLERANCE;
+    overrideTopSetpoint = Math.signum(topMotor.getVelocitySetpoint()) * Math.abs(overrideTopSetpoint);
+    overrideBottomSetpoint = Math.signum(bottomMotor.getVelocitySetpoint()) * Math.abs(overrideBottomSetpoint);
     if(Robot.isSimulation()) {
       tolerance = 3000; // sim setpoint 4k rpm turns out to be like 6661 rpm
     }
-    boolean speedWithinTolerance = ((Math.abs(topMotor.getVelocity() - topMotor.getVelocitySetpoint()) < tolerance) || topMotor.getVelocity() > topMotor.getVelocitySetpoint()) &&
-                             ((Math.abs(bottomMotor.getVelocity() - bottomMotor.getVelocitySetpoint()) < tolerance) || topMotor.getVelocity() > topMotor.getVelocitySetpoint());
+    boolean speedWithinTolerance = ((Math.abs(topMotor.getVelocity() - overrideTopSetpoint) < tolerance) || topMotor.getVelocity() > overrideTopSetpoint) &&
+                             ((Math.abs(bottomMotor.getVelocity() - overrideBottomSetpoint) < tolerance) || topMotor.getVelocity() > overrideBottomSetpoint);
     return speedDebouncer.calculate(speedWithinTolerance);
+  }
+
+  public boolean atSpeed() {
+    return atSpeed(topMotor.getVelocitySetpoint(), bottomMotor.getVelocitySetpoint());
   }
   
   public SysIdRoutine getSysIdRoutine() {
