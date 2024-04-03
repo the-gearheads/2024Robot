@@ -22,18 +22,19 @@ public class Teleop extends Command {
 
   Swerve swerve;
 
-  PIDController noteTransController = new PIDController(0.5, 0, 0);
+  PIDController noteTransController = new PIDController(0.1, 0, 0.25);
   
   public Teleop(Swerve swerve) {
     addRequirements(swerve);
     this.swerve = swerve;
+    SmartDashboard.putData("Teleop/Headingcontroller", headingController);
+    SmartDashboard.putData("Teleop/NoteController", noteTransController);
   }
 
   @Override
   public void initialize() {
     headingController.setSetpoint(swerve.getGyroRotation().getRadians());
     SmartDashboard.putBoolean("Teleop/HeadingPID", true);
-    SmartDashboard.putData("Swerve/headingcontroller", headingController);
     SmartDashboard.putBoolean("Swerve/FieldRelative", true);
   }
 
@@ -83,7 +84,8 @@ public class Teleop extends Command {
     if(Controllers.driverController.getNoteAlign().getAsBoolean()) {
       var noteYaw = swerve.noteCamera.getNoteYaw();
       if(noteYaw.isPresent()) {
-        var out = -noteTransController.calculate(noteYaw.get(), -20);
+        var out = noteTransController.calculate(noteYaw.get(), -20);
+        out = out > 0.08 || out < -0.08 ? out : 0;
         speeds.vyMetersPerSecond = out;
       }
     }

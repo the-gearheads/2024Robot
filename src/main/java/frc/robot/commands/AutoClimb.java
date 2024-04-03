@@ -38,7 +38,7 @@ public class AutoClimb extends Command {
 
 
     if(leftCurrentSpike && rightCurrentSpike) {
-      climber.up();
+      climber.down(); // both move down equally now
     }
 
     if(!leftCurrentSpike) {
