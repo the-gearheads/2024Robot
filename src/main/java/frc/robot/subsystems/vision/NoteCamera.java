@@ -1,6 +1,5 @@
 package frc.robot.subsystems.vision;
 
-import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
@@ -10,6 +9,8 @@ public class NoteCamera {
 
   PhotonCamera camera;
   String path;
+
+  private final double MIN_AREA = 10;
 
   public NoteCamera(String name) {
     // This is a constructor
@@ -31,6 +32,11 @@ public class NoteCamera {
       Logger.recordOutput(path + "/Pitch", best.getPitch());
       Logger.recordOutput(path + "/Area", best.getArea());
       Logger.recordOutput(path + "/Skew", best.getSkew());
+
+
+      if(best.getArea() < MIN_AREA) {
+        return null;
+      }
     } else {
       Logger.recordOutput(path + "/Yaw", 0d);
       Logger.recordOutput(path + "/Pitch", 0d);
@@ -39,15 +45,5 @@ public class NoteCamera {
     }
 
     return best;
-  }
-
-  public Optional<Double> getNoteYaw() {
-    // This is a method
-    var res = getTarget();
-    if(res != null) {
-      return Optional.of(res.getYaw());
-    } else {
-      return Optional.empty();
-    }
   }
 }

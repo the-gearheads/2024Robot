@@ -15,6 +15,8 @@ import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.util.BetterBangBang;
 
 import static frc.robot.Constants.Controllers.*;
+import static frc.robot.Constants.SwerveConstants.NOTE_AREA_TO_YAW_AREAS;
+import static frc.robot.Constants.SwerveConstants.noteAreaToYawInterpolationTable;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -82,9 +84,14 @@ public class Teleop extends Command {
     }
 
     if(Controllers.driverController.getNoteAlign().getAsBoolean()) {
-      var noteYaw = swerve.noteCamera.getNoteYaw();
-      if(noteYaw.isPresent()) {
-        var out = noteTransController.calculate(noteYaw.get(), -20);
+      var target = swerve.noteCamera.getTarget();
+      if(target != null) {
+        var yaw = target.getYaw();
+        var area = target.getArea();
+        area = Math.min(area, NOTE_AREA_TO_YAW_AREAS[NOTE_AREA_TO_YAW_AREAS.length-1]);
+        area = Math.max(area, NOTE_AREA_TO_YAW_AREAS[0]);
+        var targetYaw = noteAreaToYawInterpolationTable.value(area);
+        var out = noteTransController.calculate(yaw, targetYaw);
         out = out > 0.08 || out < -0.08 ? out : 0;
         speeds.vyMetersPerSecond = out;
       }

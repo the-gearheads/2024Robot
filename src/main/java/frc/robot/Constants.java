@@ -27,6 +27,7 @@ import frc.robot.util.Polygon;
 import static edu.wpi.first.units.Units.*;
 
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
+import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 
@@ -111,6 +112,11 @@ public final class Constants {
     public static final PolynomialSplineFunction yawToleranceInterpolationTable = new LinearInterpolator().interpolate(SHOOT_YAW_TOLERANCE_DISTS, SHOOT_YAW_TOLERANCE_YAWS);
 
     public static final double NOTE_FEEDING_YAW_TOLERANCE = 6;
+
+
+    public static final double[] NOTE_AREA_TO_YAW_AREAS = {1, 2, 3};
+    public static final double[] NOTE_AREA_TO_YAW_YAWS_RAD = {4, 5, 6};
+    public static final PolynomialSplineFunction noteAreaToYawInterpolationTable = new SplineInterpolator().interpolate(NOTE_AREA_TO_YAW_AREAS, NOTE_AREA_TO_YAW_YAWS_RAD);
   }
 
   public static class ShooterConstants {

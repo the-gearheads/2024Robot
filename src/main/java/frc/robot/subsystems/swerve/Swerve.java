@@ -307,7 +307,7 @@ public class Swerve extends SubsystemBase {
       module.periodic();
     }
 
-    noteCamera.getNoteYaw();
+    noteCamera.getTarget();
 
     double[] timestamps;
     // indexed by module then time
