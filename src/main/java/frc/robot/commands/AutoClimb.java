@@ -21,10 +21,10 @@ public class AutoClimb extends Command {
   }
 
   boolean leftCurrentSpike, rightCurrentSpike;
-  Debouncer leftDebouncer = new Debouncer(0.1);
-  Debouncer rightDebouncer = new Debouncer(0.1);
+  Debouncer leftDebouncer = new Debouncer(0.4);
+  Debouncer rightDebouncer = new Debouncer(0.4);
 
-  public final double MAX_CURRENT = 28;
+  public final double MAX_CURRENT = 20;
 
   @Override
   public void execute() {

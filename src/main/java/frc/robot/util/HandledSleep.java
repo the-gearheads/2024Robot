@@ -7,7 +7,7 @@ public class HandledSleep {
         if(Robot.isSimulation()) return;
         if(Robot.isReal()) return;  // TODO: AGHHHHHHHHHHHHHHHhh
         try {
-            Thread.sleep(delayMs/2);
+            Thread.sleep(delayMs);
         } catch(InterruptedException e) {
             e.printStackTrace();
         }
