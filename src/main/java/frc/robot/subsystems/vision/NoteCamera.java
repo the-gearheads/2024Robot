@@ -19,6 +19,7 @@ public class NoteCamera {
   }
 
   public PhotonTrackedTarget getTarget() {
+    if(1==1) return null;
     var res = camera.getLatestResult();
     int numTargets = res.getTargets().size();
     Logger.recordOutput(path + "/Valid", numTargets > 0);
