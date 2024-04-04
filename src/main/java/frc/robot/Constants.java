@@ -114,9 +114,9 @@ public final class Constants {
     public static final double NOTE_FEEDING_YAW_TOLERANCE = 6;
 
 
-    public static final double[] NOTE_AREA_TO_YAW_AREAS = {1, 2, 3};
-    public static final double[] NOTE_AREA_TO_YAW_YAWS_RAD = {4, 5, 6};
-    public static final PolynomialSplineFunction noteAreaToYawInterpolationTable = new SplineInterpolator().interpolate(NOTE_AREA_TO_YAW_AREAS, NOTE_AREA_TO_YAW_YAWS_RAD);
+    public static final double[] NOTE_CORNER_TO_YAW_CORNERS = {1, 2, 3};
+    public static final double[] NOTE_CORNER_TO_YAW_YAWS_RAD = {4, 5, 6};
+    public static final PolynomialSplineFunction noteAreaToYawInterpolationTable = new SplineInterpolator().interpolate(NOTE_CORNER_TO_YAW_CORNERS, NOTE_CORNER_TO_YAW_YAWS_RAD);
   }
 
   public static class ShooterConstants {

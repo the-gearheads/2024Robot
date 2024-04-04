@@ -32,7 +32,7 @@ public class NoteCamera {
       Logger.recordOutput(path + "/Pitch", best.getPitch());
       Logger.recordOutput(path + "/Area", best.getArea());
       Logger.recordOutput(path + "/Skew", best.getSkew());
-
+      Logger.recordOutput(path + "C3Y", best.getDetectedCorners().get(3).y);
 
       if(best.getArea() < MIN_AREA) {
         return null;
