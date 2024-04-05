@@ -3,16 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.288745946861262,
-        "y": 2.4406016379600333
+        "x": 1.2303755661642377,
+        "y": 3.2392807805558634
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.63307491857149,
-        "y": 3.88245927489006
+        "x": 2.77400395256631,
+        "y": 2.9703152283797456
       },
       "isLocked": false,
-      "linkedName": "C2"
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.65,
+        "y": 3.473163869404662
+      },
+      "prevControl": {
+        "x": 4.56320958225962,
+        "y": 2.8416795295129056
+      },
+      "nextControl": {
+        "x": 4.720290819669554,
+        "y": 3.9845976545519655
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,15 +36,21 @@
         "y": 5.0
       },
       "prevControl": {
-        "x": 4.821982256577126,
-        "y": 4.261808163255966
+        "x": 4.66845697224158,
+        "y": 3.88245927489006
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "C3Shoot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.85,
+      "rotationDegrees": 172.53,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -39,13 +61,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 172.87780002162464,
+    "rotation": 172.53,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 146.35543238862726,
+    "rotation": 120.09424147644499,
     "velocity": 0
   },
   "useDefaultConstraints": true
