@@ -31,6 +31,7 @@ import frc.robot.commands.AutoClimb;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.AutonAutoArmHeight;
 import frc.robot.commands.BabyBirdIntake;
+import frc.robot.commands.EndIfNoNote;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.ShootFeederNote;
@@ -119,6 +120,7 @@ public class RobotContainer {
       new WaitUntilCommand(feeder.getBeamBreakSwitch()),
       feeder.getRunFeederCommand()
     ));
+    NamedCommands.registerCommand("EndIfNoNote", new EndIfNoNote(feeder));
     NamedCommands.registerCommand("WaitForShot", new WaitUntilCommand(feeder.getBeamBreakSwitch()::getAsBoolean).withTimeout(5));
     NamedCommands.registerCommand("AlignToSpeakerYaw", new SwerveAlignToSpeaker(swerve));
     NamedCommands.registerCommand("IntakeAndShoot", Commands.run(()->{
