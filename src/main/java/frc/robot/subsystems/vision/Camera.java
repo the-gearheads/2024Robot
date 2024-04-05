@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 
 import static frc.robot.Constants.FieldConstants.FIELD;
 
@@ -129,7 +130,7 @@ public class Camera {
     double xyStdDev = xyStdDevCoefficient * Math.pow(avgDistToTarget, 2.0) / numTargets * coefficientFactor;
     double thetaStdDev = thetaStdDevCoefficient * Math.pow(avgDistToTarget, 2.0) / numTargets * coefficientFactor;
 
-    if(numTargets <= 1) thetaStdDev = Double.POSITIVE_INFINITY;
+    if(numTargets <= 1 && DriverStation.isEnabled()) thetaStdDev = Double.POSITIVE_INFINITY;
 
     Logger.recordOutput(path + "/XyStdDev", xyStdDev);
     Logger.recordOutput(path + "/ThetaStdDev", thetaStdDev);
