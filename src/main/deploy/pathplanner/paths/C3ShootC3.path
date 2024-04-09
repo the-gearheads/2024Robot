@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.883921767843536,
-        "y": 3.840777967270221
+        "x": 4.810624478391815,
+        "y": 3.97271308828332
       },
       "isLocked": false,
       "linkedName": "C3Shoot"
@@ -20,8 +20,8 @@
         "y": 4.104648209296419
       },
       "prevControl": {
-        "x": 6.81897020936899,
-        "y": 4.148626582967452
+        "x": 7.595921477557241,
+        "y": 4.089988751406074
       },
       "nextControl": null,
       "isLocked": false,
@@ -38,7 +38,7 @@
   "constraintZones": [
     {
       "name": "IntakeCSlow",
-      "minWaypointRelativePos": 0.85,
+      "minWaypointRelativePos": 0.3,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 3.0,
