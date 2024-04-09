@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.commands.AutoArmHeight;
-import frc.robot.commands.AutoClimb;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.AutonAutoArmHeight;
 import frc.robot.commands.BabyBirdIntake;
@@ -301,9 +300,6 @@ public class RobotContainer {
       HandledSleep.sleep(100);
       intake.motor.configure();
     }));
-
-
-    Controllers.operatorController.getAutoClimb().whileTrue(new AutoClimb(climber));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

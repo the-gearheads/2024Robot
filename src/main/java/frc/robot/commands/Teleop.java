@@ -15,9 +15,6 @@ import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.util.BetterBangBang;
 
 import static frc.robot.Constants.Controllers.*;
-import static frc.robot.Constants.SwerveConstants.NOTE_CORNER_TO_YAW_CORNERS;
-import static frc.robot.Constants.SwerveConstants.noteAreaToYawInterpolationTable;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Teleop extends Command {
@@ -81,20 +78,6 @@ public class Teleop extends Command {
 
     if (SmartDashboard.getBoolean("Teleop/HeadingPID", true)) {
       headingPid(attemptingToRotate, speeds);
-    }
-
-    if(Controllers.driverController.getNoteAlign().getAsBoolean()) {
-      var target = swerve.noteCamera.getTarget();
-      if(target != null) {
-        var yaw = target.getYaw();
-        var c3y = target.getDetectedCorners().get(3).y;
-        c3y = Math.min(c3y, NOTE_CORNER_TO_YAW_CORNERS[NOTE_CORNER_TO_YAW_CORNERS.length-1]);
-        c3y = Math.max(c3y, NOTE_CORNER_TO_YAW_CORNERS[0]);
-        var targetYaw = noteAreaToYawInterpolationTable.value(c3y);
-        var out = noteTransController.calculate(yaw, targetYaw);
-        out = out > 0.08 || out < -0.08 ? out : 0;
-        speeds.vyMetersPerSecond = out;
-      }
     }
 
     Logger.recordOutput("Swerve/Teleop/Speeds", speeds);
