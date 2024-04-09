@@ -87,7 +87,4 @@ public class Thrustmaster implements OperatorController {
     return new Trigger(()->joy.getRawButton(16));
   }
 
-  public Trigger getAutoClimb() {
-    return new Trigger(()->false);
-  }
 }
