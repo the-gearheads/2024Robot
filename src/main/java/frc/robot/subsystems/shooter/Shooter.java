@@ -16,6 +16,7 @@ public class Shooter extends SubsystemBase {
 
   public FlywheelMotor topMotor = new FlywheelMotor("Shooter/Top", TOP_ID, PID, FEEDFORWARD, false, false);
   public FlywheelMotor bottomMotor = new FlywheelMotor("Shooter/Bottom", BOTTOM_ID, PID, FEEDFORWARD, false, false);
+  final Debouncer SPEED_DEBOUNCER = new Debouncer(SPEED_DEBOUNCE_TIME);
 
   public Shooter() {}
 
@@ -41,15 +42,27 @@ public class Shooter extends SubsystemBase {
     bottomMotor.setSpeed(speed);
   }
 
-  Debouncer speedDebouncer = new Debouncer(0.4);
-  public boolean atSpeed() {
+  public boolean atSpeed(double overrideTopSetpoint, double overrideBottomSetpoint) {
     double tolerance = SPEED_TOLERANCE;
+    // match sign to current setpoint sign
+    overrideTopSetpoint = Math.signum(topMotor.getVelocitySetpoint()) * Math.abs(overrideTopSetpoint);
+    overrideBottomSetpoint = Math.signum(bottomMotor.getVelocitySetpoint()) * Math.abs(overrideBottomSetpoint);
     if(Robot.isSimulation()) {
       tolerance = 3000; // sim setpoint 4k rpm turns out to be like 6661 rpm
     }
-    boolean speedWithinTolerance = ((Math.abs(topMotor.getVelocity() - topMotor.getVelocitySetpoint()) < tolerance) || topMotor.getVelocity() > topMotor.getVelocitySetpoint()) &&
-                             ((Math.abs(bottomMotor.getVelocity() - bottomMotor.getVelocitySetpoint()) < tolerance) || topMotor.getVelocity() > topMotor.getVelocitySetpoint());
-    return speedDebouncer.calculate(speedWithinTolerance);
+    boolean speedWithinTolerance = 
+                             checkSpeedTolerance(topMotor.getVelocity(), overrideTopSetpoint, tolerance) &&
+                             checkSpeedTolerance(bottomMotor.getVelocity(), overrideBottomSetpoint, tolerance);
+
+    return SPEED_DEBOUNCER.calculate(speedWithinTolerance);
+  }
+
+  public boolean atSpeed() {
+    return atSpeed(topMotor.getVelocitySetpoint(), bottomMotor.getVelocitySetpoint());
+  }
+
+  private boolean checkSpeedTolerance(double velocity, double setpoint, double tolerance) {
+    return ((velocity - setpoint) < tolerance) || topMotor.getVelocity() > setpoint;
   }
   
   public SysIdRoutine getSysIdRoutine() {

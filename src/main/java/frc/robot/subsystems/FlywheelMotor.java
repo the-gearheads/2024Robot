@@ -159,6 +159,10 @@ public class FlywheelMotor {
     return flex.getAppliedOutput() * flex.getBusVoltage();
   }
 
+  public double getMotorCurrent() {
+    return flex.getOutputCurrent();
+  }
+
   public double getVelocity() {
     if(Robot.isSimulation()) return sim.getAngularVelocityRadPerSec(); // constants actually output in rpm so this function name is wrong btw
     return enc.getVelocity();
@@ -201,5 +205,6 @@ public class FlywheelMotor {
     Logger.recordOutput(name + "/VoltsSetpoint", targetVolts);
     Logger.recordOutput(name + "/LastReconfigured", lastReconfigured);
     Logger.recordOutput(name + "/SuperSpeedCount", superSpeedCount);
+    Logger.recordOutput(name + "/Current", getMotorCurrent());
   }
 }

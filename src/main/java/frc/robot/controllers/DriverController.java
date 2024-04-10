@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class DriverController {
@@ -82,6 +83,12 @@ public class DriverController {
     return new Trigger(() -> controller.getStartButton());
   }
 
+
+  public Trigger getNoteAlign() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getLeftBumper());
+  }
+
   public Trigger getDisableVisionBtn() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getRawButton(7));
@@ -109,6 +116,11 @@ public class DriverController {
   }
 
   public Command getRumbleCommand(double rumble, double seconds) {
-    return Commands.runEnd(()->{setRumble(rumble);}, ()->{setRumble(0);}).withTimeout(seconds);
+    return Commands.runEnd(()->setRumble(rumble), ()->setRumble(0)).withTimeout(seconds);
+  }
+
+  public Command getRumbleCommand(double rumble, double seconds, int pulses) {
+    final int pulseCounter[] = {0};
+    return Commands.runEnd(()->setRumble(rumble), ()->{setRumble(0);pulseCounter[0]++;}).withTimeout(seconds).andThen(new WaitCommand(seconds*1.2)).repeatedly().until(() -> pulseCounter[0]==pulses);
   }
 }

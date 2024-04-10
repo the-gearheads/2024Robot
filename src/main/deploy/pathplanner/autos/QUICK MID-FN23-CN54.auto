@@ -1,37 +1,30 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 1.3509924162705473,
+      "y": 5.546821904454621
+    },
+    "rotation": 180.0
+  },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "deadline",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "S0C3Shoot"
-                      }
-                    }
-                  ]
+                  "name": "ShootPreloadWhenReady"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "AutonAutoArmHeight"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShooterStart"
+                  "name": "AlignToSpeakerYaw"
                 }
               }
             ]
@@ -42,47 +35,22 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "AlignToSpeakerYaw"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShootWhenReady"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
                 "type": "sequential",
                 "data": {
                   "commands": [
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C3ShootC3"
+                        "pathName": "S2F2"
                       }
                     },
                     {
-                      "type": "path",
+                      "type": "wait",
                       "data": {
-                        "pathName": "C3Shoot"
+                        "waitTime": 1.0
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutonAutoArmHeight"
                 }
               },
               {
@@ -96,6 +64,12 @@
                 "data": {
                   "name": "ShooterStart"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
               }
             ]
           }
@@ -107,13 +81,76 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AlignToSpeakerYaw"
+                  "name": "ShootWhenReady"
                 }
               },
               {
                 "type": "named",
                 "data": {
+                  "name": "AlignToSpeakerYaw"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "F2F3"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShooterStart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
                   "name": "ShootWhenReady"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlignToSpeakerYaw"
                 }
               }
             ]
@@ -130,22 +167,10 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C3ShootC2"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "C2C3Shoot"
+                        "pathName": "F3C5&C5Shoot"
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutonAutoArmHeight"
                 }
               },
               {
@@ -159,6 +184,12 @@
                 "data": {
                   "name": "ShooterStart"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
               }
             ]
           }
@@ -170,13 +201,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AlignToSpeakerYaw"
+                  "name": "ShootWhenReady"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootWhenReady"
+                  "name": "AlignToSpeakerYaw"
                 }
               }
             ]
@@ -193,22 +224,16 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C3ShootC1"
+                        "pathName": "C5ShootC4"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C1C3Shoot"
+                        "pathName": "C4Shoot"
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutonAutoArmHeight"
                 }
               },
               {
@@ -222,6 +247,12 @@
                 "data": {
                   "name": "ShooterStart"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
               }
             ]
           }
@@ -233,13 +264,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AlignToSpeakerYaw"
+                  "name": "ShootWhenReady"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootWhenReady"
+                  "name": "AlignToSpeakerYaw"
                 }
               }
             ]

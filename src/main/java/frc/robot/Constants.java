@@ -123,6 +123,7 @@ public final class Constants {
     public static final double AMP_ANGLE_TOLERANCE = 1.2d * 2d * Math.PI / 360;
     public static final double STOW_ANGLE = 21d * 2d * Math.PI / 360; 
     public static final double SPEED_TOLERANCE = 240;
+    public static final double SPEED_DEBOUNCE_TIME = 0.2;
     
     public static final double[] PID = {0.0021693, 0, 0};
 
@@ -198,8 +199,7 @@ public final class Constants {
   }
 
   public static class VisionConstants {
-    // public static final String FRONT_CAM_NAME = "front_spinel";
-    // public static final String BACK_CAM_NAME = "rear_spinel";
+    public static final String NOTE_CAM_NAME = "Microsoft_LifeCam_HD-3000";
     public static final String FRONT_RIGHT_NAME = "FRONT_RIGHT";
     public static final String FRONT_LEFT_NAME = "FRONT_LEFT";
     public static final String BACK_LEFT_NAME = "BACK_LEFT";

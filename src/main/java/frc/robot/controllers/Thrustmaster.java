@@ -86,4 +86,5 @@ public class Thrustmaster implements OperatorController {
   public Trigger getIntakeRevOverride() {
     return new Trigger(()->joy.getRawButton(16));
   }
+
 }

@@ -113,6 +113,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("AutonAutoArmHeight", new AutonAutoArmHeight(arm));
     NamedCommands.registerCommand("AutoArmHeight", new AutoArmHeight(arm, swerve));
     NamedCommands.registerCommand("ShootWhenReady", new PrepareToShoot(shooter, swerve, arm).andThen(feeder.getRunFeederCommand()));
+    NamedCommands.registerCommand("ShootPreloadWhenReady", new PrepareToShoot(shooter, swerve, arm, 3000).andThen(feeder.getRunFeederCommand()));
     NamedCommands.registerCommand("FeedNote", new SequentialCommandGroup(
       new WaitUntilCommand(feeder.getBeamBreakSwitch()),
       feeder.getRunFeederCommand()

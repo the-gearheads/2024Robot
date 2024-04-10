@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -14,23 +15,25 @@ import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.util.BetterBangBang;
 
 import static frc.robot.Constants.Controllers.*;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Teleop extends Command {
 
   Swerve swerve;
+
+  PIDController noteTransController = new PIDController(0.1, 0, 0.25);
   
   public Teleop(Swerve swerve) {
     addRequirements(swerve);
     this.swerve = swerve;
+    SmartDashboard.putData("Teleop/Headingcontroller", headingController);
+    SmartDashboard.putData("Teleop/NoteController", noteTransController);
   }
 
   @Override
   public void initialize() {
     headingController.setSetpoint(swerve.getGyroRotation().getRadians());
     SmartDashboard.putBoolean("Teleop/HeadingPID", true);
-    SmartDashboard.putData("Swerve/headingcontroller", headingController);
     SmartDashboard.putBoolean("Swerve/FieldRelative", true);
   }
 

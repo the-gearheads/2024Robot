@@ -49,9 +49,10 @@ public class Climber extends SubsystemBase {
     rightMotor.periodic();
     leftMotor.log();
     rightMotor.log();
+
   }
 
-  private void setSpeed(double speed) {
+  public void setSpeed(double speed) {
     leftMotor.setSpeed(speed);
     rightMotor.setSpeed(speed);
   }

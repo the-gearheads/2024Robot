@@ -35,6 +35,7 @@
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Swerve/PoseRotPID": "PIDController",
       "/SmartDashboard/SysidRoutines": "String Chooser",
+      "/SmartDashboard/Teleop/NoteController": "PIDController",
       "/SmartDashboard/Vision and Paths Field": "Field2d",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
@@ -66,7 +67,10 @@
         "left": 150,
         "right": 2961,
         "top": 79,
-        "width": 16.541748046875
+        "width": 16.541748046875,
+        "window": {
+          "visible": true
+        }
       },
       "/SmartDashboard/VisionSystemSim-main/Sim Field": {
         "bottom": 1476,
@@ -74,7 +78,10 @@
         "left": 150,
         "right": 2961,
         "top": 79,
-        "width": 16.541748046875
+        "width": 16.541748046875,
+        "window": {
+          "visible": true
+        }
       }
     }
   },

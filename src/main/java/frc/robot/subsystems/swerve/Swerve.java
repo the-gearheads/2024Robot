@@ -305,7 +305,6 @@ public class Swerve extends SubsystemBase {
       module.periodic();
     }
 
-
     double[] timestamps;
     // indexed by module then time
     SwerveModulePosition[][] modPositions = new SwerveModulePosition[modules.length][];

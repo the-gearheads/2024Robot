@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.LedSetStateDisabled;
+import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.leds.LedState;
 import frc.robot.util.TriConsumer;
 
@@ -137,6 +138,7 @@ public class Robot extends LoggedRobot {
   private Debouncer brakeCoastButtonDebouncer = new Debouncer(0.05);
   private boolean lastBrakeCoastButton = false;
   private boolean isBraken = true;
+  private boolean rumbled = true;
 
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -188,6 +190,7 @@ public class Robot extends LoggedRobot {
     matchTimeStart = Timer.getFPGATimestamp();
     m_robotContainer.setAllBrakeCoast(true);
     CANSparkLowLevel.enableExternalUSBControl(false);
+    rumbled = false;
   }
 
   /** This function is called periodically during operator control. */
@@ -196,6 +199,10 @@ public class Robot extends LoggedRobot {
     matchTime = 135 - (Timer.getFPGATimestamp() - matchTimeStart);
     matchTime = matchTime < 0 ? 0 : matchTime;
     Logger.recordOutput("TeleopMatchTime", matchTime);
+    if (matchTime < 30.2 && matchTime > 30 && !rumbled) {
+      Controllers.driverController.getRumbleCommand(1.0, 0.2, 3).schedule();
+      rumbled = true;
+    }
   }
 
   @Override

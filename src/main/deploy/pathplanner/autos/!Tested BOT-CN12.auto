@@ -6,38 +6,6 @@
     "data": {
       "commands": [
         {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "S0C3Shoot"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutonAutoArmHeight"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShooterStart"
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "race",
           "data": {
             "commands": [
@@ -50,7 +18,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootWhenReady"
+                  "name": "ShootPreloadWhenReady"
                 }
               }
             ]
@@ -67,22 +35,16 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C3ShootC3"
+                        "pathName": "S0C1"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C3Shoot"
+                        "pathName": "C1Shoot"
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutonAutoArmHeight"
                 }
               },
               {
@@ -94,69 +56,12 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShooterStart"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "AlignToSpeakerYaw"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShootWhenReady"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "C3ShootC2"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "C2C3Shoot"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "AutonAutoArmHeight"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeNote"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "ShooterStart"
                 }
               }
@@ -193,13 +98,13 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C3ShootC1"
+                        "pathName": "C1ShootC2"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C1C3Shoot"
+                        "pathName": "C2Shoot"
                       }
                     }
                   ]
