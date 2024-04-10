@@ -20,6 +20,6 @@ public class AutoArmHeight extends Command {
   @Override
   public void execute() {
     ScoringState.babyBirdMode = false; // If this command is running we never want this
-    arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
+    arm.setAngle(ShooterCalculations.getShooterAngle(swerve));
   }
 }

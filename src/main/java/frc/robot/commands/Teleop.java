@@ -68,7 +68,7 @@ public class Teleop extends Command {
 
     var speeds = new ChassisSpeeds(x, y, rot);
 
-    double calculatedForcedAngle = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
+    double calculatedForcedAngle = ShooterCalculations.getYaw(swerve).getRadians();
     /* I don't like this anymore */
     boolean shouldAlign = Controllers.driverController.getAlignBtn().getAsBoolean() || 
                           Controllers.driverController.getAutoShootBtn().getAsBoolean() ||

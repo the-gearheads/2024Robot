@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -25,7 +26,7 @@ public class AutonAutoArmHeight extends Command {
     double[] path = areasSub.get();
     double endpointX = path[path.length - 3];
     double endpointY = path[path.length - 2];
-    double armAngle = ShooterCalculations.getShooterAngle(new Translation2d(endpointX, endpointY));
+    double armAngle = ShooterCalculations.getShooterAngle(new Translation2d(endpointX, endpointY), new ChassisSpeeds());
     arm.setAngle(armAngle);
   }
 

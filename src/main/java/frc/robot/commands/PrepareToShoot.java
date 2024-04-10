@@ -36,17 +36,17 @@ public class PrepareToShoot extends Command {
   @Override
   public void execute() {
     ShooterCalculations.setShooterPower(shooter);
-    arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation(), true));
+    arm.setAngle(ShooterCalculations.getShooterAngle(swerve, true));
     Logger.recordOutput("Arm/AngleTolerance", ShooterCalculations.getArmTolerance(swerve.getPose().getTranslation()));
-    Logger.recordOutput("Arm/AtAngle", arm.atPoint(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()), ShooterCalculations.getArmTolerance(swerve.getPose().getTranslation())));
+    Logger.recordOutput("Arm/AtAngle", arm.atPoint(ShooterCalculations.getShooterAngle(swerve), ShooterCalculations.getArmTolerance(swerve.getPose().getTranslation())));
 
   }
 
   @Override
   public boolean isFinished() {
-    double targetYaw = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
+    double targetYaw = ShooterCalculations.getYaw(swerve).getRadians();
     double yawTolerance = ShooterCalculations.getYawTolerance(swerve.getPose().getTranslation());
-    double shooterAngle = ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation(), true);
+    double shooterAngle = ShooterCalculations.getShooterAngle(swerve, true);
     double armTolerance = ShooterCalculations.getArmTolerance(swerve.getPose().getTranslation());
     ChassisSpeeds swerveSpeeds = swerve.getRobotRelativeSpeeds();
     boolean swerveStopped = swerveSpeeds.vxMetersPerSecond <= MAX_SHOOTING_SPEED_VX &&

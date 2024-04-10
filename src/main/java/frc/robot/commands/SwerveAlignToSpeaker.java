@@ -15,7 +15,7 @@ public class SwerveAlignToSpeaker extends Command {
 
   @Override
   public void execute() {
-    double speakerAngle = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
+    double speakerAngle = ShooterCalculations.getYaw(swerve).getRadians();
     swerve.drive(new ChassisSpeeds(0, 0, 0), speakerAngle);
   }
 }

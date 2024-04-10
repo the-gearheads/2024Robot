@@ -33,7 +33,9 @@ import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -298,6 +300,14 @@ public class Swerve extends SubsystemBase {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
 
+  public ChassisSpeeds getFieldRelativeSpeeds() {
+    var rot = getPose().getRotation();
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      rot = rot.rotateBy(Rotation2d.fromDegrees(180));
+    }
+    return ChassisSpeeds.fromRobotRelativeSpeeds(getRobotRelativeSpeeds(), rot);
+  }
+
   @Override
   public void periodic() {
 
@@ -370,9 +380,9 @@ public class Swerve extends SubsystemBase {
     Logger.recordOutput("Swerve/GyroAngle", -Units.degreesToRadians(gyro.getYaw()));
     Logger.recordOutput("Vision/VisionEnabled", isVisionEnabled());
     Logger.recordOutput("Swerve/YawTolerance", ShooterCalculations.getYawTolerance(getPose().getTranslation()));
-    Logger.recordOutput("Swerve/AtYaw", atYaw(ShooterCalculations.getYaw(getPose().getTranslation()).getRadians(), ShooterCalculations.getYawTolerance(getPose().getTranslation())));
-    ShooterCalculations.getShooterAngle(getPose().getTranslation());
-    ShooterCalculations.getYaw(getPose().getTranslation());
+    Logger.recordOutput("Swerve/AtYaw", atYaw(ShooterCalculations.getYaw(this).getRadians(), ShooterCalculations.getYawTolerance(getPose().getTranslation())));
+    ShooterCalculations.getShooterAngle(this);
+    ShooterCalculations.getYaw(this);
     field.setRobotPose(getPose());
     vpField.setRobotPose(getPose());
 

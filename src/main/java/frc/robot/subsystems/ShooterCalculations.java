@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.ScoringState;
@@ -20,6 +21,7 @@ import frc.robot.controllers.Controllers;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.ScoringState.GoalMode;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.swerve.Swerve;
 
 // Not the biggest fan of this but we legit need like 80 different constants from each subclass
 import static frc.robot.Constants.ArmConstants.*;
@@ -29,37 +31,65 @@ import static frc.robot.Constants.ShooterConstants.*;
 
 public class ShooterCalculations {
   // not quite sure whether to have separate variables for red and blue but for now this is fine
-  static Translation3d speakerPosition = new Translation3d(0.173, 5.543, 2.05);
+  static final Translation3d speakerPosition = new Translation3d(0.173, 5.543, 2.05);
   // static Translation3d speakerPosition = new Translation3d(0.173, 5.543, 1.9);
-  static Translation2d speakerBackPosition = new Translation2d(0.0, 5.55);  // 0.127 offset bc notes arc left in shooter
-  static Translation2d ampPosition = new Translation2d(1.85, 8.15);
-  static Translation2d stageCenter = new Translation2d(4.89, 4.09);
+  static final Translation2d speakerBackPosition = new Translation2d(0.0, 5.55);  // 0.127 offset bc notes arc left in shooter
+  static final Translation2d ampPosition = new Translation2d(1.85, 8.15);
+  static final Translation2d stageCenter = new Translation2d(4.89, 4.09);
 
   static Translation2d feedPosition = new Translation2d(2.01, 6.05);
   static Translation2d outsideWingFeedPosition = new Translation2d(6.8, 6.8);
   // Distance (m) -> Angle (rad)
-  static PolynomialSplineFunction shooterAngleFunction = new SplineInterpolator().interpolate(SPLINE_DISTANCES, SPLINE_ANGLES);
+  static final PolynomialSplineFunction shooterAngleFunction = new SplineInterpolator().interpolate(SPLINE_DISTANCES, SPLINE_ANGLES);
   
-  private static Rotation2d getYawSpeaker(Translation2d robotPos) {
-    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-    Translation2d targetAngle = speakerBackPosition;
-    if(isRed) {
-      targetAngle = GeometryUtil.flipFieldPosition(speakerBackPosition);
+  private static boolean isOnRed() {
+    return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+  }
+
+  public static boolean isInSource(Translation2d robotPos) {
+    var sourceCenter = SOURCE_CENTER;
+    if(isOnRed()) {
+      sourceCenter = GeometryUtil.flipFieldPosition(sourceCenter);
+    }
+    return robotPos.getDistance(sourceCenter) < SOURCE_RADIUS;
+  }
+
+  private static double getEstimatedShotDuration(double distance) {
+    double shotSpeed = 20; // replace this with an interpolation table or something i just took this value from someone else's code from memory
+    return distance / shotSpeed;
+  }
+
+  /* Offset the point we're aiming for by our velocity in the opposite direction */
+  private static Translation2d getVelAdjustedSpeakerPoint(Translation2d robotPos, ChassisSpeeds fieldRelativeRobotSpeeds) {
+    double shotDur = getEstimatedShotDuration(getDistanceToSpeaker(robotPos, speakerBackPosition));
+    double x = robotPos.getX() - fieldRelativeRobotSpeeds.vxMetersPerSecond * shotDur;
+    double y = robotPos.getY() - fieldRelativeRobotSpeeds.vyMetersPerSecond * shotDur;
+    Logger.recordOutput("Calculations/AdjustedSpeakerPos", new Pose2d(x, y, new Rotation2d()));
+    return new Translation2d(x, y);
+  }
+
+  /* Gets yaw specifically for speaker */
+  private static Rotation2d getYawSpeaker(Translation2d robotPos, ChassisSpeeds robotSpeeds) {
+    Translation2d target = getVelAdjustedSpeakerPoint(robotPos, robotSpeeds);
+    if(isOnRed()) {
+      target = GeometryUtil.flipFieldPosition(speakerBackPosition);
     }
 
-    Logger.recordOutput("Calculations/SpeakerBackPos", new Pose3d(new Translation3d(targetAngle.getX(), targetAngle.getY(), speakerPosition.getZ()), new Rotation3d()));
-
-    // Rotation2d angle = new Rotation2d(Math.atan2(xyPos.getY() - robotPos.getY(), xyPos.getX() - robotPos.getX()));
-    Rotation2d angle = targetAngle.minus(robotPos).getAngle();
-
+    Logger.recordOutput("Calculations/SpeakerBackPos", new Pose3d(new Translation3d(target.getX(), target.getY(), speakerPosition.getZ()), new Rotation3d()));
+    Rotation2d angle = target.minus(robotPos).getAngle();
 
     Logger.recordOutput("Calculations/YawToSpeaker", angle.getDegrees());
 
     return angle;
   }
 
+  /* Gets yaw specifically for feeding */
   private static Rotation2d getYawFeed(Translation2d robotPos) {
+    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     Translation2d targetAngle = getFeedPosition(robotPos);
+    if(isRed) {
+      targetAngle = GeometryUtil.flipFieldPosition(feedPosition);
+    }
 
     Rotation2d angle = targetAngle.minus(robotPos).getAngle();
     Logger.recordOutput("Calculations/YawToFeed", angle.getDegrees());
@@ -95,13 +125,13 @@ public class ShooterCalculations {
     }
   }
 
+  /* Gets yaw specifically for stage align (snaps to closest stage angle) */
   private static Rotation2d getYawStage(Translation2d robotPos) {
-    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     Translation2d targetAngle = stageCenter;
     Rotation2d stage1Snap = STAGE_1_SNAP;
     Rotation2d stage2Snap = STAGE_2_SNAP;
     Rotation2d stageCenterSnap = STAGE_CENTER_SNAP;
-    if(isRed) {
+    if(isOnRed()) {
       targetAngle = GeometryUtil.flipFieldPosition(targetAngle);
       stage1Snap = GeometryUtil.flipFieldRotation(stage1Snap);
       stage2Snap = GeometryUtil.flipFieldRotation(stage2Snap);
@@ -128,22 +158,24 @@ public class ShooterCalculations {
     return closestAngle;
   }
 
-  public static double getDistanceToSpeaker(Translation2d robotPos) {
-    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-    Translation2d pos = speakerPosition.toTranslation2d();
-    if(isRed) {
+  public static double getDistanceToSpeaker(Translation2d robotPos, Translation2d speakerPos) {
+    Translation2d pos = speakerPos;
+    if(isOnRed()) {
       pos = GeometryUtil.flipFieldPosition(pos);
     }
-    Logger.recordOutput("Calculations/SpeakerPos", new Pose3d(speakerPosition, new Rotation3d()));
+    Logger.recordOutput("Calculations/SpeakerPos", new Pose3d(new Translation3d(pos.getX(), pos.getY(), speakerPosition.getZ()), new Rotation3d()));
     double dist = pos.getDistance(robotPos);
     Logger.recordOutput("Calculations/DistanceToSpeaker", dist);
     return dist;
   }
 
+  public static double getDistanceToSpeaker(Swerve swerve) {
+    return getDistanceToSpeaker(swerve.getPose().getTranslation(), getVelAdjustedSpeakerPoint(swerve.getPose().getTranslation(), swerve.getFieldRelativeSpeeds()));
+  }
+
   public static double getDistanceToAmp(Translation2d robotPos) {
-    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     Translation2d pos = ampPosition;
-    if(isRed) {
+    if(isOnRed()) {
       pos = GeometryUtil.flipFieldPosition(pos);
     }
     Logger.recordOutput("Calculations/AmpPose", new Pose2d(ampPosition, new Rotation2d()));
@@ -152,9 +184,10 @@ public class ShooterCalculations {
     return dist;
   }
 
-  /* Need to account for stage and other things in the future */
-  private static double getShooterAngleSpeaker(Translation2d robotPos) {
-    double distance = getDistanceToSpeaker(robotPos);
+
+
+  private static double getShooterAngleSpeaker(Translation2d robotPos, ChassisSpeeds robotVel) {
+    double distance = getDistanceToSpeaker(robotPos, getVelAdjustedSpeakerPoint(robotPos, robotVel));
     
     if(distance > SPLINE_DISTANCES[SPLINE_DISTANCES.length - 1]) {
       return SPLINE_ANGLES[SPLINE_ANGLES.length - 1];
@@ -169,52 +202,10 @@ public class ShooterCalculations {
     return angle;
   }
   
-  /* Need to account for stage and other things in the future */
-  private static double getMathShooterAngleSpeaker(Translation2d robotPos) {
-    double distance = getDistanceToSpeaker(robotPos);
-    double pivotToSpeakerHeight = speakerPosition.getZ() - SHOOTER_PIVOT_HEIGHT;
-    Logger.recordOutput("Calculations/pivotToSpeakerHeight", pivotToSpeakerHeight);
-    double angle = Math.atan2(pivotToSpeakerHeight, distance);
-    Logger.recordOutput("Calculations/atan2ShooterAngle", angle);
-    return angle;
-  }
-  
-  public static double getYawTolerance(Translation2d robotPos) {
+  public static double getShooterAngle(Translation2d robotPos, ChassisSpeeds robotFieldSpeeds, boolean wantToShoot) {
     switch(ScoringState.goalMode) {
       case SPEAKER:
-        double dist = getDistanceToSpeaker(robotPos);
-        if (yawToleranceInterpolationTable.isValidPoint(dist)) return yawToleranceInterpolationTable.value(dist);
-        if (dist < SHOOT_YAW_TOLERANCE_DISTS[0]) return SHOOT_YAW_TOLERANCE_YAWS[0]; 
-        return SHOOT_YAW_TOLERANCE_YAWS[SHOOT_YAW_TOLERANCE_YAWS.length - 1]; 
-      case AMP:
-        return FACING_AMP_TOLERANCE;
-      case STAGE:
-        return FACING_STAGE_TOLERANCE;
-      default:
-        return 0.01;
-    }
-  }
-
-  public static double getArmTolerance(Translation2d robotPos) {
-    switch(ScoringState.goalMode) {
-      case SPEAKER:
-        double dist = getDistanceToSpeaker(robotPos);
-        if (armToleranceInterpolationTable.isValidPoint(dist)) return armToleranceInterpolationTable.value(dist);
-        if (dist < SHOOTING_ARM_TOLERANCES_DISTS[0]) return SHOOTING_ARM_TOLERANCES_ANGLES[0]; 
-        return SHOOTING_ARM_TOLERANCES_ANGLES[SHOOTING_ARM_TOLERANCES_ANGLES.length - 1]; 
-      case AMP:
-        return AMP_ANGLE_TOLERANCE;
-      case STAGE:
-        return AMP_ANGLE_TOLERANCE;
-      default:
-        return 0.01;
-    }
-  }
-  public static double getShooterAngle(Translation2d robotPos, boolean wantToShoot) {
-    switch(ScoringState.goalMode) {
-      case SPEAKER:
-      getMathShooterAngleSpeaker(robotPos);
-      return getShooterAngleSpeaker(robotPos);
+        return getShooterAngleSpeaker(robotPos, robotFieldSpeeds);
       case AMP:
         if(wantToShoot) {
           return ShooterConstants.AMP_SCORE_ANGLE;
@@ -230,29 +221,28 @@ public class ShooterCalculations {
     }
   }
 
-  public static double getShooterAngle(Translation2d robotPos) {
-    return getShooterAngle(robotPos, false);
+  public static double getShooterAngle(Swerve swerve) {
+    return getShooterAngle(swerve.getPose().getTranslation(), swerve.getFieldRelativeSpeeds(), false);
   }
 
-  public static boolean isInSource(Translation2d robotPos) {
-    var sourceCenter = SOURCE_CENTER;
-    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-    if(isRed) {
-      sourceCenter = GeometryUtil.flipFieldPosition(sourceCenter);
-    }
-    return robotPos.getDistance(sourceCenter) < SOURCE_RADIUS;
+  public static double getShooterAngle(Swerve swerve, boolean wantToShoot) {
+    return getShooterAngle(swerve.getPose().getTranslation(), swerve.getFieldRelativeSpeeds(), wantToShoot);
   }
 
-  public static Rotation2d getYaw(Translation2d robotPos) {
-    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+  public static double getShooterAngle(Translation2d robotPos, ChassisSpeeds robotFieldSpeeds) {
+    return getShooterAngle(robotPos, robotFieldSpeeds, false);
+  }
 
+  public static Rotation2d getYaw(Swerve swerve) {
+    Translation2d robotPos = swerve.getPose().getTranslation();
+    ChassisSpeeds robotVel = swerve.getFieldRelativeSpeeds();
     if(Controllers.driverController.getAimAndFeedBtn().getAsBoolean()) {
       return getYawFeed(robotPos);
     }
 
     var sourceYaw = new Rotation2d(SOURCE_YAW);
     var sourceBabyBirdYaw = new Rotation2d(BABY_BIRD_YAW);
-    if(isRed) {
+    if(isOnRed()) {
       sourceYaw = GeometryUtil.flipFieldRotation(sourceYaw);
       sourceBabyBirdYaw = GeometryUtil.flipFieldRotation(sourceBabyBirdYaw);
     }
@@ -265,7 +255,8 @@ public class ShooterCalculations {
     switch(ScoringState.goalMode) {
       default:
       case SPEAKER:
-        return getYawSpeaker(robotPos);
+        getYawSpeaker(robotPos, robotVel);
+        // return getYawSpeaker(robotPos);
       case AMP:
         return new Rotation2d(AMP_YAW);
       case STAGE:
@@ -286,6 +277,39 @@ public class ShooterCalculations {
         shooter.setSpeed(0);
         // arm.setAngle(ArmConstants.MIN_ANGLE);
         break;
+    }
+  }
+
+
+
+
+  public static double getYawTolerance(Translation2d robotPos) {
+    switch(ScoringState.goalMode) {
+      case SPEAKER:
+        double dist = getDistanceToSpeaker(robotPos, speakerBackPosition);
+        if (yawToleranceInterpolationTable.isValidPoint(dist)) return yawToleranceInterpolationTable.value(dist);
+        if (dist < SHOOT_YAW_TOLERANCE_DISTS[0]) return SHOOT_YAW_TOLERANCE_YAWS[0]; 
+        return SHOOT_YAW_TOLERANCE_YAWS[SHOOT_YAW_TOLERANCE_YAWS.length - 1]; 
+      default:
+      case AMP:
+        return FACING_AMP_TOLERANCE;
+      case STAGE:
+        return FACING_STAGE_TOLERANCE;
+    }
+  }
+
+  public static double getArmTolerance(Translation2d robotPos) {
+    switch(ScoringState.goalMode) {
+      case SPEAKER:
+        double dist = getDistanceToSpeaker(robotPos, speakerBackPosition);
+        if (armToleranceInterpolationTable.isValidPoint(dist)) return armToleranceInterpolationTable.value(dist);
+        if (dist < SHOOTING_ARM_TOLERANCES_DISTS[0]) return SHOOTING_ARM_TOLERANCES_ANGLES[0]; 
+        return SHOOTING_ARM_TOLERANCES_ANGLES[SHOOTING_ARM_TOLERANCES_ANGLES.length - 1]; 
+      default:
+      case AMP:
+        return AMP_ANGLE_TOLERANCE;
+      case STAGE:
+        return AMP_ANGLE_TOLERANCE;
     }
   }
 }
