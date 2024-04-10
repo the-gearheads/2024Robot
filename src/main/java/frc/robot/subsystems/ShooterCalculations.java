@@ -62,8 +62,8 @@ public class ShooterCalculations {
   /* Offset the point we're aiming for by our velocity in the opposite direction */
   private static Translation2d getVelAdjustedSpeakerPoint(Translation2d robotPos, ChassisSpeeds fieldRelativeRobotSpeeds) {
     double shotDur = getEstimatedShotDuration(getDistanceToSpeaker(robotPos, speakerBackPosition));
-    double x = robotPos.getX() - fieldRelativeRobotSpeeds.vxMetersPerSecond * shotDur;
-    double y = robotPos.getY() - fieldRelativeRobotSpeeds.vyMetersPerSecond * shotDur;
+    double x = speakerBackPosition.getX() - fieldRelativeRobotSpeeds.vxMetersPerSecond * shotDur;
+    double y = speakerBackPosition.getY() - fieldRelativeRobotSpeeds.vyMetersPerSecond * shotDur;
     Logger.recordOutput("Calculations/AdjustedSpeakerPos", new Pose2d(x, y, new Rotation2d()));
     return new Translation2d(x, y);
   }
@@ -255,7 +255,7 @@ public class ShooterCalculations {
     switch(ScoringState.goalMode) {
       default:
       case SPEAKER:
-        getYawSpeaker(robotPos, robotVel);
+        return getYawSpeaker(robotPos, robotVel);
         // return getYawSpeaker(robotPos);
       case AMP:
         return new Rotation2d(AMP_YAW);
