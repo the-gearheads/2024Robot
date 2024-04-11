@@ -49,6 +49,7 @@ import frc.robot.subsystems.leds.LedState;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.vision.GPDetect;
 import frc.robot.util.HandledSleep;
 
 /**
@@ -60,6 +61,7 @@ import frc.robot.util.HandledSleep;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Swerve swerve = new Swerve();
+  public final GPDetect gpDetect = new GPDetect(swerve);
   public final Leds leds = new Leds();
   private final Shooter shooter = new Shooter();
   public final Arm arm = new Arm();
@@ -77,7 +79,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     updateControllers();
-    swerve.setDefaultCommand(new Teleop(swerve));
+    swerve.setDefaultCommand(new Teleop(swerve, gpDetect));
     arm.setDefaultCommand(new AutoArmHeight(arm, swerve));
     // arm.setDefaultCommand(new ArmNTControl(arm));
 

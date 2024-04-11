@@ -12,6 +12,7 @@ import frc.robot.ScoringState.GoalMode;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.vision.GPDetect;
 import frc.robot.util.BetterBangBang;
 
 import static frc.robot.Constants.Controllers.*;
@@ -20,12 +21,14 @@ import org.littletonrobotics.junction.Logger;
 public class Teleop extends Command {
 
   Swerve swerve;
+  GPDetect gpDetect;
 
   PIDController noteTransController = new PIDController(0.1, 0, 0.25);
   
-  public Teleop(Swerve swerve) {
+  public Teleop(Swerve swerve, GPDetect gpDetect) {
     addRequirements(swerve);
     this.swerve = swerve;
+    this.gpDetect = gpDetect;
     SmartDashboard.putData("Teleop/Headingcontroller", headingController);
     SmartDashboard.putData("Teleop/NoteController", noteTransController);
   }
@@ -39,6 +42,7 @@ public class Teleop extends Command {
 
   @Override
   public void execute() {
+    gpDetect.getNearestNote();
     double x = Controllers.driverController.getTranslateXAxis();
     double y = Controllers.driverController.getTranslateYAxis();
     double rot = Controllers.driverController.getRotateAxis();
@@ -88,7 +92,7 @@ public class Teleop extends Command {
       swerve.drive(speeds, forcedAngle);
     }
 
-  }
+ }
 
   @Override
   public void end(boolean interrupted) {

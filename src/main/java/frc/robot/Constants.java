@@ -205,6 +205,11 @@ public final class Constants {
     public static final String BACK_LEFT_NAME = "BACK_LEFT";
     
 
+    public static final Transform3d NOTE_CAM_TRANSFORM = 
+      new Transform3d(
+        new Translation3d(-0.35433, -0.2667, 0.2286 + 0.1),
+        new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(180 - 9))
+    );
     // Front Left, Front Right all measured from cad, except for pitch roll and yaw.
     public static final Transform3d FRONT_LEFT_TRANSFORM = 
       new Transform3d(new Translation3d(0.3509899, 0.1526159, 0.2167636),
