@@ -16,12 +16,12 @@ public class FeederNTControl extends Command {
 
   @Override
   public void initialize() {
-    SmartDashboard.putBoolean("Feeder/manualRun", false);
+    SmartDashboard.putBoolean("Feeder/manualRun", false);//TODO: move string into const
   }
 
   @Override
   public void execute() {
-    if(SmartDashboard.getBoolean("Feeder/manualRun", false)) {
+    if(SmartDashboard.getBoolean("Feeder/manualRun", false)) {//TODO: move string into const
       feeder.run();
     } else {
       feeder.stop();

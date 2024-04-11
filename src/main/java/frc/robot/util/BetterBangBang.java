@@ -14,7 +14,7 @@ public class BetterBangBang extends BangBangController {
       return 0;
     }
 
-    return measurement < setpoint ? 1 : -1;
+    return measurement < setpoint ? 1 : -1; //TODO: move this into its own method
   }
 
 }

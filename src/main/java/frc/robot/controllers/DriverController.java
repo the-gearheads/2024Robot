@@ -88,7 +88,7 @@ public class DriverController {
   }
 
 
-  // dpad is oh shit btns, up is reset post, left is reconfigure
+  // dpad is oh shit btns, up is reset post, left is reconfigure 
   public Trigger getResetPoseBtn() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getPOV() == 0);
@@ -109,6 +109,6 @@ public class DriverController {
   }
 
   public Command getRumbleCommand(double rumble, double seconds) {
-    return Commands.runEnd(()->{setRumble(rumble);}, ()->{setRumble(0);}).withTimeout(seconds);
+    return Commands.runEnd(()->{setRumble(rumble);}, ()->{setRumble(0);}).withTimeout(seconds); //TODO: break apart
   }
 }

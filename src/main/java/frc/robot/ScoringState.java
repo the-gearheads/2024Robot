@@ -17,11 +17,11 @@ public class ScoringState {
     Logger.recordOutput("CurrentGoal", goalMode.toString());
     Logger.recordOutput("BabyBirdMode", babyBirdMode);
     
-    if (babyBirdMode && Timer.getFPGATimestamp() - babyBirdWatchdogTimerStart > 1) {
+    if (babyBirdMode && Timer.getFPGATimestamp() - babyBirdWatchdogTimerStart > 1) { //TODO: replace conditional block in () into its own method
       babyBirdMode = false; // It's pretty bad if this gets stuck so I want to be doubly sure that it's only ever set when it needs to be
     }
   }
-
+  // TODO: move this variable to the top of this class
   public static boolean babyBirdMode = false;
 
   public static void feedBabyBirdMode() {

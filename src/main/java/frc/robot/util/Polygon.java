@@ -8,7 +8,7 @@ public class Polygon {
     private final double[] yCoordinates;
 
     public Polygon(double[] xCoordinates, double[] yCoordinates) {
-        if (xCoordinates.length != yCoordinates.length || xCoordinates.length < 3) {
+        if (xCoordinates.length != yCoordinates.length || xCoordinates.length < 3) { //TODO: move the 3 into a const
             throw new IllegalArgumentException("Invalid number of coordinates for a polygon");
         }
         this.numPoints = xCoordinates.length;
@@ -29,7 +29,8 @@ public class Polygon {
             double x2 = xCoordinates[next];
             double y2 = yCoordinates[next];
 
-            if (((y1 <= y && y < y2) || (y2 <= y && y < y1)) &&
+            //TODO: split this up - put it into its own method 
+            if (((y1 <= y && y < y2) || (y2 <= y && y < y1)) && 
                     (x < (x2 - x1) * (y - y1) / (y2 - y1) + x1)) {
                 crossings++;
             }

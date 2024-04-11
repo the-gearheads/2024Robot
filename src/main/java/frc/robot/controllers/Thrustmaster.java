@@ -3,6 +3,7 @@ package frc.robot.controllers;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+//TODO: replace ALL hardcoded numeric values into consts
 public class Thrustmaster implements OperatorController {
   Joystick joy;
   public Thrustmaster(int id) {
@@ -16,7 +17,7 @@ public class Thrustmaster implements OperatorController {
   }
 
   public Trigger getBabyBird() {
-    return new Trigger(()->{return joy.getPOV() == 180;});
+    return new Trigger(()->{return joy.getPOV() == 180;}); // move the 180 into const
   }
 
   // scoring modes, controls teleop controls, 3 buttons on top of thrust stick

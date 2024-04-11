@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 
-import static frc.robot.Constants.ShooterConstants.*;
+import static frc.robot.Constants.ShooterConstants.*;//TODO: only import what you are actually using
 
 import org.littletonrobotics.junction.Logger;
 
@@ -37,6 +37,7 @@ public class PrepareToShoot extends Command {
   public void execute() {
     ShooterCalculations.setShooterPower(shooter);
     arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation(), true));
+    // The parameter length here is too long in the recordOutput - find better way of passing
     Logger.recordOutput("Arm/AngleTolerance", ShooterCalculations.getArmTolerance(swerve.getPose().getTranslation()));
     Logger.recordOutput("Arm/AtAngle", arm.atPoint(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()), ShooterCalculations.getArmTolerance(swerve.getPose().getTranslation())));
 
@@ -44,6 +45,7 @@ public class PrepareToShoot extends Command {
 
   @Override
   public boolean isFinished() {
+    // TODO: find a way to better set these doubles - maybe they need to go into their own model
     double targetYaw = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
     double yawTolerance = ShooterCalculations.getYawTolerance(swerve.getPose().getTranslation());
     double shooterAngle = ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation(), true);
@@ -53,6 +55,7 @@ public class PrepareToShoot extends Command {
                             swerveSpeeds.vyMetersPerSecond <= MAX_SHOOTING_SPEED_VY &&
                             swerveSpeeds.omegaRadiansPerSecond < MAX_SHOOTING_SPEED_ROT;
 
+                            // TODO: break the return statement up into more readable lines
     return shooter.atSpeed() && swerve.atYaw(targetYaw, yawTolerance) && arm.atPoint(shooterAngle, armTolerance) && swerveStopped;
   }
 

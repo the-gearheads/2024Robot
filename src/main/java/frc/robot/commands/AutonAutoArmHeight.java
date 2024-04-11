@@ -15,15 +15,15 @@ public class AutonAutoArmHeight extends Command {
   DoubleArraySubscriber areasSub;
   public AutonAutoArmHeight(Arm arm) {
     this.arm = arm;
-    table = NetworkTableInstance.getDefault().getTable("PathPlanner");
-    areasSub = table.getDoubleArrayTopic("activePath").subscribe(new double[] {});
+    table = NetworkTableInstance.getDefault().getTable("PathPlanner"); //TODO: move string val into constant
+    areasSub = table.getDoubleArrayTopic("activePath").subscribe(new double[] {}); //TODO: move activePath into constant
 
   }
 
   @Override
   public void execute() {
     double[] path = areasSub.get();
-    double endpointX = path[path.length - 3];
+    double endpointX = path[path.length - 3]; //TODO: move the 3 and 2 into constants
     double endpointY = path[path.length - 2];
     double armAngle = ShooterCalculations.getShooterAngle(new Translation2d(endpointX, endpointY));
     arm.setAngle(armAngle);

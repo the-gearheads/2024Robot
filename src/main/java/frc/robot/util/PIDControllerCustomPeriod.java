@@ -30,9 +30,9 @@ public class PIDControllerCustomPeriod implements Sendable, AutoCloseable {
   // The period (in seconds) of the loop that calls the controller
   private double m_period;
 
-  private double m_maximumIntegral = 1.0;
+  private double m_maximumIntegral = 1.0; //TODO: change this to const and set var name to uppercase(if not changing)
 
-  private double m_minimumIntegral = -1.0;
+  private double m_minimumIntegral = -1.0; //TODO: change this to const and set var name to uppercase(if not changing)
 
   private double m_maximumInput;
 
@@ -52,7 +52,7 @@ public class PIDControllerCustomPeriod implements Sendable, AutoCloseable {
   private double m_totalError;
 
   // The error that is considered at setpoint.
-  private double m_positionTolerance = 0.05;
+  private double m_positionTolerance = 0.05;  //TODO: change this to const and set var name to uppercase (if not changing)
   private double m_velocityTolerance = Double.POSITIVE_INFINITY;
 
   private double m_setpoint;

@@ -17,12 +17,12 @@ public class ArmNTControl extends Command {
 
   @Override
   public void initialize() {
-    SmartDashboard.putNumber("Arm/manualAngle", arm.getAngle().getDegrees());
+    SmartDashboard.putNumber("Arm/manualAngle", arm.getAngle().getDegrees()); //TODO: move string into const
   }
 
   @Override
   public void execute() {
-    arm.setAngle(Units.degreesToRadians(SmartDashboard.getNumber("Arm/manualAngle", arm.getAngle().getDegrees())));
+    arm.setAngle(Units.degreesToRadians(SmartDashboard.getNumber("Arm/manualAngle", arm.getAngle().getDegrees())));//TODO: move string into const; also break this method parameter apart, too hard to read
   }
 
   @Override

@@ -19,7 +19,7 @@ public class AutoArmHeight extends Command {
 
   @Override
   public void execute() {
-    ScoringState.babyBirdMode = false; // If this command is running we never want this
+    ScoringState.babyBirdMode = false; // If this command is running we never want this //LAC: whatr happens if this is running? Would it be possible to create a check in here to see if it is running and then turn it back once the operation is complete?
     arm.setAngle(ShooterCalculations.getShooterAngle(swerve.getPose().getTranslation()));
   }
 }

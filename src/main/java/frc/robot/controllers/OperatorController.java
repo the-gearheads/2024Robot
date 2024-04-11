@@ -68,6 +68,7 @@ public interface OperatorController {
     return new Trigger(()->false);
   }
 
+  //TODO: remove commented code if not needed
   // public default Trigger getResetPoseBtn() {
   //   return new Trigger(()->false);
   // }
@@ -85,6 +86,6 @@ public interface OperatorController {
   }
 
   public default double getClimberProportion() {
-    return 0;
+    return 0; //is there a need for this if it's always going to return 0?
   }
 }

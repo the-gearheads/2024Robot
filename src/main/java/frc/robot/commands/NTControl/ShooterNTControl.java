@@ -17,12 +17,12 @@ public class ShooterNTControl extends Command {
   @Override
   public void initialize() {
     shooter.setSpeed(0);
-    SmartDashboard.putNumber("Shooter/manualSpeed", 0);
+    SmartDashboard.putNumber("Shooter/manualSpeed", 0);//TODO: move string into const
   }
 
   @Override
   public void execute() {
-    shooter.setSpeed(SmartDashboard.getNumber("Shooter/manualSpeed", 0));
+    shooter.setSpeed(SmartDashboard.getNumber("Shooter/manualSpeed", 0));//TODO: move string into const
   }
 
   @Override

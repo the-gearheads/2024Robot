@@ -10,6 +10,7 @@ public class LedSetStateDisabled extends Command {
     return true;
   }
 
+  //TODO: move these at the top of the class
   LedState desiredState;
   Leds leds;
 

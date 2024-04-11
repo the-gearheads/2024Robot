@@ -7,7 +7,7 @@ import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
-import static frc.robot.Constants.ShooterConstants.*;
+import static frc.robot.Constants.ShooterConstants.*; //TODO: only import what you are actually using
 
 public class AutoShooter extends Command {
   Shooter shooter;
