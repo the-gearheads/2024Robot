@@ -6,6 +6,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.util.GeometryUtil;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -70,12 +71,12 @@ public class ShooterCalculations {
     Translation2d targetTrans = getFeedPosition(robotPos);
     double distToFeedPoint = targetTrans.getDistance(robotPos);
     Logger.recordOutput("Calculations/DistToFeedPoint", distToFeedPoint);
-    if(FEED_SPEED_INTERP.isValidPoint(distToFeedPoint)) {
-      return FEED_SPEED_INTERP.value(distToFeedPoint);
-    } else {
-      if (distToFeedPoint > FEED_SPEED_INTERP_DISTS[FEED_SPEED_INTERP_DISTS.length-1]) return FEED_SPEED_INTERP_SPEEDS[FEED_SPEED_INTERP_SPEEDS.length-1];
-      else return FEED_SPEED_INTERP_SPEEDS[0];
-    }
+
+    distToFeedPoint = MathUtil.clamp(distToFeedPoint, FEED_SPEED_INTERP_DISTS[0], FEED_SPEED_INTERP_DISTS[FEED_SPEED_INTERP_DISTS.length-1]);
+
+    double rpm = FEED_SPEED_INTERP.value(distToFeedPoint);
+    Logger.recordOutput("Calculations/CalculatedShooterRPM", rpm);
+    return rpm;
   }
 
   private static Translation2d getFeedPosition(Translation2d robotPos) {

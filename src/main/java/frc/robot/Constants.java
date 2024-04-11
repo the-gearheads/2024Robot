@@ -27,6 +27,7 @@ import frc.robot.util.Polygon;
 import static edu.wpi.first.units.Units.*;
 
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
+import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 
@@ -136,9 +137,9 @@ public final class Constants {
     public static final double MAX_SHOOTING_SPEED_ROT = 0.05; // omega rad / s
 
     public static final double NOTE_FEEDING_SPEED = 3250;
-    public static final double[] FEED_SPEED_INTERP_DISTS = {3, 5.4, 9.56};
-    public static final double[] FEED_SPEED_INTERP_SPEEDS = {1000, 1500, 3200};
-    public static final PolynomialSplineFunction FEED_SPEED_INTERP = new LinearInterpolator().interpolate(FEED_SPEED_INTERP_DISTS, FEED_SPEED_INTERP_SPEEDS);
+    public static final double[] FEED_SPEED_INTERP_DISTS = {0.5, 2.0, 5.4, 9.56};
+    public static final double[] FEED_SPEED_INTERP_SPEEDS = {1000, 1500.0, 3250.0, 3300.0};
+    public static final PolynomialSplineFunction FEED_SPEED_INTERP = new SplineInterpolator().interpolate(FEED_SPEED_INTERP_DISTS, FEED_SPEED_INTERP_SPEEDS);
 
   }
 
