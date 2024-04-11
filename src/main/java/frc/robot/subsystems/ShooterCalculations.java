@@ -35,6 +35,7 @@ public class ShooterCalculations {
   static Translation2d stageCenter = new Translation2d(4.89, 4.09);
 
   static Translation2d feedPosition = new Translation2d(1.95, 6.68);
+  static Translation2d outsideWingFeedPosition = new Translation2d(6.8, 6.8);
   // Distance (m) -> Angle (rad)
   static PolynomialSplineFunction shooterAngleFunction = new SplineInterpolator().interpolate(SPLINE_DISTANCES, SPLINE_ANGLES);
   
@@ -55,18 +56,42 @@ public class ShooterCalculations {
 
     return angle;
   }
-  
+
   private static Rotation2d getYawFeed(Translation2d robotPos) {
-    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-    Translation2d targetAngle = feedPosition;
-    if(isRed) {
-      targetAngle = GeometryUtil.flipFieldPosition(feedPosition);
-    }
+    Translation2d targetAngle = getFeedPosition(robotPos);
 
     Rotation2d angle = targetAngle.minus(robotPos).getAngle();
     Logger.recordOutput("Calculations/YawToFeed", angle.getDegrees());
 
     return angle;
+  }
+
+  public static double getFeedRpm(Translation2d robotPos) {
+    Translation2d targetTrans = getFeedPosition(robotPos);
+    double distToFeedPoint = targetTrans.getDistance(robotPos);
+    Logger.recordOutput("Calculations/DistToFeedPoint", distToFeedPoint);
+    if(FEED_SPEED_INTERP.isValidPoint(distToFeedPoint)) {
+      return FEED_SPEED_INTERP.value(distToFeedPoint);
+    } else {
+      if (distToFeedPoint > FEED_SPEED_INTERP_DISTS[FEED_SPEED_INTERP_DISTS.length-1]) return FEED_SPEED_INTERP_SPEEDS[FEED_SPEED_INTERP_SPEEDS.length-1];
+      else return FEED_SPEED_INTERP_SPEEDS[0];
+    }
+  }
+
+  private static Translation2d getFeedPosition(Translation2d robotPos) {
+    boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+    Translation2d targetAngle = SOURCE_CENTER;
+    if(isRed) {
+      targetAngle = GeometryUtil.flipFieldPosition(SOURCE_CENTER);
+    }
+
+    double distToSource = targetAngle.getDistance(robotPos);
+    Logger.recordOutput("Calculations/DistToSource", distToSource);
+    if (distToSource < SOURCE_WING_DIST) {
+      return isRed ? GeometryUtil.flipFieldPosition(outsideWingFeedPosition) : outsideWingFeedPosition;
+    } else {
+      return isRed ? GeometryUtil.flipFieldPosition(feedPosition) : feedPosition;
+    }
   }
 
   private static Rotation2d getYawStage(Translation2d robotPos) {

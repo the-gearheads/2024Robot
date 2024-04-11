@@ -136,6 +136,10 @@ public final class Constants {
     public static final double MAX_SHOOTING_SPEED_ROT = 0.05; // omega rad / s
 
     public static final double NOTE_FEEDING_SPEED = 3250;
+    public static final double[] FEED_SPEED_INTERP_DISTS = {3, 5.4, 9.56};
+    public static final double[] FEED_SPEED_INTERP_SPEEDS = {1000, 1500, 3200};
+    public static final PolynomialSplineFunction FEED_SPEED_INTERP = new LinearInterpolator().interpolate(FEED_SPEED_INTERP_DISTS, FEED_SPEED_INTERP_SPEEDS);
+
   }
 
   public static class ArmConstants {
@@ -207,7 +211,7 @@ public final class Constants {
 
     public static final Transform3d NOTE_CAM_TRANSFORM = 
       new Transform3d(
-        new Translation3d(-0.35433, -0.2667, 0.2286 + 0.1),
+        new Translation3d(-0.35433, -0.2667, 0.2286 - 0.0254), // 0.0254 1 inches (1/2 note height)
         new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(180 - 9))
     );
     // Front Left, Front Right all measured from cad, except for pitch roll and yaw.
@@ -278,7 +282,8 @@ public final class Constants {
     public static final Rotation2d STAGE_1_SNAP = Rotation2d.fromDegrees(59.85);
 
     public static final Translation2d SOURCE_CENTER = new Translation2d(15.70, 0.54);
-    public static final double SOURCE_RADIUS = 2.2; // consider 1.9-1.6ish if you want it more sensitive (more towards 1.9)?
+    public static final double SOURCE_WING_DIST = 4;  // controls when to switch feeding position
+    public static final double SOURCE_RADIUS = 3.2; // consider 1.9-1.6ish if you want it more sensitive (more towards 1.9)?
 
   }
 
