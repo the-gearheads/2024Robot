@@ -64,7 +64,7 @@ public class ShooterCalculations {
     double shotDur = getEstimatedShotDuration(getDistanceToSpeaker(robotPos, speakerBackPosition));
     double x = speakerBackPosition.getX() - fieldRelativeRobotSpeeds.vxMetersPerSecond * shotDur;
     double y = speakerBackPosition.getY() - fieldRelativeRobotSpeeds.vyMetersPerSecond * shotDur;
-    Logger.recordOutput("Calculations/AdjustedSpeakerPos", new Pose2d(x, y, new Rotation2d()));
+    Logger.recordOutput("Calculations/AdjustedSpeakerPos", new Translation3d(x, y, speakerPosition.getZ()));
     return new Translation2d(x, y);
   }
 
@@ -75,7 +75,7 @@ public class ShooterCalculations {
       target = GeometryUtil.flipFieldPosition(speakerBackPosition);
     }
 
-    Logger.recordOutput("Calculations/SpeakerBackPos", new Pose3d(new Translation3d(target.getX(), target.getY(), speakerPosition.getZ()), new Rotation3d()));
+    Logger.recordOutput("Calculations/SpeakerBackPos", new Pose3d(new Translation3d(speakerBackPosition.getX(), speakerBackPosition.getY(), speakerPosition.getZ()), new Rotation3d()));
     Rotation2d angle = target.minus(robotPos).getAngle();
 
     Logger.recordOutput("Calculations/YawToSpeaker", angle.getDegrees());
