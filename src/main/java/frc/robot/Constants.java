@@ -137,8 +137,8 @@ public final class Constants {
     public static final double MAX_SHOOTING_SPEED_ROT = 0.05; // omega rad / s
 
     public static final double NOTE_FEEDING_SPEED = 3250;
-    public static final double[] FEED_SPEED_INTERP_DISTS = {0.5, 2.0, 5.4, 9.56};
-    public static final double[] FEED_SPEED_INTERP_SPEEDS = {1000, 1500.0, 3250.0, 3300.0};
+    public static final double[] FEED_SPEED_INTERP_DISTS = {1.0, 3.0, 5.4, 9.56};
+    public static final double[] FEED_SPEED_INTERP_SPEEDS = {1400, 1700.0, 2500.0, 3200.0};
     public static final PolynomialSplineFunction FEED_SPEED_INTERP = new SplineInterpolator().interpolate(FEED_SPEED_INTERP_DISTS, FEED_SPEED_INTERP_SPEEDS);
 
   }
@@ -212,7 +212,7 @@ public final class Constants {
 
     public static final Transform3d NOTE_CAM_TRANSFORM = 
       new Transform3d(
-        new Translation3d(-0.35433, -0.2667, 0.2286 - 0.0254), // 0.0254 1 inches (1/2 note height)
+        new Translation3d(-0.35433, -0.2667, 0.2286 + 0.051), // 0.0254 1 inches (1/2 note height)
         new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(180 - 9))
     );
     // Front Left, Front Right all measured from cad, except for pitch roll and yaw.
