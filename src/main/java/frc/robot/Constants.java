@@ -164,7 +164,7 @@ public final class Constants {
     public static final double MIN_ANGLE = (MIN_ANGLE_DEG / 360.0) * (2 * Math.PI);
 
     public static final double[] SPLINE_DISTANCES = {1.0959, 1.5100, 2.0153, 2.4980, 3.0284, 3.5106, 4.0048, 4.341426, 4.9951, 5.350909, 6.011493};  // old values
-    public static final double[] SPLINE_ANGLES =    {0.9564, 0.8269, 0.7308, 0.6372, 0.5620, 0.5288, 0.4950, 0.462555, 0.4462, 0.39945,  0.355};  // old values
+    public static final double[] SPLINE_ANGLES =    {0.9564, 0.8269, 0.7308, 0.6372, 0.5620, 0.5288, 0.4950, 0.462555, 0.4342, 0.39945,  0.355};  // old values
     // public static final double[] SPLINE_DISTANCES = {1.235, 1.980185, 2.248288, 2.77234, 3.21358, 3.762, 4.275393, 4.77155, 5.350909, 6.041493};
     // public static final double[] SPLINE_ANGLES =    {0.952, 0.752,    0.810,    0.580,   0.527,   0.498, 0.4687,   0.4220,  0.39945,  0.375};
 
