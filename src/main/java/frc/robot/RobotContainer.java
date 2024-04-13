@@ -127,6 +127,11 @@ public class RobotContainer {
       feeder.run();
       shooter.setSpeed(DEFAULT_SPEED);
     }, feeder, intake, shooter));
+    NamedCommands.registerCommand("Sweep", Commands.run(()->{
+      intake.run();
+      feeder.run();
+      shooter.setSpeed(1000);
+    }, feeder, intake, shooter));
 
 
     autoChooser = AutoBuilder.buildAutoChooser();

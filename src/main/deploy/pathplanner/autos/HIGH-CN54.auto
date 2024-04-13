@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4014420821634435,
-      "y": 6.988995599612821
+      "x": 1.4144409357464742,
+      "y": 7.01
     },
     "rotation": 180.0
   },
@@ -24,7 +24,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootWhenReady"
+                  "name": "ShootPreloadWhenReady"
                 }
               }
             ]
