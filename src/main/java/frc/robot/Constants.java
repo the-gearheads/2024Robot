@@ -105,7 +105,7 @@ public final class Constants {
     public static final double SOURCE_YAW = (120d / 360d) * 2 * Math.PI;
 
     public static final double FACING_SPEAKER_TOLERANCE = (2.5 / 360.0) * (2 * Math.PI);
-    public static final double FACING_AMP_TOLERANCE = (1 / 360.0) * (2 * Math.PI);
+    public static final double FACING_AMP_TOLERANCE = (10 / 360.0) * (2 * Math.PI);
     public static final double FACING_STAGE_TOLERANCE = (1 / 360.0) * (2 * Math.PI);
     public static final double[] SHOOT_YAW_TOLERANCE_DISTS = {1.5, 2, 3};
     public static final double[] SHOOT_YAW_TOLERANCE_YAWS = {0.1, 0.07, 0.044};
