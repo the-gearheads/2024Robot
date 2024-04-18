@@ -35,7 +35,7 @@ public class ShooterCalculations {
   static Translation2d ampPosition = new Translation2d(1.85, 8.15);
   static Translation2d stageCenter = new Translation2d(4.89, 4.09);
 
-  static Translation2d feedPosition = new Translation2d(2.01, 6.05);
+  static Translation2d feedPosition = new Translation2d(1.89, 6.57);
   static Translation2d outsideWingFeedPosition = new Translation2d(6.8, 6.8);
   // Distance (m) -> Angle (rad)
   static PolynomialSplineFunction shooterAngleFunction = new SplineInterpolator().interpolate(SPLINE_DISTANCES, SPLINE_ANGLES);

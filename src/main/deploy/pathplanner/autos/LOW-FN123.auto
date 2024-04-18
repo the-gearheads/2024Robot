@@ -1,0 +1,188 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7352951848760846,
+      "y": 4.441815740774339
+    },
+    "rotation": 120.85420450589702
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootPreloadWhenReady"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlignToSpeakerYaw"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S1F1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShooterStart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootWhenReady"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlignToSpeakerYaw"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "F1F2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShooterStart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootWhenReady"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlignToSpeakerYaw"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "F2F3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShooterStart"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonAutoArmHeight"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootWhenReady"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlignToSpeakerYaw"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
