@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.649370441598027,
-        "y": 4.30988061976124
+        "x": 4.634710983707682,
+        "y": 4.720345440690882
       },
       "isLocked": false,
       "linkedName": "C3Shoot"
     },
     {
       "anchor": {
-        "x": 4.65,
-        "y": 4.104648209296419
+        "x": 4.957219057295258,
+        "y": 4.339199535541929
       },
       "prevControl": {
-        "x": 4.560231151366779,
-        "y": 4.106644978206673
+        "x": 4.867450208662036,
+        "y": 4.341196304452183
       },
       "nextControl": {
-        "x": 5.309046046663522,
-        "y": 4.089988751406074
+        "x": 5.61626510395878,
+        "y": 4.324540077651584
       },
       "isLocked": false,
       "linkedName": null
@@ -53,13 +53,13 @@
   ],
   "constraintZones": [
     {
-      "name": "IntakeCSlow",
-      "minWaypointRelativePos": 0.0,
-      "maxWaypointRelativePos": 2.0,
+      "name": "sloqw",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 1.1,
       "constraints": {
-        "maxVelocity": 3.0,
-        "maxAcceleration": 3.0,
-        "maxAngularVelocity": 540.0,
+        "maxVelocity": 2.0,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 520.0,
         "maxAngularAcceleration": 720.0
       }
     }
