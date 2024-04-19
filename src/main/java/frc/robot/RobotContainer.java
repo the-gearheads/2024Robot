@@ -7,7 +7,7 @@ package frc.robot;
 import static frc.robot.Constants.ArmConstants.armOverrideVoltage;
 import static frc.robot.Constants.FieldConstants.AMP_SCORE_POSE;
 import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
-import static frc.robot.Constants.SwerveConstants.NOTE_FEEDING_YAW_TOLERANCE;
+
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -38,7 +38,6 @@ import frc.robot.commands.NTControl.ShooterNTControl;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.NoteSimMgr;
-import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.NoteSimMgr.NoteState;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climber.Climber;
@@ -171,14 +170,8 @@ public class RobotContainer {
     // teleop controlls
     Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(Commands.run(feeder::run, feeder)));
     Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand());
-    Controllers.driverController.getFeedBtn().whileTrue(new ShootFeederNote(arm, feeder, shooter, swerve::getPose, true));
-    Controllers.driverController.getAimAndFeedBtn().whileTrue(
-      new WaitUntilCommand(() -> {
-        return swerve.atYaw(ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians(), NOTE_FEEDING_YAW_TOLERANCE);
-      }
-      ).raceWith(new ShootFeederNote(arm, feeder, shooter, swerve::getPose, false)).andThen(
-        new ShootFeederNote(arm, feeder, shooter, swerve::getPose, true)
-      ));
+    Controllers.driverController.getFeedBtn().whileTrue(new ShootFeederNote(arm, feeder, shooter, swerve, false));
+    Controllers.driverController.getAimAndFeedBtn().whileTrue(new ShootFeederNote(arm, feeder, shooter, swerve, true));
     Controllers.driverController.getAlignBtn().whileTrue(new ProxyCommand(() -> {
       switch(ScoringState.goalMode) {
         case SPEAKER:

@@ -94,9 +94,6 @@
           }
         },
         "RealOutputs": {
-          "Calculations": {
-            "open": true
-          },
           "Climber": {
             "Left": {
               "open": true
@@ -105,32 +102,18 @@
               "open": true
             }
           },
-          "Feeder": {
-            "open": true
-          },
-          "Intake": {
-            "open": true
-          },
-          "LoggedRobot": {
-            "open": true
-          },
-          "Mechanism2d": {
-            "open": true
-          },
           "Shooter": {
             "Bottom": {
               "open": true
             },
             "Top": {
               "open": true
-            },
-            "open": true
+            }
           },
           "Swerve": {
             "Teleop": {
               "open": true
-            },
-            "open": true
+            }
           },
           "open": true
         },
