@@ -65,7 +65,7 @@ public class DriverController {
 
   public Trigger getShootBtn() {
     if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getXButton());
+    return new Trigger(() -> controller.getLeftBumper());
   }
 
   public Trigger getFeedBtn() {
@@ -86,7 +86,7 @@ public class DriverController {
 
   public Trigger getFeedAlign() {
     if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getLeftBumper());
+    return new Trigger(() -> controller.getXButton());
   }
 
   public Trigger getDisableVisionBtn() {
