@@ -113,7 +113,7 @@ public final class Constants {
     public static final double[] SHOOT_YAW_TOLERANCE_YAWS = {0.1, 0.07, 0.044};
     public static final PolynomialSplineFunction yawToleranceInterpolationTable = new LinearInterpolator().interpolate(SHOOT_YAW_TOLERANCE_DISTS, SHOOT_YAW_TOLERANCE_YAWS);
 
-    public static final double NOTE_FEEDING_YAW_TOLERANCE = 4;
+    public static final double NOTE_FEEDING_YAW_TOLERANCE = (6 / 360.0) * (2 * Math.PI);;
   }
 
   public static class ShooterConstants {

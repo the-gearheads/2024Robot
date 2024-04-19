@@ -172,7 +172,13 @@ public class RobotContainer {
     Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(Commands.run(feeder::run, feeder)));
     Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand());
     Controllers.driverController.getFeedBtn().whileTrue(new ShootFeederNote(arm, feeder, shooter, swerve::getPose));
-    Controllers.driverController.getAimAndFeedBtn().whileTrue(new WaitUntilCommand(() -> {return swerve.atYaw(ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians(), NOTE_FEEDING_YAW_TOLERANCE);}).andThen(new ShootFeederNote(arm, feeder, shooter, swerve::getPose)));
+    Controllers.driverController.getAimAndFeedBtn().whileTrue(
+      new WaitUntilCommand(() -> {
+        return swerve.atYaw(ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians(), NOTE_FEEDING_YAW_TOLERANCE);
+      }
+      ).andThen(
+        new ShootFeederNote(arm, feeder, shooter, swerve::getPose)
+      ));
     Controllers.driverController.getAlignBtn().whileTrue(new ProxyCommand(() -> {
       switch(ScoringState.goalMode) {
         case SPEAKER:
