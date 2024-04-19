@@ -246,7 +246,8 @@ public class ShooterCalculations {
   public static Rotation2d getYaw(Translation2d robotPos) {
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
 
-    if(Controllers.driverController.getAimAndFeedBtn().getAsBoolean()) {
+    if(DriverStation.isTeleopEnabled() &&
+      (Controllers.driverController.getAimAndFeedBtn().getAsBoolean() || Controllers.driverController.getFeedAlign().getAsBoolean())) {
       return getYawFeed(robotPos);
     }
 

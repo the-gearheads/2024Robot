@@ -73,6 +73,7 @@ public class Teleop extends Command {
     boolean shouldAlign = Controllers.driverController.getAlignBtn().getAsBoolean() || 
                           Controllers.driverController.getAutoShootBtn().getAsBoolean() ||
                           Controllers.driverController.getAimAndFeedBtn().getAsBoolean() ||
+                          Controllers.driverController.getFeedAlign().getAsBoolean() ||
                           ScoringState.goalMode == GoalMode.STAGE || 
                           (ScoringState.babyBirdMode && ShooterCalculations.isInSource(swerve.getPose().getTranslation()));
     // i think the first condition should be removed tbh but i dont want to break anything

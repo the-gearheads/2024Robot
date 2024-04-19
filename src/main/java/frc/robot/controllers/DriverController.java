@@ -84,7 +84,7 @@ public class DriverController {
   }
 
 
-  public Trigger getNoteAlign() {
+  public Trigger getFeedAlign() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getLeftBumper());
   }
