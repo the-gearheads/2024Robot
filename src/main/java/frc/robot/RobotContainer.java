@@ -171,13 +171,13 @@ public class RobotContainer {
     // teleop controlls
     Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(Commands.run(feeder::run, feeder)));
     Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand());
-    Controllers.driverController.getFeedBtn().whileTrue(new ShootFeederNote(arm, feeder, shooter, swerve::getPose));
+    Controllers.driverController.getFeedBtn().whileTrue(new ShootFeederNote(arm, feeder, shooter, swerve::getPose, true));
     Controllers.driverController.getAimAndFeedBtn().whileTrue(
       new WaitUntilCommand(() -> {
         return swerve.atYaw(ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians(), NOTE_FEEDING_YAW_TOLERANCE);
       }
-      ).andThen(
-        new ShootFeederNote(arm, feeder, shooter, swerve::getPose)
+      ).raceWith(new ShootFeederNote(arm, feeder, shooter, swerve::getPose, false)).andThen(
+        new ShootFeederNote(arm, feeder, shooter, swerve::getPose, true)
       ));
     Controllers.driverController.getAlignBtn().whileTrue(new ProxyCommand(() -> {
       switch(ScoringState.goalMode) {

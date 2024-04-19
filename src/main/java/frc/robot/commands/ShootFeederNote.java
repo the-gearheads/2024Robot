@@ -17,8 +17,9 @@ public class ShootFeederNote extends Command {
   Feeder feeder;
   Shooter shooter;
   Supplier<Pose2d> poseSupplier;
-
-  public ShootFeederNote(Arm arm, Feeder feeder, Shooter shooter, Supplier<Pose2d> poseSupplier) {
+  boolean wantToShoot;
+  
+  public ShootFeederNote(Arm arm, Feeder feeder, Shooter shooter, Supplier<Pose2d> poseSupplier, boolean wantToShoot) {
     this.arm = arm;
     this.feeder = feeder;
     this.shooter = shooter;
@@ -31,7 +32,9 @@ public class ShootFeederNote extends Command {
     arm.setAngle(NOTE_FEEDING_ANGLE);
     shooter.setSpeed(ShooterCalculations.getFeedRpm(poseSupplier.get().getTranslation()));
     if (arm.atPoint(NOTE_FEEDING_ANGLE, NOTE_FEEDING_ANGLE_TOLERANCE) && shooter.atSpeed()) {
-      feeder.run();
+      if (wantToShoot) {
+        feeder.run();
+      }
     };
   }
 }
