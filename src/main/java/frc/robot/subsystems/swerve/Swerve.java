@@ -254,6 +254,8 @@ public class Swerve extends SubsystemBase {
     Logger.recordOutput("Swerve/Speeds", speeds);
     Logger.recordOutput("Swerve/DiscretizedSpeeds", discretized);
 
+    Logger.recordOutput("Swerve/DesiredStates", moduleStates);
+
     for (int i = 0; i < modules.length; i++) {
       modules[i].setState(moduleStates[i]);
     }
