@@ -17,14 +17,21 @@ public class PrepareToShoot extends Command {
   Swerve swerve;
   Arm arm;
   double endAtSpeed;
+  boolean waitForYaw;
 
-  public PrepareToShoot(Shooter shooter, Swerve swerve, Arm arm, double endAtSpeed) {
+  public PrepareToShoot(Shooter shooter, Swerve swerve, Arm arm, double endAtSpeed, boolean waitForYaw) {
     this.shooter = shooter;
     this.swerve = swerve;
     this.arm = arm;
     this.endAtSpeed = endAtSpeed;
+    this.waitForYaw = waitForYaw;
     addRequirements(shooter, arm);
   }
+
+  public PrepareToShoot(Shooter shooter, Swerve swerve, Arm arm, double endAtSpeed) {
+    this(shooter, swerve, arm, endAtSpeed, true);
+  }
+
   public PrepareToShoot(Shooter shooter, Swerve swerve, Arm arm) {
     this(shooter, swerve, arm, -1);
   }
@@ -54,7 +61,8 @@ public class PrepareToShoot extends Command {
                             swerveSpeeds.omegaRadiansPerSecond < MAX_SHOOTING_SPEED_ROT;
 
     boolean shooterAtSpeed = endAtSpeed == -1 ? shooter.atSpeed() : shooter.atSpeed(endAtSpeed, endAtSpeed);
-    return shooterAtSpeed && swerve.atYaw(targetYaw, yawTolerance) && arm.atPoint(shooterAngle, armTolerance) && swerveStopped;
+    boolean atYaw = waitForYaw ? swerve.atYaw(targetYaw, yawTolerance) : true;
+    return shooterAtSpeed && atYaw && arm.atPoint(shooterAngle, armTolerance) && swerveStopped;
   }
 
 }

@@ -20,12 +20,6 @@
                 "data": {
                   "name": "ShootPreloadWhenReady"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AlignToSpeakerYaw"
-                }
               }
             ]
           }
