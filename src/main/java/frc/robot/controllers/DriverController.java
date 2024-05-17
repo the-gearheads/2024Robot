@@ -112,6 +112,7 @@ public class DriverController {
   }
 
   public void setRumble(double rumble) {
+    if(isNull()) return;
     controller.setRumble(RumbleType.kBothRumble, rumble);
   }
 
