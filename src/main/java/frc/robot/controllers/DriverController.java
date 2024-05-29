@@ -43,62 +43,10 @@ public class DriverController {
     return Controllers.deadband(-controller.getRightX());
   }
 
-  public double getSpeedUpAxis() {
-    if(isNull()) return 0;
-    return Controllers.deadband(controller.getLeftTriggerAxis());
-  }
-  
-  public double getSlowDownAxis() {
-    if(isNull()) return 0;
-    return Controllers.deadband(controller.getRightTriggerAxis());
-  }
-
-  public Trigger getAlignBtn() {
-    if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getRightBumper());
-  }
-
-  public Trigger getAutoShootBtn() {
-    if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getAButton());
-  }
-
-  public Trigger getShootBtn() {
-    if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getLeftBumper());
-  }
-
-  public Trigger getFeedBtn() {
-    if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getBButton());
-  }
-
-  public Trigger getAimAndFeedBtn() {
-    if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getYButton());
-  }
-
-  public Trigger enableVision() {
-    if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getStartButton());
-  }
-
-
-  public Trigger getFeedAlign() {
-    if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getXButton());
-  }
-
-  public Trigger getDisableVisionBtn() {
-    if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getRawButton(7));
-  }
-
-
-  // dpad is oh shit btns, up is reset post, left is reconfigure
+  // dpad is oh shit btns, down is reset post, left is reconfigure
   public Trigger getResetPoseBtn() {
     if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getPOV() == 0);
+    return new Trigger(() -> controller.getPOV() == 180);
   }
 
   public Trigger reconfigureEverything() {
