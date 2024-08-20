@@ -71,9 +71,9 @@ public class Teleop extends Command {
     double calculatedForcedAngle = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
     /* I don't like this anymore */
     boolean shouldAlign = Controllers.driverController.getAlignBtn().getAsBoolean() || 
-                          Controllers.driverController.getAutoShootBtn().getAsBoolean() ||
-                          Controllers.driverController.getAimAndFeedBtn().getAsBoolean() ||
-                          Controllers.driverController.getFeedAlign().getAsBoolean() ||
+                          Controllers.driverController.getScoreBtn().getAsBoolean() ||
+                          Controllers.driverController.getOverheadFeedBtn().getAsBoolean() ||
+                          Controllers.driverController.getUnderstageFeedBtn().getAsBoolean() ||
                           ScoringState.goalMode == GoalMode.STAGE || 
                           (ScoringState.babyBirdMode && ShooterCalculations.isInSource(swerve.getPose().getTranslation()));
     // i think the first condition should be removed tbh but i dont want to break anything

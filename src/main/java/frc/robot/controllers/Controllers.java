@@ -11,7 +11,6 @@ public class Controllers {
   private static String[] lastControllerNames = new String[6];
 
   public static DriverController driverController;
-  public static OperatorController operatorController;
 
   /** Returns true if the connected controllers have changed since last called. */
   public static boolean didControllersChange() {
@@ -32,7 +31,6 @@ public class Controllers {
     // Defaults, since a NullPointerException would be far worse than any warnings
     // driverController = new DriverController() {};
     driverController = new DriverController(-1);
-    operatorController = new OperatorController() {};
 
     boolean foundDriveController = false;
     boolean foundOperatorController = false;
@@ -45,7 +43,7 @@ public class Controllers {
 
       if (!foundOperatorController && (joyName.contains("T.16000M") || joyName.contains("Keyboard 1"))) {
         foundOperatorController = true;
-        operatorController = new Thrustmaster(i);
+        // operatorController = new Thrustmaster(i);
       }
 
       // No filtering for now, just use the first

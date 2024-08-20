@@ -1,7 +1,8 @@
 package frc.robot.commands;
 
-import static frc.robot.Constants.ArmConstants.NOTE_FEEDING_ANGLE;
 import static frc.robot.Constants.ArmConstants.NOTE_FEEDING_ANGLE_TOLERANCE;
+import static frc.robot.Constants.ArmConstants.NOTE_UNDERSTAGE_FEEDING_ANGLE;
+import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 import static frc.robot.Constants.SwerveConstants.NOTE_FEEDING_YAW_TOLERANCE;
 
 import org.littletonrobotics.junction.Logger;
@@ -14,14 +15,14 @@ import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
-public class ShootFeederNote extends Command {
+public class UnderstageFeed extends Command {
   Arm arm;
   Feeder feeder;
   Shooter shooter;
   Swerve swerve;
   boolean waitForYaw;
   
-  public ShootFeederNote(Arm arm, Feeder feeder, Shooter shooter, Swerve swerve, boolean waitForYaw) {
+  public UnderstageFeed(Arm arm, Feeder feeder, Shooter shooter, Swerve swerve, boolean waitForYaw) {
     this.arm = arm;
     this.feeder = feeder;
     this.shooter = shooter;
@@ -33,15 +34,15 @@ public class ShootFeederNote extends Command {
   @Override
   public void execute() {
     Translation2d pose = swerve.getPose().getTranslation();
-    arm.setAngle(NOTE_FEEDING_ANGLE);
-    shooter.setSpeed(ShooterCalculations.getFeedRpm(pose));
+    arm.setAngle(NOTE_UNDERSTAGE_FEEDING_ANGLE);
+    shooter.setSpeed(DEFAULT_SPEED);
     boolean atYaw = swerve.atYaw(ShooterCalculations.getYaw(pose).getRadians(), NOTE_FEEDING_YAW_TOLERANCE);
     boolean atYawIfWaiting = waitForYaw ? atYaw : true;
 
-    Logger.recordOutput("ShootFeederNote/AtYaw", atYawIfWaiting);
-    Logger.recordOutput("ShootFeederNote/WaitForYaw", waitForYaw);
+    Logger.recordOutput("UnderstageFeed/AtYaw", atYawIfWaiting);
+    Logger.recordOutput("UnderstageFeed/WaitForYaw", waitForYaw);
 
-    if (arm.atPoint(NOTE_FEEDING_ANGLE, NOTE_FEEDING_ANGLE_TOLERANCE) && shooter.atSpeed() && atYawIfWaiting) {
+    if (arm.atPoint(NOTE_UNDERSTAGE_FEEDING_ANGLE, NOTE_FEEDING_ANGLE_TOLERANCE) && shooter.atSpeed() && atYawIfWaiting) {
         feeder.run();
     };
   }
