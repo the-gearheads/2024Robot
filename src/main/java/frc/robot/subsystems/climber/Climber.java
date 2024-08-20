@@ -26,7 +26,7 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Logger.recordOutput("Climber/ControllerVal", Controllers.operatorController.getClimberProportion());
+    // Logger.recordOutput("Climber/ControllerVal", Controllers.operatorController.getClimberProportion());
     if (leftMotor.getPosition() >= MAX_DIST && leftMotor.getVelocitySetpoint() > 0
         || leftMotor.getPosition() <= MIN_DIST && leftMotor.getVelocitySetpoint() < 0){
       Logger.recordOutput("Climber/Left/OutOfRange", true);
@@ -93,6 +93,23 @@ public class Climber extends SubsystemBase {
   public void down(double proportion) {
     setSpeedProportional(proportion, -SPEED);
   }
+
+  public void leftDown() {
+    leftMotor.setSpeed(-SPEED);
+  }
+
+  public void leftUp() {
+    leftMotor.setSpeed(SPEED);
+  }
+
+  public void rightDown() {
+    rightMotor.setSpeed(-SPEED);
+  }
+
+  public void rightUp() {
+    rightMotor.setSpeed(SPEED);
+  }
+
 
   public void down() {
     down(0);

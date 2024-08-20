@@ -247,7 +247,7 @@ public class ShooterCalculations {
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
 
     if(DriverStation.isTeleopEnabled() &&
-      (Controllers.driverController.getAimAndFeedBtn().getAsBoolean() || Controllers.driverController.getFeedAlign().getAsBoolean())) {
+      (Controllers.driverController.getOverheadFeedBtn().getAsBoolean() || Controllers.driverController.getUnderstageFeedBtn().getAsBoolean())) {
       return getYawFeed(robotPos);
     }
 

@@ -58,47 +58,88 @@ public class DriverController {
     return new Trigger(() -> controller.getRightBumper());
   }
 
-  public Trigger getAutoShootBtn() {
+  // only work during stage mode
+  public Trigger getLClimbUpBtn() {
     if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getAButton());
+    return new Trigger(() -> Controllers.deadband(controller.getLeftTriggerAxis()) > 0); 
   }
 
-  public Trigger getShootBtn() {
+  public Trigger getLClimbDownBtn() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getLeftBumper());
   }
 
-  public Trigger getFeedBtn() {
+  public Trigger getRClimbUpBtn() {
     if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getBButton());
+    return new Trigger(() -> Controllers.deadband(controller.getRightTriggerAxis()) > 0); 
   }
 
-  public Trigger getAimAndFeedBtn() {
+  public Trigger getRClimbDownBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getRightBumper());
+  }
+  // ----
+
+  public Trigger getOverheadFeedBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getLeftBumper());
+  }
+
+  public Trigger getScoreBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> Controllers.deadband(controller.getLeftTriggerAxis()) > 0);
+  }
+
+  public Trigger getIntakeBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> Controllers.deadband(controller.getRightTriggerAxis()) > 0);
+  }
+
+  public Trigger getOuttakeBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getRightBumper());
+  }
+  
+  public Trigger getUnderstageFeedBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getRawButton(17)); // left paddle
+  }
+
+  public Trigger getAmpModeBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getRawButton(16));
+  }
+
+  public Trigger getBabyBirdBtn() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getYButton());
   }
 
-  public Trigger enableVision() {
+  public Trigger getStageModeBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getLeftStickButton());
+  }
+
+  public Trigger getClimbersAutoExtendBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getRightStickButton());
+  }
+
+  // -- backup btns --
+  public Trigger getEnableVisionBtn() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getStartButton());
   }
 
-
-  public Trigger getFeedAlign() {
-    if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getXButton());
-  }
-
   public Trigger getDisableVisionBtn() {
     if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getRawButton(7));
+    return new Trigger(() -> controller.getBackButton());
   }
 
-
-  // dpad is oh shit btns, up is reset post, left is reconfigure
+  // dpad is oh shit btns, down is reset pose, left is reconfigure. right is climber override
   public Trigger getResetPoseBtn() {
     if(isNull()) return emptyTrigger();
-    return new Trigger(() -> controller.getPOV() == 0);
+    return new Trigger(() -> controller.getPOV() == 180);
   }
 
   public Trigger reconfigureEverything() {

@@ -173,6 +173,7 @@ public final class Constants {
     public static final Measure<Voltage> armOverrideVoltage = Volts.of(4);
 
     public static final double NOTE_FEEDING_ANGLE = (45.0 / 360.0) * (2 * Math.PI);
+    public static final double NOTE_UNDERSTAGE_FEEDING_ANGLE = MIN_ANGLE;
     public static final double NOTE_FEEDING_ANGLE_TOLERANCE = (4.0 / 360.0) * (2 * Math.PI);
     public static final double[] SHOOTING_ARM_TOLERANCES_DISTS = {1.5, 2, 3};
     public static final double[] SHOOTING_ARM_TOLERANCES_ANGLES = {0.0872, 0.0349, 0.01};

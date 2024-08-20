@@ -25,16 +25,18 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.commands.AutoArmHeight;
+import frc.robot.commands.AutoShoot;
 import frc.robot.commands.AutoShooter;
 import frc.robot.commands.AutonAutoArmHeight;
 import frc.robot.commands.BabyBirdIntake;
 import frc.robot.commands.IntakeNote;
+import frc.robot.commands.OverheadFeed;
 import frc.robot.commands.PrepareToShoot;
-import frc.robot.commands.ShootFeederNote;
 import frc.robot.commands.SwerveAlignToSpeaker;
 import frc.robot.commands.Teleop;
-import frc.robot.commands.NTControl.ShooterNTControl;
+import frc.robot.commands.UnderstageFeed;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.NoteSimMgr;
@@ -167,25 +169,58 @@ public class RobotContainer {
     // Find new controllers
     Controllers.updateActiveControllerInstance();
 
-    // teleop controlls
-    Controllers.driverController.getAutoShootBtn().whileTrue(new PrepareToShoot(shooter, swerve, arm).andThen(Commands.run(feeder::run, feeder)));
-    Controllers.driverController.getShootBtn().whileTrue(feeder.getRunFeederCommand());
-    Controllers.driverController.getFeedBtn().whileTrue(new ShootFeederNote(arm, feeder, shooter, swerve, false));
-    Controllers.driverController.getAimAndFeedBtn().whileTrue(new ShootFeederNote(arm, feeder, shooter, swerve, true));
-    Controllers.driverController.getAlignBtn().whileTrue(new ProxyCommand(() -> {
-      switch(ScoringState.goalMode) {
-        case SPEAKER:
-          return new PrepareToShoot(shooter, swerve, arm).repeatedly();
-        case AMP:
-        case STAGE:
-        default:
-         // will set forced angle to AMP because of ShooterCalculation getYaw being called in teleop, will set forced angle to stage bc shootercalculations getYaw in teleop
-        return new InstantCommand();
+    // teleop controls
+    Controllers.driverController.getBabyBirdBtn().whileTrue(new BabyBirdIntake(arm, shooter, feeder));
+    Controllers.driverController.getUnderstageFeedBtn().whileTrue(new UnderstageFeed(arm, feeder, shooter, swerve, false));
+    Controllers.driverController.getAmpModeBtn().onTrue(new InstantCommand(()->{
+      ScoringState.goalMode = ScoringState.GoalMode.AMP;
+    }));
+    Controllers.driverController.getAmpModeBtn().onFalse(new InstantCommand(()->{
+      ScoringState.goalMode = ScoringState.GoalMode.SPEAKER;
+    }));
+    Controllers.driverController.getStageModeBtn().onTrue(new ProxyCommand(() -> {
+      if(ScoringState.goalMode.equals(ScoringState.GoalMode.STAGE)) {
+        return new InstantCommand(() -> ScoringState.goalMode = ScoringState.GoalMode.SPEAKER);
+      } else {
+        return new InstantCommand(() -> ScoringState.goalMode = ScoringState.GoalMode.STAGE);
       }
     }));
+    Controllers.driverController.getClimbersAutoExtendBtn().onTrue(new InstantCommand(() -> climber.setSpeed(ClimberConstants.SPEED)));
+    Controllers.driverController.getOverheadFeedBtn().whileTrue(new OverheadFeed(arm, feeder, shooter, swerve, true));
+    Controllers.driverController.getScoreBtn().whileTrue(new AutoShoot(shooter, swerve, arm, feeder));
+    Controllers.driverController.getIntakeBtn().whileTrue(new IntakeNote(feeder, intake));
+    Controllers.driverController.getOuttakeBtn().whileTrue(Commands.run(() -> {
+      intake.runReverse();
+      feeder.runReverse();
+    }, intake, feeder));
 
-    Controllers.driverController.enableVision().onTrue(new InstantCommand(() -> swerve.enableVision()));
-    Controllers.operatorController.getIntakeNote().whileTrue(new IntakeNote(feeder, intake));
+    Controllers.driverController.getLClimbUpBtn().whileTrue(new ProxyCommand(() -> {
+      if (ScoringState.goalMode == ScoringState.GoalMode.STAGE) {
+        return Commands.run(climber::leftUp, climber);
+      }
+      return Commands.none();
+    }));
+    Controllers.driverController.getLClimbDownBtn().whileTrue(new ProxyCommand(() -> {
+      if (ScoringState.goalMode == ScoringState.GoalMode.STAGE) {
+        return Commands.run(climber::leftDown, climber);
+      }
+      return Commands.none();
+    }));
+    Controllers.driverController.getRClimbUpBtn().whileTrue(new ProxyCommand(() -> {
+      if (ScoringState.goalMode == ScoringState.GoalMode.STAGE) {
+        return Commands.run(climber::rightUp, climber);
+      }
+      return Commands.none();
+    }));
+    Controllers.driverController.getRClimbDownBtn().whileTrue(new ProxyCommand(() -> {
+      if (ScoringState.goalMode == ScoringState.GoalMode.STAGE) {
+        return Commands.run(climber::rightDown, climber);
+      }
+      return Commands.none();
+    }));
+
+    Controllers.driverController.getEnableVisionBtn().onTrue(new InstantCommand(() -> swerve.enableVision()));
+    Controllers.driverController.getDisableVisionBtn().onTrue(new InstantCommand(() -> swerve.disableVision()));
     Controllers.driverController.getResetPoseBtn().onTrue(new InstantCommand(() -> {
         boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
         Pose2d pos = AMP_SCORE_POSE;
@@ -193,94 +228,6 @@ public class RobotContainer {
           pos = GeometryUtil.flipFieldPose(pos);
         }
         swerve.resetPose(pos);
-    }));
-    Controllers.driverController.getDisableVisionBtn().onTrue(new InstantCommand(() -> swerve.disableVision()));
-    Controllers.operatorController.climberDown().whileTrue(Commands.run(() -> {
-      climber.down(Controllers.operatorController.getClimberProportion());
-    }, climber));
-    Controllers.operatorController.climberUp().whileTrue(Commands.run(() -> {
-      climber.up(Controllers.operatorController.getClimberProportion());
-    }, climber));
-    Controllers.operatorController.getShooterOverride().whileTrue(Commands.run(() -> {
-       shooter.setSpeed(Constants.ShooterConstants.DEFAULT_SPEED);
-      },
-      shooter
-    ));
-
-
-    Controllers.operatorController.getShooterRevOverride().whileTrue(Commands.run(() -> {
-       shooter.setSpeed(-Constants.ShooterConstants.DEFAULT_SPEED);
-      },
-      shooter
-    ));
-
-    Controllers.operatorController.getArmUp().whileTrue(Commands.run(()->{
-      arm.setVoltage(armOverrideVoltage);
-      arm.runPid = false;
-      arm.resetToCurrentPose();
-    }));
-
-    Controllers.operatorController.getArmDown().whileTrue(Commands.run(()->{
-      arm.setVoltage(armOverrideVoltage.negate());
-      arm.runPid = false;
-      arm.resetToCurrentPose();
-    }));
-
-    Controllers.operatorController.getArmAutosOff().onTrue(new InstantCommand(()->{
-      arm.getDefaultCommand().cancel();
-      shooter.getDefaultCommand().cancel();
-      arm.setDefaultCommand(Commands.run(()->{}, arm));
-      shooter.setDefaultCommand(new ShooterNTControl(shooter));
-      Commands.runOnce(()->{}, shooter).schedule();
-      Commands.runOnce(()->{}, arm).schedule();
-      shooter.setSpeed(0);
-    }));
-
-    Controllers.operatorController.getArmAutosOn().onTrue(new InstantCommand(()->{
-      arm.getDefaultCommand().cancel();
-      shooter.getDefaultCommand().cancel();
-      arm.setDefaultCommand(new AutoArmHeight(arm, swerve));
-      shooter.setDefaultCommand(new AutoShooter(shooter, swerve, feeder));
-      Commands.runOnce(()->{}, shooter).schedule();
-      Commands.runOnce(()->{}, arm).schedule();
-    }));
-
-    Controllers.operatorController.getIntakeOverride().whileTrue(Commands.startEnd(
-      intake::run,
-      intake::stop,
-      intake
-    ));
-
-    Controllers.operatorController.getIntakeRevOverride().whileTrue(Commands.startEnd(
-      intake::runReverse,
-      intake::stop,
-      intake
-    ));
-    
-    Controllers.operatorController.getBabyBird().and(DriverStation::isTeleopEnabled).whileTrue(new BabyBirdIntake(arm, shooter, feeder));
-
-    Controllers.operatorController.getFeederOverride().whileTrue(Commands.startEnd(
-      feeder::run,
-      feeder::stop,
-      feeder
-    ));
-
-    Controllers.operatorController.getFeederRevOverride().whileTrue(Commands.startEnd(
-      feeder::runReverse,
-      feeder::stop,
-      feeder
-    ));
-
-    Controllers.operatorController.getSetSpeakerModeBtn().onTrue(new InstantCommand(()->{
-      ScoringState.goalMode = ScoringState.GoalMode.SPEAKER;
-    }));
-
-    Controllers.operatorController.getSetAmpModeBtn().onTrue(new InstantCommand(()->{
-      ScoringState.goalMode = ScoringState.GoalMode.AMP;
-    }));
-
-    Controllers.operatorController.getSetStageModeBtn().onTrue(new InstantCommand(()->{
-      ScoringState.goalMode = ScoringState.GoalMode.STAGE;
     }));
 
     Controllers.driverController.allowClimberOverride().whileTrue(leds.getSetStateCommand(LedState.WHITE));
