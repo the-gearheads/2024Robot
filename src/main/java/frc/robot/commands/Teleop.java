@@ -7,10 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.ScoringState;
-import frc.robot.ScoringState.GoalMode;
 import frc.robot.controllers.Controllers;
-import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.vision.GPDetect;
 import frc.robot.util.BetterBangBang;
@@ -68,18 +65,9 @@ public class Teleop extends Command {
 
     var speeds = new ChassisSpeeds(x, y, rot);
 
-    double calculatedForcedAngle = ShooterCalculations.getYaw(swerve.getPose().getTranslation()).getRadians();
-    /* I don't like this anymore */
-    boolean shouldAlign = Controllers.driverController.getAlignBtn().getAsBoolean() || 
-                          Controllers.driverController.getAutoShootBtn().getAsBoolean() ||
-                          Controllers.driverController.getAimAndFeedBtn().getAsBoolean() ||
-                          Controllers.driverController.getFeedAlign().getAsBoolean() ||
-                          ScoringState.goalMode == GoalMode.STAGE || 
-                          (ScoringState.babyBirdMode && ShooterCalculations.isInSource(swerve.getPose().getTranslation()));
     // i think the first condition should be removed tbh but i dont want to break anything
-    var forcedAngle = shouldAlign ? calculatedForcedAngle : null;
+    Double forcedAngle = null;
     if (DriverStation.isAutonomous()) forcedAngle = null;
-    if(forcedAngle != null) headingController.setSetpoint(swerve.getGyroRotation().getRadians());
 
     if (SmartDashboard.getBoolean("Teleop/HeadingPID", true)) {
       headingPid(attemptingToRotate, speeds);
@@ -87,7 +75,7 @@ public class Teleop extends Command {
 
     Logger.recordOutput("Swerve/Teleop/Speeds", speeds);
     
-    if (SmartDashboard.getBoolean("Swerve/FieldRelative", true) && ScoringState.goalMode != GoalMode.STAGE) {
+    if (SmartDashboard.getBoolean("Swerve/FieldRelative", true)) {
       swerve.driveFieldRelative(speeds, forcedAngle);
     } else {
       swerve.drive(speeds, forcedAngle);

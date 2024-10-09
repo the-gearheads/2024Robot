@@ -8,7 +8,6 @@ import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,16 +17,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
 import frc.robot.util.Polygon;
 
-import static edu.wpi.first.units.Units.*;
 
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
-import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 
@@ -114,89 +108,6 @@ public final class Constants {
     public static final PolynomialSplineFunction yawToleranceInterpolationTable = new LinearInterpolator().interpolate(SHOOT_YAW_TOLERANCE_DISTS, SHOOT_YAW_TOLERANCE_YAWS);
 
     public static final double NOTE_FEEDING_YAW_TOLERANCE = (6 / 360.0) * (2 * Math.PI);;
-  }
-
-  public static class ShooterConstants {
-    public static final int TOP_ID = 11;
-    public static final int BOTTOM_ID = 12;
-    public static final int DEFAULT_SPEED = 6000;
-    public static final int AMP_SPEED = 4000;
-    public static final double AMP_WAIT_ANGLE = 85d * 2d * Math.PI / 360;
-    public static final double AMP_SCORE_ANGLE = 100d * 2d * Math.PI / 360;
-    public static final double AMP_ANGLE_TOLERANCE = 1.2d * 2d * Math.PI / 360;
-    public static final double STOW_ANGLE = 21d * 2d * Math.PI / 360; 
-    public static final double SPEED_TOLERANCE = 240;
-    public static final double SPEED_DEBOUNCE_TIME = 0.2;
-    
-    public static final double[] PID = {0.0021693, 0, 0};
-
-    public static final double SHOOTER_PIVOT_HEIGHT = 0.3048; // placeholder
-    public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.045537, 0.0017932, 0.0001929);
-    public static final double AUTO_SHOOTER_DISTANCE = 7;  // meters from speaker where shooter will begin spinning, in amp or speaker mode
-
-    public static final double MAX_SHOOTING_SPEED_VX = 0.3; // m/s, preparetoshoot command waits for the chassisspeeds to be below this number before finishing
-    public static final double MAX_SHOOTING_SPEED_VY = 0.3;
-    public static final double MAX_SHOOTING_SPEED_ROT = 0.05; // omega rad / s
-
-    public static final double NOTE_FEEDING_SPEED = 3250;
-    public static final double[] FEED_SPEED_INTERP_DISTS = {1.0, 3.0, 5.4, 9.56};
-    public static final double[] FEED_SPEED_INTERP_SPEEDS = {1400, 1700.0, 2500.0, 3200.0};
-    public static final PolynomialSplineFunction FEED_SPEED_INTERP = new SplineInterpolator().interpolate(FEED_SPEED_INTERP_DISTS, FEED_SPEED_INTERP_SPEEDS);
-
-  }
-
-  public static class ArmConstants {
-    public static final int MAIN_ARM_ID = 10;
-    public static final int FOLLOWER_ARM_ID = 9;
-    public static final double MAX_ANGLE_DEG = 110.17978;
-    public static final double MIN_ANGLE_DEG = 21;
-    public static final double ARM_OFFSET = -0.189979;
-    public static final double ARM_POS_FACTOR = 9.0/20.0 * 2 * Math.PI * 0.981664; // 20:9 artio between encoder and arm, also conv to radians; 0.981664 is fudge factor 😋
-    public static final double ARM_ANGLE_LIVE_FF_THRESHOLD = 10; //deg
-    public static final double ARM_LENGTH = 0.6660; // meters, sim and mechanism2d only
-    public static final double ARM_MOTOR_GEARING = 125; // sim only, gearing between motor and arm
-    public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.19684, 0.0069965, 0.47015, 0.022602);
-    public static final ArmFeedforward SIM_FEEDFORWARD = new ArmFeedforward(0.2509, 0.099081, 5.5782, 0.28261); // both of these are wrong but this one is less wrong for the purposes of sim
-    public static final double[] PID = {34.566, 0, 1.0137};
-    public static final Constraints ARM_CONSTRAINTS = new Constraints(
-      Units.degreesToRadians(400), // max vel, deg/s  101
-      Units.degreesToRadians(650) // max acc, deg/s^2 
-    );
-    public static final double MAX_ANGLE = (MAX_ANGLE_DEG / 360.0) * (2 * Math.PI);
-    public static final double MIN_ANGLE = (MIN_ANGLE_DEG / 360.0) * (2 * Math.PI);
-
-    public static final double[] SPLINE_DISTANCES = {1.0959, 1.5100, 2.0153, 2.4980, 3.0284, 3.5106, 4.0048, 4.341426, 4.9951, 5.350909, 6.011493};  // old values
-    public static final double[] SPLINE_ANGLES =    {0.9564, 0.8269, 0.7308, 0.6372, 0.5620, 0.5288, 0.4950, 0.462555, 0.4342, 0.39945,  0.355};  // old values
-    // public static final double[] SPLINE_DISTANCES = {1.235, 1.980185, 2.248288, 2.77234, 3.21358, 3.762, 4.275393, 4.77155, 5.350909, 6.041493};
-    // public static final double[] SPLINE_ANGLES =    {0.952, 0.752,    0.810,    0.580,   0.527,   0.498, 0.4687,   0.4220,  0.39945,  0.375};
-
-    public static final Measure<Voltage> armOverrideVoltage = Volts.of(4);
-
-    public static final double NOTE_FEEDING_ANGLE = (45.0 / 360.0) * (2 * Math.PI);
-    public static final double NOTE_FEEDING_ANGLE_TOLERANCE = (4.0 / 360.0) * (2 * Math.PI);
-    public static final double[] SHOOTING_ARM_TOLERANCES_DISTS = {1.5, 2, 3};
-    public static final double[] SHOOTING_ARM_TOLERANCES_ANGLES = {0.0872, 0.0349, 0.01};
-    public static final PolynomialSplineFunction armToleranceInterpolationTable = new LinearInterpolator().interpolate(SHOOTING_ARM_TOLERANCES_DISTS, SHOOTING_ARM_TOLERANCES_ANGLES);
-    public static final double BABY_BIRD_ANGLE = Units.degreesToRadians(47);
-  }
-
-  public static class FeederConstants {
-    public static final int FEEDER_ID = 13;
-    public static final int HANDOFF_ID = 7;
-    public static final int IR_SWITCH_ID = 9;
-    public static final int BEAMBREAK_SWITCH_ID = 7;
-    public static final double[] PID = {0.00038793, 0, 0};
-    public static final double[] HANDOFF_PID = {0.0019749, 0, 0}; 
-    public static final double SPEED = 3000.0;
-    public static final SimpleMotorFeedforward FEEDER_FF = new SimpleMotorFeedforward(0.065837, 0.0019032, 0.00021355); 
-    public static final SimpleMotorFeedforward HANDOFF_FF = new SimpleMotorFeedforward(0.1132, 0.0018353, 0.00013306);
-  }
-
-  public static class IntakeConstants {
-    public static final int ID = 14;
-    public static final double[] PID = {0.0018087, 0, 0};
-    public static final double SPEED = 5500;
-    public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.26764, 0.0018386, 0.00010506);
   }
 
   public static class AutoConstants {
@@ -288,17 +199,6 @@ public final class Constants {
     public static final double SOURCE_WING_DIST = 4;  // controls when to switch feeding position
     public static final double SOURCE_RADIUS = 3.2; // consider 1.9-1.6ish if you want it more sensitive (more towards 1.9)?
 
-  }
-
-  public static class ClimberConstants {
-    public static final int RIGHT_ID = 15;
-    public static final int LEFT_ID = 5;
-    public static final double[] PID = {0.00074427, 0, 0};
-    public static final double SPEED = 6000;
-    public static final double GEAR_RATIO = 1d / 64d;
-    public static final double MAX_DIST = 3.0625 / GEAR_RATIO; // was 2.734375 (aka 175 rotations), now is at 196 rotations
-    public static final double MIN_DIST = 10;
-    public static final SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.19684, 0.0016759, 3.5906e-05);
   }
 
   public static class Leds {

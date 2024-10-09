@@ -55,7 +55,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.leds.LedState;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.HandledSleep;
@@ -371,10 +370,6 @@ public class Swerve extends SubsystemBase {
     Logger.recordOutput("Swerve/CurrentSpeeds", getRobotRelativeSpeeds());
     Logger.recordOutput("Swerve/GyroAngle", -Units.degreesToRadians(gyro.getYaw()));
     Logger.recordOutput("Vision/VisionEnabled", isVisionEnabled());
-    Logger.recordOutput("Swerve/YawTolerance", ShooterCalculations.getYawTolerance(getPose().getTranslation()));
-    Logger.recordOutput("Swerve/AtYaw", atYaw(ShooterCalculations.getYaw(getPose().getTranslation()).getRadians(), ShooterCalculations.getYawTolerance(getPose().getTranslation())));
-    ShooterCalculations.getShooterAngle(getPose().getTranslation());
-    ShooterCalculations.getYaw(getPose().getTranslation());
     field.setRobotPose(getPose());
     vpField.setRobotPose(getPose());
 

@@ -127,7 +127,6 @@ public class Robot extends LoggedRobot {
     triggerEventLoop.poll();
     CommandScheduler.getInstance().run();
     m_robotContainer.updateControllers();
-    ScoringState.periodic();
 
     if (DriverStation.isEStopped()) {
       m_robotContainer.leds.setState(LedState.HOT_PINK);

@@ -6,7 +6,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -17,7 +17,7 @@ import java.util.OptionalDouble;
 
 public class DriveMotor {
 
-  CANSparkFlex flex;
+  CANSparkMax flex;
   RelativeEncoder encoder;
 
   SparkPIDController pid;
@@ -30,7 +30,7 @@ public class DriveMotor {
 
   /* id is the CAN id, index is the index into the array of modules and stuff */
   public DriveMotor(int id, int index, String modulePath) {
-    flex = new CANSparkFlex(id, MotorType.kBrushless);
+    flex = new CANSparkMax(id, MotorType.kBrushless);
     pid = flex.getPIDController();
     pid.setP((DRIVE_PID[0] / 12.0) * DRIVE_VEL_FACTOR);
     pid.setI(0);
