@@ -2,25 +2,27 @@ package frc.robot.subsystems.swerve.motors;
 
 import static frc.robot.Constants.SwerveConstants.DRIVE_FEEDFORWARD;
 import static frc.robot.Constants.SwerveConstants.DRIVE_PID;
-import static frc.robot.Constants.SwerveConstants.DRIVE_POS_FACTOR;
-import static frc.robot.Constants.SwerveConstants.DRIVE_VEL_FACTOR;
+import static frc.robot.Constants.SwerveConstants.DRIVE_RATIO;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
 import java.util.OptionalDouble;
 
-import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
-
 public class DriveMotorSim extends DriveMotor {
 
+  FlywheelSim sim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(DRIVE_FEEDFORWARD.kv, DRIVE_FEEDFORWARD.ka), DCMotor.getNeoVortex(1), DRIVE_RATIO);
   PIDController softPid = new PIDController(DRIVE_PID[0], DRIVE_PID[1], DRIVE_PID[2]);
 
-  SwerveModuleSimulation sim;
+  double pos = 0;
+  double volts = 0;
 
-  public DriveMotorSim(int id, int index, String modulePath, SwerveModuleSimulation sim) {
+  public DriveMotorSim(int id, int index, String modulePath) {
     super(id, index, modulePath);
-    this.sim = sim;
   }
 
   // i think we need to override periodic, setVoltage, getPosition, resetEncoder, and getVelocity
@@ -28,36 +30,40 @@ public class DriveMotorSim extends DriveMotor {
   @Override
   public void periodic() {
     super.periodic();
-    setVoltage(softPid.calculate(getVelocity(), driveSetpoint) + DRIVE_FEEDFORWARD.calculate(driveSetpoint));
+    sim.update(0.02);
+    setVoltage(softPid.calculate(sim.getAngularVelocityRPM(), driveSetpoint) + DRIVE_FEEDFORWARD.calculate(driveSetpoint));
+    pos += sim.getAngularVelocityRadPerSec() * 0.02;
   }
 
   @Override
   public void setVoltage(double volts) {
-    sim.requestDriveVoltageOut(volts);
+    this.volts = volts;
+    double batteryVolts = RobotController.getBatteryVoltage();
+    sim.setInputVoltage(MathUtil.clamp(volts, -batteryVolts, batteryVolts));
   }
   
   @Override
   public double getVoltage() {
-    return sim.getDriveMotorAppliedVolts();
+    return volts;
   }
 
   @Override
   public double getPosition() {
-    return Units.radiansToRotations(sim.getDriveEncoderUnGearedPositionRad()) * DRIVE_POS_FACTOR;
+    return pos;
   }
 
   @Override
   public OptionalDouble getPositionOptional() {
-    return OptionalDouble.of(getPosition());
+    return OptionalDouble.of(pos);
   }
 
   @Override
   public void resetEncoder() {
-    return; // no-op for now ig
+    pos = 0;
   }
 
   @Override
   public double getVelocity() {
-    return Units.radiansPerSecondToRotationsPerMinute(sim.getDriveEncoderUnGearedSpeedRadPerSec()) * DRIVE_VEL_FACTOR;
+    return sim.getAngularVelocityRadPerSec();
   }
 }

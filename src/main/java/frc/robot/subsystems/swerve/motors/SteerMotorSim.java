@@ -1,53 +1,42 @@
 package frc.robot.subsystems.swerve.motors;
 
-import static frc.robot.Constants.SwerveConstants.STEER_PIDF;
-
 import java.util.OptionalDouble;
 
-import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class SteerMotorSim extends SteerMotor {
-  SwerveModuleSimulation sim;
-  public SteerMotorSim(int id, int index, Rotation2d offset, String modulePath, SwerveModuleSimulation sim) {
+  public SteerMotorSim(int id, int index, Rotation2d offset, String modulePath) {
     super(id, index, offset, modulePath);
-    this.sim = sim;
   }
 
-  PIDController softPid = new PIDController(STEER_PIDF[0], STEER_PIDF[1], STEER_PIDF[2]);
+  Rotation2d angle = new Rotation2d();
 
   // override noOffsetGetAngle, periodic, setVoltage
 
   @Override
   public Rotation2d getAngle() {
-    return sim.getSteerAbsoluteFacing();
+    return Rotation2d.fromRadians(targetAngle);
   }
 
   @Override
   public double getAngleRadians() {
-    return sim.getSteerAbsoluteFacing().getRadians();
+    return targetAngle;
   }
 
   @Override
   public OptionalDouble getAngleRadiansOptional() {
-    return OptionalDouble.of(getAngleRadians());
+    return OptionalDouble.of(targetAngle);
   }
 
   @Override
   public void periodic() {
-    var volts = softPid.calculate(getAngleRadians(), targetAngle);
-    setVoltage(volts);
   }
 
   @Override
   public void setAngle(Rotation2d angle) {
     super.setAngle(angle);
+    this.angle = angle;
   }
 
-  @Override
-  public void setVoltage(double volts) {
-    sim.requestSteerVoltageOut(volts);
-  }
+  
 }

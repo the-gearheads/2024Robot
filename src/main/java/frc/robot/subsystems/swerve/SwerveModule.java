@@ -13,7 +13,6 @@ import static frc.robot.Constants.SwerveConstants.*;
 
 import java.util.Queue;
 
-import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 import org.littletonrobotics.junction.Logger;
 
 public class SwerveModule {
@@ -27,15 +26,15 @@ public class SwerveModule {
 
   String modulePath;
 
-  public SwerveModule(int id, String moduleName, SwerveModuleSimulation sim) {
+  public SwerveModule(int id, String moduleName) {
     this.modulePath = "Swerve/" + moduleName;
     this.offset = Rotation2d.fromDegrees(WHEEL_OFFSETS[id]);
     if (Robot.isReal()) {
       drive = new DriveMotor(MOTOR_IDS[id][0], id, modulePath);
       steer = new SteerMotor(MOTOR_IDS[id][1], id, offset, modulePath);
     } else {
-      drive = new DriveMotorSim(MOTOR_IDS[id][0], id, modulePath, sim);
-      steer = new SteerMotorSim(MOTOR_IDS[id][1], id, offset, modulePath, sim);
+      drive = new DriveMotorSim(MOTOR_IDS[id][0], id, modulePath);
+      steer = new SteerMotorSim(MOTOR_IDS[id][1], id, offset, modulePath);
     }
     timestampQueue = SparkMaxOdometryThread.getInstance().makeTimestampQueue();
     drivePositionQueue = SparkMaxOdometryThread.getInstance().registerSignal(drive::getPositionOptional);

@@ -96,10 +96,10 @@ public class Swerve extends SubsystemBase {
   );
 
   SwerveModule[] modules = {
-    new SwerveModule(0, "FL", sim.getModules()[0]),
-    new SwerveModule(1, "FR", sim.getModules()[1]),
-    new SwerveModule(2, "BL", sim.getModules()[2]),
-    new SwerveModule(3, "BR", sim.getModules()[3])
+    new SwerveModule(0, "FL"),
+    new SwerveModule(1, "FR"),
+    new SwerveModule(2, "BL"),
+    new SwerveModule(3, "BR")
   };
 
   public Swerve() {
@@ -227,6 +227,8 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
+    sim.setRobotSpeeds(getRobotRelativeSpeeds());
+    sim.setSimulationWorldPose(getPoseWheelsOnly());
     simGyroAngle.set(gyroSimulation.getGyroReading().getDegrees());
   }
 
