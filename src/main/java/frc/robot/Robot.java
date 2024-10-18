@@ -5,9 +5,11 @@
 package frc.robot;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -19,6 +21,7 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.revrobotics.CANSparkLowLevel;
 
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -222,5 +225,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    SimulatedArena.getInstance().simulationPeriodic();
+    List<Pose3d> notesPoses = SimulatedArena.getInstance().getGamePiecesByType("Note");
+    Logger.recordOutput("FieldSimulation/NotesPositions", notesPoses.toArray(new Pose3d[0]));
+  }
 }

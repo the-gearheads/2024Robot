@@ -15,7 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.GyroSimulation;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 import org.littletonrobotics.junction.Logger;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -40,6 +45,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
@@ -55,6 +61,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.ShooterCalculations;
 import frc.robot.subsystems.leds.LedState;
 import frc.robot.subsystems.vision.Vision;
@@ -75,11 +82,24 @@ public class Swerve extends SubsystemBase {
   SimDouble simGyroAngle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(simGyro, "Yaw"));
   double rotSpdSetpoint = 0;
 
+  GyroSimulation gyroSimulation = GyroSimulation.createNav2X();
+
+  SwerveDriveSimulation sim = new SwerveDriveSimulation(
+    68.03, // robot weight in kg
+    26 * 0.0254, // track width in meters
+    26 * 0.0254, // track length in meters 
+    30.3 * 0.0254, // bumper width in meters
+    30.3 * 0.0254, // bumper length in meters
+    getMaxswerve(),
+    gyroSimulation, // the gyro simulation
+    new Pose2d() // initial starting pose on the field
+  );
+
   SwerveModule[] modules = {
-    new SwerveModule(0, "FL"),
-    new SwerveModule(1, "FR"),
-    new SwerveModule(2, "BL"),
-    new SwerveModule(3, "BR")
+    new SwerveModule(0, "FL", sim.getModules()[0]),
+    new SwerveModule(1, "FR", sim.getModules()[1]),
+    new SwerveModule(2, "BL", sim.getModules()[2]),
+    new SwerveModule(3, "BR", sim.getModules()[3])
   };
 
   public Swerve() {
@@ -118,6 +138,8 @@ public class Swerve extends SubsystemBase {
     multitagPoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0, 0)));
     wheelOdometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModulePositions());
     resetPose(new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(180)));
+
+    SimulatedArena.getInstance().addDriveTrainSimulation(sim); 
 
     // Logging callback for current robot pose
     PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
@@ -186,16 +208,26 @@ public class Swerve extends SubsystemBase {
     SmartDashboard.putData("Swerve/PoseRotPID", headingController);
   }
 
+  public static Supplier<SwerveModuleSimulation> getMaxswerve() {
+    return () -> new SwerveModuleSimulation(
+      DCMotor.getNeoVortex(1), DCMotor.getNeo550(1), SwerveConstants.DRIVE_CURRENT_LIMIT,
+      SwerveConstants.DRIVE_RATIO,
+      46.42,
+      SwerveConstants.DRIVE_FEEDFORWARD.ks,
+      0.3,
+      1.25,
+      Units.inchesToMeters(3.0 / 2.0),
+      0.03
+    );
+  }
+
   public Rotation2d getGyroRotation() {
-    /* gyro's inverted i believe */
     return Rotation2d.fromRadians(gyro.getRotation2d().getRadians());
   }
 
   @Override
   public void simulationPeriodic() {
-    // var degreesPerSecond = Units.radiansToDegrees(rotSpdSetpoint);
-    var degreesPerSecond = Units.radiansToDegrees(getRobotRelativeSpeeds().omegaRadiansPerSecond);
-    simGyroAngle.set(simGyroAngle.get() - (degreesPerSecond * 0.02));
+    simGyroAngle.set(gyroSimulation.getGyroReading().getDegrees());
   }
 
   public Command pathFindTo(Pose2d targetPose) {
@@ -399,6 +431,10 @@ public class Swerve extends SubsystemBase {
     return wheelOdometry.getPoseMeters();
   }
 
+  public Pose2d getPoseSim() {
+    return sim.getSimulatedDriveTrainPose();
+  }
+
   public boolean atYaw(double yaw) {
     var difference = Math.abs(new Rotation2d(yaw).minus(getPose().getRotation()).getRadians());
     return difference < FACING_SPEAKER_TOLERANCE;
@@ -421,6 +457,7 @@ public class Swerve extends SubsystemBase {
   public void resetPose(Pose2d pose) {
     multitagPoseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);
     wheelOdometry.resetPosition(getGyroRotation(), getModulePositions(), pose);
+    sim.setSimulationWorldPose(pose);
   }
 
   private void sysidSetVolts(Measure<Voltage> volts) {

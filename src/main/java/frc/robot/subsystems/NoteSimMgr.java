@@ -5,6 +5,8 @@ import static frc.robot.Constants.FeederConstants.BEAMBREAK_SWITCH_ID;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNoteOnField;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.filter.Debouncer;
@@ -48,6 +50,7 @@ public class NoteSimMgr extends SubsystemBase {
 
     for (Translation2d notePos : NOTE_POSITIONS) {
       notePositionsTransform.add(new Transform3d(new Translation3d(notePos.getX(), notePos.getY(), NOTE_HEIGHT), new Rotation3d()));
+      SimulatedArena.getInstance().addGamePiece(new CrescendoNoteOnField(notePos));
     }
 
     this.notePositionsTransform = notePositionsTransform.toArray(new Transform3d[0]);

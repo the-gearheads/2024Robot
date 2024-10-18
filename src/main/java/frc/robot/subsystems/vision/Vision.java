@@ -62,7 +62,9 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    sim.periodic(swerve.getPoseWheelsOnly());
+    if(Robot.isSimulation()) {
+      sim.periodic(swerve.getPoseSim());
+    }
     frontLeft.logCamTransform(swerve.getPose());
     frontRight.logCamTransform(swerve.getPose());
     backLeft.logCamTransform(swerve.getPose());
