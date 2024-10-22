@@ -98,7 +98,9 @@ public class Teleop extends Command {
     }
 
     if(SmartDashboard.getBoolean("Teleop/ImplicitModelFollowing", false)) {
+      Logger.recordOutput("Swerve/Teleop/PreImplicitModelFollowingSpeeds", speeds);
       implicitModelFollowing(speeds);
+      Logger.recordOutput("Swerve/Teleop/PostImplicitModelFollowingSpeeds", speeds);
     }
 
     Logger.recordOutput("Swerve/Teleop/Speeds", speeds);
@@ -151,7 +153,10 @@ public class Teleop extends Command {
   ImplicitModelFollower<N2, N2, N2> controller = new ImplicitModelFollower<>(current, desired);  
 
 
-  // an attempt at implementing https://discord.com/channels/176186766946992128/368993897495527424/1220411851859300522
+  /* An attempt at implementing https://discord.com/channels/176186766946992128/368993897495527424/1220411851859300522
+   * Basically, this allows us to follow a "worse" model of the robot's behavior to make it act like another one.
+   * This is, in effect, reinterpreting the input speeds as a voltage, but who cares? Or we could reformulate our gains, but meh.
+   */
   void implicitModelFollowing(ChassisSpeeds speeds) {
     // need to make speeds robot relative also
     var curVel = swerve.getRobotRelativeSpeeds();
@@ -165,8 +170,14 @@ public class Teleop extends Command {
       MatBuilder.fill(Nat.N2(), Nat.N1(), robotRelSpeed.vxMetersPerSecond, robotRelSpeed.vyMetersPerSecond));
     var adj_vx = output.get(0, 0);
     var adj_vy = output.get(1, 0);
+    // hack, isn't dimensionally accurate but the numbers probably check out
+    // adj_vx = adj_vx < -DRIVE_FEEDFORWARD.ks || adj_vx > DRIVE_FEEDFORWARD.ks ? adj_vx : 0;
+    // adj_vy = adj_vy < -DRIVE_FEEDFORWARD.ks || adj_vy > DRIVE_FEEDFORWARD.ks ? adj_vy : 0;
+    // adj_vx -= adj_vx * 0.5;
+    // adj_vy -= adj_vy * 0.5;
+    // yeah ok this isn't working
     ChassisSpeeds adjSpeeds = new ChassisSpeeds(adj_vx, adj_vy, 0);
-    adjSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(adjSpeeds, rot);
+    adjSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(adjSpeeds, rot);
     speeds.vxMetersPerSecond = adjSpeeds.vxMetersPerSecond;
     speeds.vyMetersPerSecond = adjSpeeds.vyMetersPerSecond;
   }
