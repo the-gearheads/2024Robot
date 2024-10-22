@@ -3,8 +3,10 @@ package frc.robot.commands;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.controller.ImplicitModelFollower;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -23,6 +25,8 @@ import frc.robot.subsystems.vision.GPDetect;
 import frc.robot.util.BetterBangBang;
 
 import static frc.robot.Constants.Controllers.*;
+import static frc.robot.Constants.SwerveConstants.DRIVE_FEEDFORWARD;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Teleop extends Command {
@@ -45,6 +49,7 @@ public class Teleop extends Command {
     headingController.setSetpoint(swerve.getGyroRotation().getRadians());
     SmartDashboard.putBoolean("Teleop/HeadingPID", true);
     SmartDashboard.putBoolean("Swerve/FieldRelative", true);
+    SmartDashboard.putBoolean("Teleop/ImplicitModelFollowing", false);
   }
 
   @Override
@@ -92,6 +97,10 @@ public class Teleop extends Command {
       headingPid(attemptingToRotate, speeds);
     }
 
+    if(SmartDashboard.getBoolean("Teleop/ImplicitModelFollowing", false)) {
+      implicitModelFollowing(speeds);
+    }
+
     Logger.recordOutput("Swerve/Teleop/Speeds", speeds);
     
     if (SmartDashboard.getBoolean("Swerve/FieldRelative", true) && ScoringState.goalMode != GoalMode.STAGE) {
@@ -123,43 +132,42 @@ public class Teleop extends Command {
   }
 
 
-  double kVLinear = 0.1;
-  double kVAngular = 0.1;
-  double kALinear = 0.1;
-  double kAAngular = 0.1;
-  LinearSystem<N2, N2, N2> identifyDrivetrainSystem(
-      double kVLinear, double kALinear, double kVAngular, double kAAngular) {
-    if (kVLinear <= 0.0) {
-      throw new IllegalArgumentException("Kv,linear must be greater than zero.");
-    }
-    if (kALinear <= 0.0) {
-      throw new IllegalArgumentException("Ka,linear must be greater than zero.");
-    }
-    if (kVAngular <= 0.0) {
-      throw new IllegalArgumentException("Kv,angular must be greater than zero.");
-    }
-    if (kAAngular <= 0.0) {
-      throw new IllegalArgumentException("Ka,angular must be greater than zero.");
-    }
+  // honestly since linear and angular don't affect each other, we can just treat them as X and Y and abuse the model
+  double cur_kV_X = DRIVE_FEEDFORWARD.kv;
+  double cur_kA_X = DRIVE_FEEDFORWARD.ka;
+  double cur_kV_Y = cur_kV_X;
+  double cur_kA_Y = cur_kA_X;
 
-    final double A1 = 0.5 * -(kVLinear / kALinear + kVAngular / kAAngular);
-    final double A2 = 0.5 * -(kVLinear / kALinear - kVAngular / kAAngular);
-    final double B1 = 0.5 * (1.0 / kALinear + 1.0 / kAAngular);
-    final double B2 = 0.5 * (1.0 / kALinear - 1.0 / kAAngular);
 
-    return new LinearSystem<>(
-        MatBuilder.fill(Nat.N2(), Nat.N2(), A1, A2, A2, A1),
-        MatBuilder.fill(Nat.N2(), Nat.N2(), B1, B2, B2, B1),
-        // implicit model follower doesnt even really use these two
-        MatBuilder.fill(Nat.N2(), Nat.N2(), 1, 0, 0, 1),
-        MatBuilder.fill(Nat.N2(), Nat.N2(), 0, 0, 0, 0));
-  }
+  double desired_kV_X = DRIVE_FEEDFORWARD.kv;
+  double desired_kA_X = DRIVE_FEEDFORWARD.ka * 1.5;
+  double desired_kV_Y = desired_kV_X;
+  double desired_kA_Y = desired_kA_X;
 
   // ImplicitModelFollower
 
-  
+  LinearSystem<N2, N2, N2> current = LinearSystemId.identifyDrivetrainSystem(cur_kV_X, cur_kA_X, cur_kV_Y, cur_kA_Y);
+  LinearSystem<N2, N2, N2> desired = LinearSystemId.identifyDrivetrainSystem(desired_kV_X, desired_kA_X, desired_kV_Y, desired_kA_Y);
+  ImplicitModelFollower<N2, N2, N2> controller = new ImplicitModelFollower<>(current, desired);  
+
 
   // an attempt at implementing https://discord.com/channels/176186766946992128/368993897495527424/1220411851859300522
   void implicitModelFollowing(ChassisSpeeds speeds) {
+    // need to make speeds robot relative also
+    var curVel = swerve.getRobotRelativeSpeeds();
+    var rot = swerve.getPose().getRotation();
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      rot = rot.rotateBy(Rotation2d.fromDegrees(180));
+    }
+    var robotRelSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rot);
+    var output = controller.calculate(
+      MatBuilder.fill(Nat.N2(), Nat.N1(), curVel.vxMetersPerSecond, curVel.vyMetersPerSecond), 
+      MatBuilder.fill(Nat.N2(), Nat.N1(), robotRelSpeed.vxMetersPerSecond, robotRelSpeed.vyMetersPerSecond));
+    var adj_vx = output.get(0, 0);
+    var adj_vy = output.get(1, 0);
+    ChassisSpeeds adjSpeeds = new ChassisSpeeds(adj_vx, adj_vy, 0);
+    adjSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(adjSpeeds, rot);
+    speeds.vxMetersPerSecond = adjSpeeds.vxMetersPerSecond;
+    speeds.vyMetersPerSecond = adjSpeeds.vyMetersPerSecond;
   }
 }
