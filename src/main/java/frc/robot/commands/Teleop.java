@@ -152,6 +152,7 @@ public class Teleop extends Command {
   LinearSystem<N2, N2, N2> desired = LinearSystemId.identifyDrivetrainSystem(desired_kV_X, desired_kA_X, desired_kV_Y, desired_kA_Y);
   ImplicitModelFollower<N2, N2, N2> controller = new ImplicitModelFollower<>(current, desired);  
 
+  double lastVx = 0, lastVy = 0, lastTime = Timer.getFPGATimestamp();
 
   /* An attempt at implementing https://discord.com/channels/176186766946992128/368993897495527424/1220411851859300522
    * Basically, this allows us to follow a "worse" model of the robot's behavior to make it act like another one.
@@ -176,6 +177,21 @@ public class Teleop extends Command {
     // adj_vx -= adj_vx * 0.5;
     // adj_vy -= adj_vy * 0.5;
     // yeah ok this isn't working
+
+    // antidrift hack (doesn't really work well but helps)
+    if(Math.abs((adj_vx - lastVx) / (Timer.getFPGATimestamp() - lastTime)) < 0.21 && Math.abs(robotRelSpeed.vxMetersPerSecond) < 0.001) {
+      adj_vx = 0;
+      lastVx = 0;
+    }
+
+    if(Math.abs((adj_vy - lastVy) / (Timer.getFPGATimestamp() - lastTime)) < 0.21 && Math.abs(robotRelSpeed.vyMetersPerSecond) < 0.001) {
+      adj_vy = 0;
+      lastVy = 0;
+    }
+
+    lastVx = adj_vx;
+    lastVy = adj_vy;
+    lastTime = Timer.getFPGATimestamp();
     ChassisSpeeds adjSpeeds = new ChassisSpeeds(adj_vx, adj_vy, 0);
     adjSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(adjSpeeds, rot);
     speeds.vxMetersPerSecond = adjSpeeds.vxMetersPerSecond;
