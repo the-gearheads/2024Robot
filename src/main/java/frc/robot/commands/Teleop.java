@@ -135,22 +135,22 @@ public class Teleop extends Command {
 
 
   // honestly since linear and angular don't affect each other, we can just treat them as X and Y and abuse the model
-  double cur_kV_X = DRIVE_FEEDFORWARD.kv;
-  double cur_kA_X = DRIVE_FEEDFORWARD.ka;
-  double cur_kV_Y = cur_kV_X;
-  double cur_kA_Y = cur_kA_X;
+  final double cur_kV_X = DRIVE_FEEDFORWARD.kv;
+  final double cur_kA_X = DRIVE_FEEDFORWARD.ka;
+  final double cur_kV_Y = cur_kV_X;
+  final double cur_kA_Y = cur_kA_X;
 
 
-  double desired_kV_X = DRIVE_FEEDFORWARD.kv;
-  double desired_kA_X = DRIVE_FEEDFORWARD.ka * 1.5;
-  double desired_kV_Y = desired_kV_X;
-  double desired_kA_Y = desired_kA_X;
+  final double desired_kV_X = DRIVE_FEEDFORWARD.kv;
+  final double desired_kA_X = DRIVE_FEEDFORWARD.ka * 1.5;
+  final double desired_kV_Y = desired_kV_X;
+  final double desired_kA_Y = desired_kA_X;
 
   // ImplicitModelFollower
 
-  LinearSystem<N2, N2, N2> current = LinearSystemId.identifyDrivetrainSystem(cur_kV_X, cur_kA_X, cur_kV_Y, cur_kA_Y);
-  LinearSystem<N2, N2, N2> desired = LinearSystemId.identifyDrivetrainSystem(desired_kV_X, desired_kA_X, desired_kV_Y, desired_kA_Y);
-  ImplicitModelFollower<N2, N2, N2> controller = new ImplicitModelFollower<>(current, desired);  
+  final LinearSystem<N2, N2, N2> current = LinearSystemId.identifyDrivetrainSystem(cur_kV_X, cur_kA_X, cur_kV_Y, cur_kA_Y);
+  final LinearSystem<N2, N2, N2> desired = LinearSystemId.identifyDrivetrainSystem(desired_kV_X, desired_kA_X, desired_kV_Y, desired_kA_Y);
+  final ImplicitModelFollower<N2, N2, N2> controller = new ImplicitModelFollower<>(current, desired);  
 
   double lastVx = 0, lastVy = 0, lastTime = Timer.getFPGATimestamp();
 
