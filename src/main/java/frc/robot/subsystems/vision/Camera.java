@@ -23,7 +23,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.GtsamInterface;
 import frc.robot.util.TagDetection;
@@ -149,10 +148,10 @@ public class Camera {
 
   PhotonPipelineResult lastResult = new PhotonPipelineResult();
 
-  public void feedGtsam(GtsamInterface gtsam) {
+  public void feedGtsam(GtsamInterface gtsam, long zeTime) {
     List<TagDetection> dets = new ArrayList<>();
     var results = camera.getLatestResult();
-    var tagDetTime = WPIUtilJNI.now(); // no real timesync soooooooo
+    var tagDetTime = zeTime - 10000; // no real timesync soooooooo
     if(results.getTimestampSeconds() != lastResult.getTimestampSeconds()) {
       lastResult = results;
       for(var target: results.targets) {

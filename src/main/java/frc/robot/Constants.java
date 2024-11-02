@@ -22,6 +22,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
+import frc.robot.subsystems.vision.CameraIntrinsics;
 import frc.robot.util.Polygon;
 
 import static edu.wpi.first.units.Units.*;
@@ -210,7 +211,21 @@ public final class Constants {
     public static final String FRONT_RIGHT_NAME = "FRONT_RIGHT";
     public static final String FRONT_LEFT_NAME = "FRONT_LEFT";
     public static final String BACK_LEFT_NAME = "BACK_LEFT";
+
+    public static final CameraIntrinsics FRONT_RIGHT_INTRINSICS = new CameraIntrinsics(
+      907.53,  909.67, 667.87, 416.65,
+      new double[] {0.065, -0.116, -0.003, 0.001, 0.053, -0.003, 0.006, -0.002}
+      );
+
+    public static final CameraIntrinsics FRONT_LEFT_INTRINSICS = new CameraIntrinsics(
+      901.50, 902.01, 653.40, 374.80, 
+      new double[] { 0.046, -0.05, 0, 0, -0.013}
+    );
     
+    public static final CameraIntrinsics BACK_LEFT_INTRINSICS = new CameraIntrinsics(
+      897.90, 896.55, 645.85, 406.51,
+      new double[] {0.032, -0.035, -0.001, -0.005, -0.024, 0, 0.005, 0.003}
+    );
 
     public static final Transform3d NOTE_CAM_TRANSFORM = 
       new Transform3d(

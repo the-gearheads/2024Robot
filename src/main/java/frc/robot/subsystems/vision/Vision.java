@@ -29,11 +29,6 @@ public class Vision extends SubsystemBase {
 
   private final Camera frontLeft, frontRight, backLeft;
 
-  CameraIntrinsics intrinsics = new CameraIntrinsics(
-    737.6136442454854, 733.1927575565593, 662.3371068271363, 435.9984845786,
-    new double[] {0.15288116557227518,-0.2878953642242236,-0.0010986978034486703,0.0011333394853758716,0.12276685039910991}
-  );
-
   private final GtsamInterface gtsam = new GtsamInterface(List.of(FRONT_LEFT_NAME, FRONT_RIGHT_NAME, BACK_LEFT_NAME));
 
   public Vision(Swerve swerve) {
@@ -49,9 +44,9 @@ public class Vision extends SubsystemBase {
       System.out.println(AprilTagFields.k2024Crescendo.m_resourceFile);
     }
 
-    frontLeft = new Camera(field, FRONT_LEFT_NAME, FRONT_LEFT_TRANSFORM, intrinsics);
-    frontRight = new Camera(field, FRONT_RIGHT_NAME, FRONT_RIGHT_TRANSFORM, intrinsics);
-    backLeft = new Camera(field, BACK_LEFT_NAME, BACK_LEFT_TRANSFORM, intrinsics);
+    frontLeft = new Camera(field, FRONT_LEFT_NAME, FRONT_LEFT_TRANSFORM, FRONT_LEFT_INTRINSICS);
+    frontRight = new Camera(field, FRONT_RIGHT_NAME, FRONT_RIGHT_TRANSFORM, FRONT_RIGHT_INTRINSICS);
+    backLeft = new Camera(field, BACK_LEFT_NAME, BACK_LEFT_TRANSFORM, BACK_LEFT_INTRINSICS);
 
     sim = new VisionSim();
     sim.addCamera(frontLeft);
@@ -64,11 +59,18 @@ public class Vision extends SubsystemBase {
     boolean tfr = frontRight.feedPoseEstimator(poseEstimator);
     boolean tbl = backLeft.feedPoseEstimator(poseEstimator);
 
-    gtsam.sendOdomUpdate(WPIUtilJNI.now(), swerve.getTwist3d(), new Pose3d(swerve.getPose()));
+    // frontLeft.feedGtsam(gtsam, true);
+    // frontRight.feedGtsam(gtsam, true);
+    // backLeft.feedGtsam(gtsam, true);
 
-    frontLeft.feedGtsam(gtsam);
-    frontRight.feedGtsam(gtsam);
-    backLeft.feedGtsam(gtsam);
+    long zeTime = WPIUtilJNI.now();
+
+    frontLeft.feedGtsam(gtsam,  zeTime);
+    frontRight.feedGtsam(gtsam, zeTime);
+    backLeft.feedGtsam(gtsam,   zeTime);
+
+    gtsam.sendOdomUpdate(zeTime, swerve.getTwist3d(), new Pose3d(swerve.getPose()));
+
 
     Logger.recordOutput("Vision/gtsam_pose", gtsam.getLatencyCompensatedPoseEstimate());
 

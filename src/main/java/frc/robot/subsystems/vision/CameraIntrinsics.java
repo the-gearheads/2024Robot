@@ -41,7 +41,9 @@ public class CameraIntrinsics {
     if(distCoeffs.length == 5) {
       return MatBuilder.fill(Nat.N5(), Nat.N1(), distCoeffs[0], distCoeffs[1], distCoeffs[2], distCoeffs[3], distCoeffs[4]);
     } else if(distCoeffs.length == 4) {
-      return MatBuilder.fill(Nat.N3(), Nat.N1(), distCoeffs[0], distCoeffs[1], distCoeffs[2], distCoeffs[3]);
+      return MatBuilder.fill(Nat.N4(), Nat.N1(), distCoeffs[0], distCoeffs[1], distCoeffs[2], distCoeffs[3]);
+    } else if (distCoeffs.length == 8) {
+      return MatBuilder.fill(Nat.N8(), Nat.N1(), distCoeffs[0], distCoeffs[1], distCoeffs[2], distCoeffs[3], distCoeffs[4], distCoeffs[5], distCoeffs[6], distCoeffs[7]);
     } else {
       throw new IllegalArgumentException("wtf");
     }
