@@ -2,6 +2,7 @@ package frc.robot.subsystems.vision;
 
 import java.util.Optional;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
@@ -22,6 +23,10 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.WPIUtilJNI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.util.GtsamInterface;
+import frc.robot.util.TagDetection;
 
 import static frc.robot.Constants.FieldConstants.FIELD;
 
@@ -141,6 +146,34 @@ public class Camera {
     poseEstimator.addVisionMeasurement(estPose, pose.get().timestampSeconds, stddevs);
     return true;
   }
+
+  PhotonPipelineResult lastResult = new PhotonPipelineResult();
+
+  public void feedGtsam(GtsamInterface gtsam) {
+    List<TagDetection> dets = new ArrayList<>();
+    var results = camera.getLatestResult();
+    var tagDetTime = WPIUtilJNI.now(); // no real timesync soooooooo
+    if(results.getTimestampSeconds() != lastResult.getTimestampSeconds()) {
+      lastResult = results;
+      for(var target: results.targets) {
+        dets.add(new TagDetection(target.getFiducialId(), target.getDetectedCorners()));
+      }
+
+      // Publish debug info to NT
+      List<Double> corns = new ArrayList<>();
+      for (var d : dets) {
+        for (var c : d.corners) {
+          corns.add(c.x);
+          corns.add(c.y);
+        }
+      }
+      SmartDashboard.putNumberArray("/meme/" + name + "/measured_corners", corns.toArray(new Double[0]));
+    }
+
+    gtsam.setCamIntrinsics(name, Optional.of(intrinsics.getCameraMatrix()), Optional.of(intrinsics.getDistCoeffsMatrix()));
+    gtsam.sendVisionUpdate(name, tagDetTime, dets, transform);
+  }
+
 
   public SimCameraProperties getSimProperties() {
     SimCameraProperties properties = new SimCameraProperties();

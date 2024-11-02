@@ -35,9 +35,11 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -298,6 +300,28 @@ public class Swerve extends SubsystemBase {
 
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
+  }
+
+
+  SwerveDriveWheelPositions lastPositions;
+  /**
+   * So gtsam actually wants pose deltas
+   */
+  public Twist3d getTwist3d() {
+
+    var now = new SwerveDriveWheelPositions(getModulePositions());
+    if(lastPositions == null) {
+      lastPositions = now;
+    }
+    var twist = kinematics.toTwist2d(lastPositions, now);
+    lastPositions = now;
+        
+    var twist3 = new Twist3d(
+      twist.dx, twist.dy, 0,
+      0, 0, twist.dtheta
+    );
+
+    return twist3;
   }
 
   @Override

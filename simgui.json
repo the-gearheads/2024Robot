@@ -135,6 +135,12 @@
         "SysidRoutines": {
           "open": true
         },
+        "Teleop": {
+          "Headingcontroller": {
+            "open": true
+          },
+          "open": true
+        },
         "open": true
       },
       "photonvision": {

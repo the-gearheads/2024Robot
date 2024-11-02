@@ -5,15 +5,20 @@
 package frc.robot.subsystems.vision;
 
 import java.io.IOException;
+import java.util.List;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.util.GtsamInterface;
 
 import static frc.robot.Constants.VisionConstants.*;
 
@@ -28,6 +33,8 @@ public class Vision extends SubsystemBase {
     737.6136442454854, 733.1927575565593, 662.3371068271363, 435.9984845786,
     new double[] {0.15288116557227518,-0.2878953642242236,-0.0010986978034486703,0.0011333394853758716,0.12276685039910991}
   );
+
+  private final GtsamInterface gtsam = new GtsamInterface(List.of(FRONT_LEFT_NAME, FRONT_RIGHT_NAME, BACK_LEFT_NAME));
 
   public Vision(Swerve swerve) {
     this.swerve = swerve;
@@ -56,9 +63,19 @@ public class Vision extends SubsystemBase {
     boolean tfl = frontLeft.feedPoseEstimator(poseEstimator);
     boolean tfr = frontRight.feedPoseEstimator(poseEstimator);
     boolean tbl = backLeft.feedPoseEstimator(poseEstimator);
+
+
+    frontLeft.feedGtsam(gtsam);
+    frontRight.feedGtsam(gtsam);
+    backLeft.feedGtsam(gtsam);
+
+    gtsam.sendOdomUpdate(WPIUtilJNI.now(), swerve.getTwist3d(), new Pose3d(swerve.getPose()));
+    Logger.recordOutput("Vision/gtsam_pose", gtsam.getLatencyCompensatedPoseEstimate());
+
     return tfl || tfr || tbl;
     // return tfr;
   }
+
 
   @Override
   public void periodic() {

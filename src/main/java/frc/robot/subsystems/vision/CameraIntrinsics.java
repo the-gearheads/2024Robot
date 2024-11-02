@@ -5,6 +5,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.numbers.N5;
 
@@ -34,5 +35,15 @@ public class CameraIntrinsics {
 
   public Vector<N5> getDistCoeffs() {
     return VecBuilder.fill(distCoeffs[0], distCoeffs[1], distCoeffs[2], distCoeffs[3], distCoeffs[4]);
+  }
+
+  public Matrix<?, N1> getDistCoeffsMatrix() {
+    if(distCoeffs.length == 5) {
+      return MatBuilder.fill(Nat.N5(), Nat.N1(), distCoeffs[0], distCoeffs[1], distCoeffs[2], distCoeffs[3], distCoeffs[4]);
+    } else if(distCoeffs.length == 4) {
+      return MatBuilder.fill(Nat.N3(), Nat.N1(), distCoeffs[0], distCoeffs[1], distCoeffs[2], distCoeffs[3]);
+    } else {
+      throw new IllegalArgumentException("wtf");
+    }
   }
 }
