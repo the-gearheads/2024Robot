@@ -59,17 +59,14 @@ public class Vision extends SubsystemBase {
     boolean tfr = frontRight.feedPoseEstimator(poseEstimator);
     boolean tbl = backLeft.feedPoseEstimator(poseEstimator);
 
-    // frontLeft.feedGtsam(gtsam, true);
-    // frontRight.feedGtsam(gtsam, true);
-    // backLeft.feedGtsam(gtsam, true);
+    long time = WPIUtilJNI.now();
 
-    long zeTime = WPIUtilJNI.now();
+    var guess = new Pose3d(swerve.getPose());
+    gtsam.sendOdomUpdate(time, swerve.getTwist3d(), guess);
 
-    frontLeft.feedGtsam(gtsam,  zeTime);
-    frontRight.feedGtsam(gtsam, zeTime);
-    backLeft.feedGtsam(gtsam,   zeTime);
-
-    gtsam.sendOdomUpdate(zeTime, swerve.getTwist3d(), new Pose3d(swerve.getPose()));
+    frontLeft.feedGtsam(gtsam, time - 100);
+    frontRight.feedGtsam(gtsam, time - 100);
+    backLeft.feedGtsam(gtsam, time - 100);
 
 
     Logger.recordOutput("Vision/gtsam_pose", gtsam.getLatencyCompensatedPoseEstimate());

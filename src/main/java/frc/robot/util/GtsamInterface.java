@@ -165,6 +165,7 @@ public class GtsamInterface {
     public void sendOdomUpdate(long odomTime, Twist3d odom,
             Pose3d guess) {
 
+        // System.out.println("GtsamInterface.sendOdomUpdate time: " + odomTime);
         odomPub.set(odom, odomTime);
 
         if (guess != null) {
@@ -195,6 +196,7 @@ public class GtsamInterface {
             throw new RuntimeException("Camera " + camName + " not in map!");
         }
 
+        // System.out.println("GtsamInterface.sendVisionUpdate name: " + camName + ", time: " + tagDetTime);
         cam.tagPub.set(camDetectedTags.stream().map(it -> cam.undistort(it)).collect(Collectors.toList())
                 .toArray(new TagDetection[0]), tagDetTime);
         cam.robotTcamPub.set(robotTcam, tagDetTime);
@@ -215,7 +217,7 @@ public class GtsamInterface {
             var poseDelta = poseNow.minus(poseAtSample.get());
             return poseEst.value.transformBy(poseDelta);
         } else {
-            System.err.println("No pose estimate yet");
+            // System.err.println("No pose estimate yet");
             return new Pose3d();
         }
     }

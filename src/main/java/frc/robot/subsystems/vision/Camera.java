@@ -151,7 +151,7 @@ public class Camera {
   public void feedGtsam(GtsamInterface gtsam, long zeTime) {
     List<TagDetection> dets = new ArrayList<>();
     var results = camera.getLatestResult();
-    var tagDetTime = zeTime - 10000; // no real timesync soooooooo
+    var tagDetTime = zeTime; // no real timesync soooooooo
     if(results.getTimestampSeconds() != lastResult.getTimestampSeconds()) {
       lastResult = results;
       for(var target: results.targets) {

@@ -141,7 +141,31 @@
           },
           "open": true
         },
+        "meme": {
+          "BACK_LEFT": {
+            "open": true
+          },
+          "FRONT_LEFT": {
+            "open": true
+          },
+          "FRONT_RIGHT": {
+            "open": true
+          },
+          "open": true
+        },
         "open": true
+      },
+      "gtsam_meme": {
+        "open": true,
+        "output": {
+          "Pose3d##v_/gtsam_meme/output/optimized_pose": {
+            "Translation3d##v_translation": {
+              "open": true
+            },
+            "open": true
+          },
+          "open": true
+        }
       },
       "photonvision": {
         "Left Camera": {
