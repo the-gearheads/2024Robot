@@ -35,7 +35,7 @@ public class FlywheelMotor {
 
   public double targetVolts;
 
-  SparkFlexConfig config;
+  SparkFlexConfig config = new SparkFlexConfig();
 
   PIDController pid;
   SimpleMotorFeedforward ff;
@@ -98,7 +98,7 @@ public class FlywheelMotor {
 
     config.encoder.quadratureAverageDepth(1);
     config.encoder.quadratureMeasurementPeriod(8);
-    config.signals.appliedOutputPeriodMs(20);
+    // config.signals.appliedOutputPeriodMs(20);
 
     flex.configure(config, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     flex.setCANTimeout(0);

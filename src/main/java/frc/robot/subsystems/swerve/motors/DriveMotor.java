@@ -104,9 +104,9 @@ public class DriveMotor {
     config.closedLoop.i(0);
     config.closedLoop.d(0);
 
-    config.signals.appliedOutputPeriodMs(20);
-    config.signals.primaryEncoderPositionPeriodMs((int)(1000.0 / ODOMETRY_FREQUENCY));
-    config.signals.primaryEncoderVelocityPeriodMs((int)(1000.0 / ODOMETRY_FREQUENCY));
+    // config.signals.appliedOutputPeriodMs(20);
+    // config.signals.primaryEncoderPositionPeriodMs((int)(1000.0 / ODOMETRY_FREQUENCY));
+    // config.signals.primaryEncoderVelocityPeriodMs((int)(1000.0 / ODOMETRY_FREQUENCY));
 
     flex.configure(config, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
