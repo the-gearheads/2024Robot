@@ -1,17 +1,12 @@
 package frc.robot.subsystems.arm;
 
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Timer;
@@ -29,25 +24,28 @@ import static edu.wpi.first.units.Units.*;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.LimitSwitchConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
+
 public class Arm extends SubsystemBase {
-  private CANSparkFlex mainFlex = new CANSparkFlex(MAIN_ARM_ID, MotorType.kBrushless);
-  private CANSparkFlex followerFlex = new CANSparkFlex(FOLLOWER_ARM_ID, MotorType.kBrushless);
+  private SparkFlex mainFlex = new SparkFlex(MAIN_ARM_ID, MotorType.kBrushless);
+  private SparkFlex followerFlex = new SparkFlex(FOLLOWER_ARM_ID, MotorType.kBrushless);
   ProfiledPIDControllerCustomPeriod pid = new ProfiledPIDControllerCustomPeriod(PID[0], PID[1], PID[2], ARM_CONSTRAINTS, 0.02);
 
-  SingleJointedArmSim armSim = new SingleJointedArmSim(LinearSystemId.identifyPositionSystem(SIM_FEEDFORWARD.kv, SIM_FEEDFORWARD.ka),
+  SingleJointedArmSim armSim = new SingleJointedArmSim(LinearSystemId.identifyPositionSystem(SIM_FEEDFORWARD.getKv(), SIM_FEEDFORWARD.getKa()),
                                                        DCMotor.getNeoVortex(2), ARM_MOTOR_GEARING,
                                                        ARM_LENGTH, MIN_ANGLE-0.1, MAX_ANGLE+0.1, false, 0.79);
 
+  SparkFlexConfig mainConfig = new SparkFlexConfig();
+  SparkFlexConfig followerConfig = new SparkFlexConfig();
   DutyCycleEncoder enc = new DutyCycleEncoder(0);
   public Arm() {
-    mainFlex.restoreFactoryDefaults();
-    followerFlex.restoreFactoryDefaults();
-
     configure();
-
-    // We're doing this ourselves (DutyCycleEncoder doesn't have an invert mode)
-    enc.setPositionOffset(0);
-    enc.setDistancePerRotation(1);
 
     if(!DriverStation.isFMSAttached()) {
       SmartDashboard.putBoolean("Arm/manualVoltageOnly", false);
@@ -67,20 +65,27 @@ public class Arm extends SubsystemBase {
   public void configure() {
     mainFlex.setCANTimeout(250);
     followerFlex.setCANTimeout(250);
-    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
-    setupStatusFrames();
-    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
 
-    mainFlex.getForwardLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyClosed).enableLimitSwitch(true);
-    mainFlex.getReverseLimitSwitch(com.revrobotics.SparkLimitSwitch.Type.kNormallyClosed).enableLimitSwitch(true);
+    mainConfig.limitSwitch.forwardLimitSwitchEnabled(true);
+    mainConfig.limitSwitch.reverseLimitSwitchEnabled(true);
+    mainConfig.limitSwitch.forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyClosed);
+    mainConfig.limitSwitch.reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyClosed);
 
-    mainFlex.setSmartCurrentLimit(80);
-    followerFlex.setSmartCurrentLimit(80);
+    mainConfig.voltageCompensation(12);
+    mainConfig.smartCurrentLimit(80);
 
-    // mainFlex.enableVoltageCompensation(12);
-    // followerFlex.enableVoltageCompensation(12);
+    mainConfig.signals.appliedOutputPeriodMs(10);
+    mainConfig.signals.primaryEncoderPositionPeriodMs(50);
+    mainConfig.signals.primaryEncoderVelocityPeriodMs(50);
 
-    followerFlex.follow(mainFlex, true);
+    mainConfig.idleMode(IdleMode.kBrake);
+
+    mainFlex.configure(mainConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+
+    followerConfig.follow(mainFlex);
+    followerConfig.idleMode(IdleMode.kBrake);
+    followerConfig.voltageCompensation(12);
+    followerFlex.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
     mainFlex.setCANTimeout(0);
     followerFlex.setCANTimeout(0);
@@ -164,7 +169,7 @@ public class Arm extends SubsystemBase {
 
   public Rotation2d getAngle() {
     if(Robot.isSimulation()) return new Rotation2d(armSim.getAngleRads());
-    return new Rotation2d((1-enc.getAbsolutePosition())*ARM_POS_FACTOR - ARM_OFFSET);
+    return new Rotation2d((1-enc.get())*ARM_POS_FACTOR - ARM_OFFSET);
   }
 
   public double getVelocity() {
@@ -178,7 +183,7 @@ public class Arm extends SubsystemBase {
     pid.setGoal(angleRad);
   }
 
-  public void setVoltage(Measure<Voltage> volts) {
+  public void setVoltage(Voltage volts) {
     if(Robot.isSimulation()) armSim.setInputVoltage(volts.in(Volts));
     mainFlex.setVoltage(-volts.in(Volts));
   }
@@ -190,7 +195,7 @@ public class Arm extends SubsystemBase {
 
   public SysIdRoutine getSysIdRoutine() {
     return new SysIdRoutine(
-      new SysIdRoutine.Config(Volts.of(0.8).per(Seconds.of(1)), Volts.of(6), null, 
+      new SysIdRoutine.Config(Volts.of(0.8).per(Seconds), Volts.of(6), null, 
           (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
       new SysIdRoutine.Mechanism(
         this::setVoltage,
@@ -203,8 +208,10 @@ public class Arm extends SubsystemBase {
   public void setBrakeCoast(boolean willBrake) {
     mainFlex.setCANTimeout(250);
     followerFlex.setCANTimeout(250);
-    mainFlex.setIdleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
-    followerFlex.setIdleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    mainConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    followerConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    mainFlex.configure(mainConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    followerFlex.configure(followerConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     Logger.recordOutput("Arm/IsBraken", willBrake);
     mainFlex.setCANTimeout(0);
     followerFlex.setCANTimeout(0);
@@ -216,15 +223,5 @@ public class Arm extends SubsystemBase {
 
   public boolean atPoint(double angle, double tolerance) {
     return MathUtil.isNear(getAngle().getRadians(), angle, tolerance);
-  }
-
-  public void setupStatusFrames() {
-    mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
-    /* We don't care about our motor position, only what the encoder reads */
-    mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
-    /* Don't have an analog sensor */
-    mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500);
-    /* Don't have an alternate encoder */
-    mainFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
   }
 }

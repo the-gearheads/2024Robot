@@ -20,8 +20,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
+import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.Polygon;
 
 import static edu.wpi.first.units.Units.*;
@@ -57,6 +56,9 @@ public final class Constants {
       new Translation2d(-0.3305, 0.3313),
       new Translation2d(-0.3305, -0.3313)
     };
+
+    public static final double WHEEL_BASE = WHEEL_POSITIONS[0].getX() - WHEEL_POSITIONS[2].getX();
+    public static final double TRACK_WIDTH = WHEEL_POSITIONS[0].getY() - WHEEL_POSITIONS[1].getY();
     public static final double MODULE_RADIUS = WHEEL_POSITIONS[0].getNorm();
 
     public static final double[] WHEEL_OFFSETS = {90, 0, 0, 90}; // could be wrong, we get to find out {270, 0, 180, 90};
@@ -170,7 +172,7 @@ public final class Constants {
     // public static final double[] SPLINE_DISTANCES = {1.235, 1.980185, 2.248288, 2.77234, 3.21358, 3.762, 4.275393, 4.77155, 5.350909, 6.041493};
     // public static final double[] SPLINE_ANGLES =    {0.952, 0.752,    0.810,    0.580,   0.527,   0.498, 0.4687,   0.4220,  0.39945,  0.375};
 
-    public static final Measure<Voltage> armOverrideVoltage = Volts.of(4);
+    public static final Voltage armOverrideVoltage = Volts.of(4);
 
     public static final double NOTE_FEEDING_ANGLE = (45.0 / 360.0) * (2 * Math.PI);
     public static final double NOTE_FEEDING_ANGLE_TOLERANCE = (4.0 / 360.0) * (2 * Math.PI);

@@ -6,21 +6,23 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.numbers.N5;
+import edu.wpi.first.math.numbers.N8;
 
 public class CameraIntrinsics {
   public double fx;
   public double fy;
   public double cx;
   public double cy;
-  public double[] distCoeffs;
+  public double[] distCoeffs = new double[8];
 
   public CameraIntrinsics(double fx, double fy, double cx, double cy, double[] distCoeffs) {
     this.fx = fx;
     this.fy = fy;
     this.cx = cx;
     this.cy = cy;
-    this.distCoeffs = distCoeffs;
+    for(int i = 0; i < distCoeffs.length; i++) { // cause we wanna preserve the 0s
+      this.distCoeffs[i] = distCoeffs[i];
+    }
   }
 
   public Matrix<N3, N3> getCameraMatrix() {
@@ -32,7 +34,7 @@ public class CameraIntrinsics {
     );
   }
 
-  public Vector<N5> getDistCoeffs() {
-    return VecBuilder.fill(distCoeffs[0], distCoeffs[1], distCoeffs[2], distCoeffs[3], distCoeffs[4]);
+  public Vector<N8> getDistCoeffs() {
+    return VecBuilder.fill(distCoeffs[0], distCoeffs[1], distCoeffs[2], distCoeffs[3], distCoeffs[4], distCoeffs[5], distCoeffs[6], distCoeffs[7]);
   }
 }

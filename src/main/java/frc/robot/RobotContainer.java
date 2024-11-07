@@ -11,7 +11,7 @@ import static frc.robot.Constants.ShooterConstants.DEFAULT_SPEED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.util.GeometryUtil;
+import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -190,7 +190,7 @@ public class RobotContainer {
         boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
         Pose2d pos = AMP_SCORE_POSE;
         if(isRed) {
-          pos = GeometryUtil.flipFieldPose(pos);
+          pos = FlippingUtil.flipFieldPose(pos);
         }
         swerve.resetPose(pos);
     }));
@@ -221,7 +221,7 @@ public class RobotContainer {
     }));
 
     Controllers.operatorController.getArmDown().whileTrue(Commands.run(()->{
-      arm.setVoltage(armOverrideVoltage.negate());
+      arm.setVoltage(armOverrideVoltage.unaryMinus());
       arm.runPid = false;
       arm.resetToCurrentPose();
     }));

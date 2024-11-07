@@ -96,20 +96,9 @@ public class SwerveModule {
     drive.log();
   }
 
-  /* MUST CALL THESE THREE BEFORE USING */
-  public void factoryDefaults() {
-    steer.factoryDefaults();
-    drive.factoryDefaults();
-  }
-
   public void configure() {
     steer.configure();
     drive.configure();
-  }
-
-  public void setupStatusFrames() {
-    steer.setupStatusFrames();
-    drive.setupStatusFrames();
   }
 
   private Rotation2d[] getOdometrySteerPositions() {

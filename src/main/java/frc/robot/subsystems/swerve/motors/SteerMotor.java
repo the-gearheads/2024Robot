@@ -6,23 +6,26 @@ import java.util.OptionalDouble;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.REVLibError;
-import com.revrobotics.SparkAbsoluteEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class SteerMotor {
 
-  CANSparkMax max;
+  SparkMax max;
   SparkAbsoluteEncoder encoder;
-  SparkPIDController pid;
+  SparkClosedLoopController pid;
+  SparkMaxConfig config = new SparkMaxConfig();
 
   int index;
   Rotation2d offset;
@@ -33,9 +36,9 @@ public class SteerMotor {
   boolean manualVoltageOnly = false;
 
   public SteerMotor(int id, int index, Rotation2d offset, String modulePath) {
-    max = new CANSparkMax(id, MotorType.kBrushless);
-    encoder = max.getAbsoluteEncoder(Type.kDutyCycle);
-    pid = max.getPIDController();
+    max = new SparkMax(id, MotorType.kBrushless);
+    encoder = max.getAbsoluteEncoder();
+    pid = max.getClosedLoopController();
     this.index = index;
     this.offset = offset;
     this.modulePath = modulePath;
@@ -91,51 +94,41 @@ public class SteerMotor {
     Logger.recordOutput(modulePath + "/targetAngle", targetAngle);
     Logger.recordOutput(modulePath + "/manualVoltageOnly", manualVoltageOnly);
   }
-
-  public void factoryDefaults() {
-    max.restoreFactoryDefaults();
-  }
-
   public void configure() {
-    max.setCANTimeout(250);
-    max.setSmartCurrentLimit(STEER_CURRENT_LIMIT);
+    max.setCANTimeout(250); 
+    config.smartCurrentLimit(STEER_CURRENT_LIMIT);
+    config.idleMode(IdleMode.kBrake);
 
-    max.setIdleMode(IdleMode.kBrake);
+    config.absoluteEncoder.positionConversionFactor(STEER_POS_FACTOR);
+    config.absoluteEncoder.velocityConversionFactor(STEER_VEL_FACTOR);
+    config.absoluteEncoder.inverted(true);
 
-    encoder.setPositionConversionFactor(STEER_POS_FACTOR);
-    encoder.setVelocityConversionFactor(STEER_VEL_FACTOR);
-    encoder.setInverted(true);
+    config.closedLoop.positionWrappingEnabled(true);
+    config.closedLoop.positionWrappingMinInput(0);
+    config.closedLoop.positionWrappingMaxInput(Math.PI * 2);
 
-    pid.setPositionPIDWrappingEnabled(true);
-    pid.setPositionPIDWrappingMinInput(0);
-    pid.setPositionPIDWrappingMaxInput(Math.PI * 2);
+    config.closedLoop.pidf(STEER_PIDF[0], STEER_PIDF[1], STEER_PIDF[2], STEER_PIDF[3]);
+    config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
-    pid.setP(STEER_PIDF[0]);
-    pid.setI(STEER_PIDF[1]);
-    pid.setD(STEER_PIDF[2]);
-    pid.setFF(STEER_PIDF[3]);
 
-    pid.setFeedbackDevice(encoder);
-  }
+    // I currently do not know whether revlib takes the minumum of all signals in a status frame including or excluding defaults.
+    config.signals.appliedOutputPeriodMs(20);
+    config.signals.primaryEncoderPositionAlwaysOn(false);
+    config.signals.primaryEncoderVelocityPeriodMs(40);
 
-  public void setupStatusFrames() {
-    /* Status 0 governs applied output, faults, and whether is a follower. We don't care about that super much, so we increase it */
-    max.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-    /* We don't care about our motor position, only what the encoder reads */
-    max.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
-    /* Don't have an analog sensor */
-    max.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500);
-    /* Don't have an alternate encoder */
-    max.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
-    /* We -really- care about our duty cycle encoder readings though. THE DEFAULT WAS 200MS */
-    max.setPeriodicFramePeriod(PeriodicFrame.kStatus5, (int)(1000.0 / ODOMETRY_FREQUENCY));
-    max.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+    config.signals.absoluteEncoderPositionAlwaysOn(true);
+    config.signals.absoluteEncoderPositionPeriodMs((int)(1000.0 / ODOMETRY_FREQUENCY));
+    config.signals.absoluteEncoderVelocityAlwaysOn(true);
+    config.signals.absoluteEncoderVelocityPeriodMs(20);
+
+    max.configure(config, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     max.setCANTimeout(0);
   }
 
   public void setBrakeCoast(boolean willBrake) {
     max.setCANTimeout(250);
-    max.setIdleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    config.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    max.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     max.setCANTimeout(0);
   }
 }

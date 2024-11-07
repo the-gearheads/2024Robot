@@ -12,11 +12,10 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import org.littletonrobotics.urcl.URCL;
+// import org.littletonrobotics.urcl.URCL;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathfindingCommand;
-import com.revrobotics.CANSparkLowLevel;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -67,7 +66,7 @@ public class Robot extends LoggedRobot {
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
 
-    Logger.registerURCL(URCL.startExternal());
+    // Logger.registerURCL(URCL.startExternal());
     Logger.start();
 
     /* Log all commands running, both uniquely and by name. */
@@ -169,7 +168,7 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
-    CANSparkLowLevel.enableExternalUSBControl(false);
+    // SparkLowLevel.enableExternalUSBControl(false); //removed??
     m_robotContainer.setAllBrakeCoast(true);
   }
 
@@ -189,7 +188,7 @@ public class Robot extends LoggedRobot {
 
     matchTimeStart = Timer.getFPGATimestamp();
     m_robotContainer.setAllBrakeCoast(true);
-    CANSparkLowLevel.enableExternalUSBControl(false);
+    // SparkLowLevel.enableExternalUSBControl(false); // removed??
     rumbled = false;
   }
 
@@ -209,7 +208,7 @@ public class Robot extends LoggedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    CANSparkLowLevel.enableExternalUSBControl(true);
+    // CANSparkLowLevel.enableExternalUSBControl(true); // removed??
   }
 
   /** This function is called periodically during test mode. */
