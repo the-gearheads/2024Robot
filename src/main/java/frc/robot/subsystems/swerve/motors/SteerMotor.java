@@ -112,14 +112,14 @@ public class SteerMotor {
 
 
     // I currently do not know whether revlib takes the minumum of all signals in a status frame including or excluding defaults.
-    // config.signals.appliedOutputPeriodMs(20);
-    // config.signals.primaryEncoderPositionAlwaysOn(false);
-    // config.signals.primaryEncoderVelocityPeriodMs(40);
+    config.signals.appliedOutputPeriodMs(20);
+    config.signals.primaryEncoderPositionAlwaysOn(false);
+    config.signals.primaryEncoderVelocityPeriodMs(40);
 
-    // config.signals.absoluteEncoderPositionAlwaysOn(true);
-    // config.signals.absoluteEncoderPositionPeriodMs((int)(1000.0 / ODOMETRY_FREQUENCY));
-    // config.signals.absoluteEncoderVelocityAlwaysOn(true);
-    // config.signals.absoluteEncoderVelocityPeriodMs(20);
+    config.signals.absoluteEncoderPositionAlwaysOn(true);
+    config.signals.absoluteEncoderPositionPeriodMs((int)(1000.0 / ODOMETRY_FREQUENCY));
+    config.signals.absoluteEncoderVelocityAlwaysOn(true);
+    config.signals.absoluteEncoderVelocityPeriodMs(20);
 
     max.configure(config, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     max.setCANTimeout(0);

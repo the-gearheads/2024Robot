@@ -74,15 +74,15 @@ public class Arm extends SubsystemBase {
     mainConfig.voltageCompensation(12);
     mainConfig.smartCurrentLimit(80);
 
-    // mainConfig.signals.appliedOutputPeriodMs(10);
-    // mainConfig.signals.primaryEncoderPositionPeriodMs(50);
-    // mainConfig.signals.primaryEncoderVelocityPeriodMs(50);
+    mainConfig.signals.appliedOutputPeriodMs(10);
+    mainConfig.signals.primaryEncoderPositionPeriodMs(50);
+    mainConfig.signals.primaryEncoderVelocityPeriodMs(50);
 
     mainConfig.idleMode(IdleMode.kBrake);
 
     mainFlex.configure(mainConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
-    // followerConfig.follow(mainFlex);
+    followerConfig.follow(mainFlex);
     followerConfig.idleMode(IdleMode.kBrake);
     followerConfig.voltageCompensation(12);
     followerFlex.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
