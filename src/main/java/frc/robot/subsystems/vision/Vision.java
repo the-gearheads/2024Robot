@@ -64,9 +64,9 @@ public class Vision extends SubsystemBase {
     var guess = new Pose3d(swerve.getPose());
     gtsam.sendOdomUpdate(time, swerve.getTwist3d(), guess);
 
-    frontLeft.feedGtsam(gtsam, time - 100);
-    frontRight.feedGtsam(gtsam, time - 100);
-    backLeft.feedGtsam(gtsam, time - 100);
+    frontLeft.feedGtsam(gtsam, (long)(frontLeft.lastResult.getTimestampSeconds()) * (long)1e6);
+    frontRight.feedGtsam(gtsam, (long)(frontRight.lastResult.getTimestampSeconds()) * (long)1e6);
+    backLeft.feedGtsam(gtsam, (long)(backLeft.lastResult.getTimestampSeconds()) * (long)1e6);
 
 
     Logger.recordOutput("Vision/gtsam_pose", gtsam.getLatencyCompensatedPoseEstimate());

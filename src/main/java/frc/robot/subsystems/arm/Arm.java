@@ -82,7 +82,7 @@ public class Arm extends SubsystemBase {
 
     mainFlex.configure(mainConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
-    followerConfig.follow(mainFlex);
+    followerConfig.follow(mainFlex, true);
     followerConfig.idleMode(IdleMode.kBrake);
     followerConfig.voltageCompensation(12);
     followerFlex.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);

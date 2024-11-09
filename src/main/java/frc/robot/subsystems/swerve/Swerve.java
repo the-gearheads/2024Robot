@@ -109,7 +109,7 @@ public class Swerve extends SubsystemBase {
 
     SparkMaxOdometryThread.getInstance().start();
 
-    multitagPoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0, 0)));
+    multitagPoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
     wheelOdometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModulePositions());
     resetPose(new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(180)));
 
