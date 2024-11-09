@@ -4,7 +4,7 @@ import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.littletonrobotics.junction.Logger;
 
-import com.pathplanner.lib.util.GeometryUtil;
+import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -44,7 +44,7 @@ public class ShooterCalculations {
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     Translation2d targetAngle = speakerBackPosition;
     if(isRed) {
-      targetAngle = GeometryUtil.flipFieldPosition(speakerBackPosition);
+      targetAngle = FlippingUtil.flipFieldPosition(speakerBackPosition);
     }
 
     Logger.recordOutput("Calculations/SpeakerBackPos", new Pose3d(new Translation3d(targetAngle.getX(), targetAngle.getY(), speakerPosition.getZ()), new Rotation3d()));
@@ -83,15 +83,15 @@ public class ShooterCalculations {
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     Translation2d targetAngle = SOURCE_CENTER;
     if(isRed) {
-      targetAngle = GeometryUtil.flipFieldPosition(SOURCE_CENTER);
+      targetAngle = FlippingUtil.flipFieldPosition(SOURCE_CENTER);
     }
 
     double distToSource = targetAngle.getDistance(robotPos);
     Logger.recordOutput("Calculations/DistToSource", distToSource);
     if (distToSource < SOURCE_WING_DIST) {
-      return isRed ? GeometryUtil.flipFieldPosition(outsideWingFeedPosition) : outsideWingFeedPosition;
+      return isRed ? FlippingUtil.flipFieldPosition(outsideWingFeedPosition) : outsideWingFeedPosition;
     } else {
-      return isRed ? GeometryUtil.flipFieldPosition(feedPosition) : feedPosition;
+      return isRed ? FlippingUtil.flipFieldPosition(feedPosition) : feedPosition;
     }
   }
 
@@ -102,10 +102,10 @@ public class ShooterCalculations {
     Rotation2d stage2Snap = STAGE_2_SNAP;
     Rotation2d stageCenterSnap = STAGE_CENTER_SNAP;
     if(isRed) {
-      targetAngle = GeometryUtil.flipFieldPosition(targetAngle);
-      stage1Snap = GeometryUtil.flipFieldRotation(stage1Snap);
-      stage2Snap = GeometryUtil.flipFieldRotation(stage2Snap);
-      stageCenterSnap = GeometryUtil.flipFieldRotation(stageCenterSnap);
+      targetAngle = FlippingUtil.flipFieldPosition(targetAngle);
+      stage1Snap = FlippingUtil.flipFieldRotation(stage1Snap);
+      stage2Snap = FlippingUtil.flipFieldRotation(stage2Snap);
+      stageCenterSnap = FlippingUtil.flipFieldRotation(stageCenterSnap);
     }
 
     Rotation2d angle = targetAngle.minus(robotPos).getAngle();
@@ -132,7 +132,7 @@ public class ShooterCalculations {
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     Translation2d pos = speakerPosition.toTranslation2d();
     if(isRed) {
-      pos = GeometryUtil.flipFieldPosition(pos);
+      pos = FlippingUtil.flipFieldPosition(pos);
     }
     Logger.recordOutput("Calculations/SpeakerPos", new Pose3d(speakerPosition, new Rotation3d()));
     double dist = pos.getDistance(robotPos);
@@ -144,7 +144,7 @@ public class ShooterCalculations {
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     Translation2d pos = ampPosition;
     if(isRed) {
-      pos = GeometryUtil.flipFieldPosition(pos);
+      pos = FlippingUtil.flipFieldPosition(pos);
     }
     Logger.recordOutput("Calculations/AmpPose", new Pose2d(ampPosition, new Rotation2d()));
     double dist = pos.getDistance(robotPos);
@@ -238,7 +238,7 @@ public class ShooterCalculations {
     var sourceCenter = SOURCE_CENTER;
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     if(isRed) {
-      sourceCenter = GeometryUtil.flipFieldPosition(sourceCenter);
+      sourceCenter = FlippingUtil.flipFieldPosition(sourceCenter);
     }
     return robotPos.getDistance(sourceCenter) < SOURCE_RADIUS;
   }
@@ -254,8 +254,8 @@ public class ShooterCalculations {
     var sourceYaw = new Rotation2d(SOURCE_YAW);
     var sourceBabyBirdYaw = new Rotation2d(BABY_BIRD_YAW);
     if(isRed) {
-      sourceYaw = GeometryUtil.flipFieldRotation(sourceYaw);
-      sourceBabyBirdYaw = GeometryUtil.flipFieldRotation(sourceBabyBirdYaw);
+      sourceYaw = FlippingUtil.flipFieldRotation(sourceYaw);
+      sourceBabyBirdYaw = FlippingUtil.flipFieldRotation(sourceBabyBirdYaw);
     }
 
     // Baby Bird mode (feed directly from source)

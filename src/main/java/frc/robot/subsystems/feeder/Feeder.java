@@ -1,7 +1,6 @@
 package frc.robot.subsystems.feeder;
 
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -70,7 +69,7 @@ public class Feeder extends SubsystemBase {
       new SysIdRoutine.Config(null, null, null, 
           (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
       new SysIdRoutine.Mechanism(
-        (Measure<Voltage> volts) -> {
+        (Voltage volts) -> {
           feederMotor.setVolts(volts);
           handoffMotor.setVolts(volts);
         },

@@ -14,8 +14,8 @@ public class TagDetectionStruct implements Struct<TagDetection> {
   }
 
   @Override
-  public String getTypeString() {
-    return "struct:TagDetection";
+  public String getTypeName() {
+    return "TagDetection";
   }
 
   @Override

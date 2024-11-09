@@ -63,7 +63,7 @@ public class Camera {
 
     var strategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
-    estimator = new PhotonPoseEstimator(this.field, strategy, camera, transform);
+    estimator = new PhotonPoseEstimator(this.field, strategy, transform);
   }
 
   public Pair<Optional<EstimatedRobotPose>, PhotonPipelineResult> getGlobalPose() {

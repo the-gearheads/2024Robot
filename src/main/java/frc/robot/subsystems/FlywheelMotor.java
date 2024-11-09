@@ -1,16 +1,12 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -18,11 +14,14 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkRelativeEncoder;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 
-import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.util.HandledSleep;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -31,10 +30,12 @@ import org.littletonrobotics.junction.Logger;
 // these configs are kinda long and we gotta do it twice so why not put it in its own file
 public class FlywheelMotor {
 
-  public CANSparkFlex flex;
+  public SparkFlex flex;
   public RelativeEncoder enc;
 
   public double targetVolts;
+
+  SparkFlexConfig config = new SparkFlexConfig();
 
   PIDController pid;
   SimpleMotorFeedforward ff;
@@ -52,28 +53,28 @@ public class FlywheelMotor {
     this.ff = ff;
     this.inverted = inverted;
     this.brakeMode = brakeMode;
-    flex = new CANSparkFlex(id, CANSparkFlex.MotorType.kBrushless);
-    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
-    flex.restoreFactoryDefaults();
-    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
+    flex = new SparkFlex(id, MotorType.kBrushless);
+    // HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
+    // flex.restoreFactoryDefaults();
+    // HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
 
-    flex.setSmartCurrentLimit(80);
-    flex.setInverted(inverted);
-    if(brakeMode) {
-      flex.setIdleMode(IdleMode.kBrake);
-    } else {
-      flex.setIdleMode(IdleMode.kCoast);
-    }
+    // flex.setSmartCurrentLimit(80);
+    // flex.setInverted(inverted);
+    // if(brakeMode) {
+    //   flex.setIdleMode(IdleMode.kBrake);
+    // } else {
+    //   flex.setIdleMode(IdleMode.kCoast);
+    // }
 
     // we're just not gonna set the position or velocity conversion factors because they default to rot(/min)
 
-    enc = flex.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
+    enc = flex.getEncoder();
     // enc = flex.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
 
     configure();
 
     if(Robot.isSimulation()) {
-      sim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(ff.kv, ff.ka), DCMotor.getNeoVortex(1), simGearRatio);
+      sim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(ff.getKv(), ff.getKa()), DCMotor.getNeoVortex(1).withReduction(simGearRatio));
     }
 
     SmartDashboard.putBoolean(name + "/manualVoltageOnly", false);
@@ -90,20 +91,16 @@ public class FlywheelMotor {
   public void configure() {
     // we're just not gonna set the position or velocity conversion factors because they default to rot(/min)
     flex.setCANTimeout(250);
-    flex.setSmartCurrentLimit(65);
-    flex.setInverted(inverted);
-    HandledSleep.sleep(100);
-    if(brakeMode) {
-      flex.setIdleMode(IdleMode.kBrake);
-    } else {
-      flex.setIdleMode(IdleMode.kCoast);
-    }
-    HandledSleep.sleep(100);
-    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500);
-    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
-    enc.setAverageDepth(1);
-    enc.setMeasurementPeriod(8);
+
+    config.smartCurrentLimit(65);
+    config.idleMode(brakeMode ? IdleMode.kBrake : IdleMode.kCoast);
+    config.inverted(inverted);
+
+    config.encoder.quadratureAverageDepth(1);
+    config.encoder.quadratureMeasurementPeriod(8);
+    config.signals.appliedOutputPeriodMs(20);
+
+    flex.configure(config, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     flex.setCANTimeout(0);
   }
 
@@ -183,7 +180,8 @@ public class FlywheelMotor {
 
   public void setBrakeCoast(boolean willBrake) {
     flex.setCANTimeout(250);
-    flex.setIdleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    config.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    flex.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     Logger.recordOutput(name + "/IsBraken", willBrake);
     flex.setCANTimeout(0);
   }
@@ -193,7 +191,7 @@ public class FlywheelMotor {
     return enc.getPosition();
   }
 
-  public void setVolts(Measure<Voltage> volts) {
+  public void setVolts(Voltage volts) {
     setVolts(volts.in(Volts));
   }
 

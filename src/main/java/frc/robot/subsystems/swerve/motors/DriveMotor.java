@@ -4,23 +4,26 @@ import static frc.robot.Constants.SwerveConstants.*;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkFlex;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 
 import java.util.OptionalDouble;
 
 public class DriveMotor {
 
-  CANSparkFlex flex;
+  SparkFlex flex;
+  SparkFlexConfig config = new SparkFlexConfig();
   RelativeEncoder encoder;
 
-  SparkPIDController pid;
+  SparkClosedLoopController pid;
 
   String modulePath;
   boolean manualVoltageOnly = false;
@@ -30,11 +33,8 @@ public class DriveMotor {
 
   /* id is the CAN id, index is the index into the array of modules and stuff */
   public DriveMotor(int id, int index, String modulePath) {
-    flex = new CANSparkFlex(id, MotorType.kBrushless);
-    pid = flex.getPIDController();
-    pid.setP((DRIVE_PID[0] / 12.0) * DRIVE_VEL_FACTOR);
-    pid.setI(0);
-    pid.setD(0);
+    flex = new SparkFlex(id, MotorType.kBrushless);
+    pid = flex.getClosedLoopController();
     encoder = flex.getEncoder();
     this.modulePath = modulePath;
     this.index = index;
@@ -90,39 +90,33 @@ public class DriveMotor {
     encoder.setPosition(0);
   }
 
-  /* call this first */
-  public void factoryDefaults() {
-    flex.restoreFactoryDefaults();
-  }
-
   /* then this, after a delay */
   public void configure() {
     flex.setCANTimeout(250);
-    flex.setSmartCurrentLimit(DRIVE_CURRENT_LIMIT);
-    flex.setIdleMode(IdleMode.kBrake);
-    flex.setInverted(IS_INVERTED[index]);
-    flex.enableVoltageCompensation(12);
-    encoder.setPositionConversionFactor(DRIVE_POS_FACTOR);
-    encoder.setVelocityConversionFactor(DRIVE_VEL_FACTOR);
-  }
+    config.smartCurrentLimit(DRIVE_CURRENT_LIMIT);
+    config.idleMode(IdleMode.kBrake);
+    config.inverted(IS_INVERTED[index]);
+    config.voltageCompensation(12);
+    config.encoder.positionConversionFactor(DRIVE_POS_FACTOR);
+    config.encoder.velocityConversionFactor(DRIVE_VEL_FACTOR);
 
-  /* then this, surrounded by 2 delays */
-  public void setupStatusFrames() {
-    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus2, (int)(1000.0 / ODOMETRY_FREQUENCY));
-    /* Don't have an analog encoder */
-    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500);
-    /* Don't have an alternate encoder */
-    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
-    /* Don't have a duty cycle encoder */
-    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500);
-    flex.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500);
+    config.closedLoop.p((DRIVE_PID[0] / 12.0) * DRIVE_VEL_FACTOR);
+    config.closedLoop.i(0);
+    config.closedLoop.d(0);
+
+    config.signals.appliedOutputPeriodMs(20);
+    config.signals.primaryEncoderPositionPeriodMs((int)(1000.0 / ODOMETRY_FREQUENCY));
+    config.signals.primaryEncoderVelocityPeriodMs((int)(1000.0 / ODOMETRY_FREQUENCY));
+
+    flex.configure(config, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+
     flex.setCANTimeout(0);
   }
 
   public void setBrakeCoast(boolean willBrake) {
     flex.setCANTimeout(250);
-    flex.setIdleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    config.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    flex.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     flex.setCANTimeout(0);
   }
 }

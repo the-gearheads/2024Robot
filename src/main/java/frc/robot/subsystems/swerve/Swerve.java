@@ -9,6 +9,8 @@ import static frc.robot.Constants.SwerveConstants.MAX_ROBOT_ROT_SPEED;
 import static frc.robot.Constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
 import static frc.robot.Constants.SwerveConstants.MODULE_RADIUS;
 import static frc.robot.Constants.SwerveConstants.PATHPLANNER_MAX_MOD_SPEED;
+import static frc.robot.Constants.SwerveConstants.TRACK_WIDTH;
+import static frc.robot.Constants.SwerveConstants.WHEEL_BASE;
 import static frc.robot.Constants.SwerveConstants.WHEEL_POSITIONS;
 
 import java.util.ArrayList;
@@ -18,15 +20,19 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.GeometryUtil;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.path.Waypoint;
+import com.pathplanner.lib.util.FlippingUtil;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import com.pathplanner.lib.util.ReplanningConfig;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
@@ -42,12 +48,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -63,7 +68,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.HandledSleep;
 public class Swerve extends SubsystemBase {
   static final Lock odometryLock = new ReentrantLock();
-  AHRS gyro = new AHRS(SerialPort.Port.kUSB);
+  AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDrivePoseEstimator multitagPoseEstimator;
   SwerveDriveOdometry wheelOdometry; 
@@ -91,24 +96,12 @@ public class Swerve extends SubsystemBase {
     SmartDashboard.putData("Vision and Paths Field", vpField);
 
     /* Configure the motors in batch */
-    for (SwerveModule module : modules) {
-      module.factoryDefaults();
-      HandledSleep.sleep(40);
-    }
-
     HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
 
     for (SwerveModule module : modules) {
       module.configure();
       HandledSleep.sleep(100);
     }
-
-    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
-    for (SwerveModule module : modules) {
-      module.setupStatusFrames();
-      HandledSleep.sleep(100);
-    }
-    HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
 
     if(!DriverStation.isFMSAttached()) {
       SmartDashboard.putBoolean("Swerve/manualVoltageSteer", false);
@@ -159,18 +152,16 @@ public class Swerve extends SubsystemBase {
       vpField.getObject("Pathplanner Path").setPoses(poses);
     });
 
-    AutoBuilder.configureHolonomic(
+    AutoBuilder.configure(
         this::getPose, // Robot pose supplier
         this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-        this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-        new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                new PIDConstants(5.7, 0.0, 0.0), // Translation PID constants
-                new PIDConstants(5.7, 0.0, 0.0), // Rotation PID constants
-                PATHPLANNER_MAX_MOD_SPEED, // Max module speed, in m/s
-                MODULE_RADIUS, // Drive base radius in meters. Distance from robot center to furthest module.
-                new ReplanningConfig() // Default path replanning config. See the API for the options here
+        this::driveButNamedDifferently, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        new PPHolonomicDriveController( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                new PIDConstants(5.7, 0.0, 0.0), // Translation X PID constants
+                new PIDConstants(5.7, 0.0, 0.0) // Translateion Y PID constants
         ),
+        new RobotConfig(56, 5.596, new ModuleConfig(MODULE_RADIUS, PATHPLANNER_MAX_MOD_SPEED, 1.2, DCMotor.getNeoVortex(1), 60, 1), TRACK_WIDTH, WHEEL_BASE), // STOP ASKING FOR SOME MANY THINGS PATHPLANNER
         () -> {
             // Boolean supplier that controls when the path will be mirrored for the red alliance
             // This will flip the path being followed to the red side of the field.
@@ -205,22 +196,27 @@ public class Swerve extends SubsystemBase {
     Command pathfindingCommand = AutoBuilder.pathfindToPose(
             targetPose,
             Constants.AutoConstants.PATHFIND_CONSTRAINTS,
-            0.0, // Goal end velocity in meters/sec
-            0.0 // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
+            0.0 // Goal end velocity in meters/sec
     );
     return pathfindingCommand.withTimeout(5);
   }
 
   public Command goTo(Pose2d targetPose) {
     Rotation2d startHeading = targetPose.getTranslation().minus(getPose().getTranslation()).getAngle();
-    List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
+    List<Waypoint> bezierPoints = PathPlannerPath.waypointsFromPoses(
         new Pose2d(getPose().getTranslation(), startHeading),
         targetPose
+    );
+
+    var speeds = getRobotRelativeSpeeds();
+    double speed = Math.sqrt(
+        Math.pow(speeds.vxMetersPerSecond, 2) + Math.pow(speeds.vyMetersPerSecond, 2)
     );
 
     PathPlannerPath ampPath = new PathPlannerPath(
         bezierPoints,
         AutoConstants.PATHFIND_CONSTRAINTS,
+        new IdealStartingState(speed, getPose().getRotation()),
         new GoalEndState(0.0, targetPose.getRotation())
     );
     return AutoBuilder.followPath(ampPath);
@@ -265,6 +261,11 @@ public class Swerve extends SubsystemBase {
 
   public void drive(ChassisSpeeds speeds) {
     drive(speeds, null);
+  }
+
+  /* soooo we need this because of some wonky java disambiguation stuff that i dont know anything about? */
+  public void driveButNamedDifferently(ChassisSpeeds speeds) {
+    drive(speeds);
   }
 
   public void driveFieldRelative(ChassisSpeeds speeds, Double alignToAngle) {
@@ -437,7 +438,7 @@ public class Swerve extends SubsystemBase {
     Pose2d pose = getPose();
     boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     if(isRed) {
-      return GeometryUtil.flipFieldPose(pose);
+      return FlippingUtil.flipFieldPose(pose);
     }
     return pose;
   }
@@ -447,7 +448,7 @@ public class Swerve extends SubsystemBase {
     wheelOdometry.resetPosition(getGyroRotation(), getModulePositions(), pose);
   }
 
-  private void sysidSetVolts(Measure<Voltage> volts) {
+  private void sysidSetVolts(Voltage volts) {
     double v = volts.in(Volts);
     // var states = kinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 1));
     for (int i = 0; i < modules.length; i++) {
@@ -457,7 +458,7 @@ public class Swerve extends SubsystemBase {
     }
   }
 
-  private void sysidSetVoltsSteer(Measure<Voltage> volts) {
+  private void sysidSetVoltsSteer(Voltage volts) {
     double v = volts.in(Volts);
     for(var module: modules) {
       module.setSteerVolts(v);
@@ -515,11 +516,11 @@ public class Swerve extends SubsystemBase {
   public SysIdRoutine getSysIdRoutineAngular() {
     return new SysIdRoutine(
       new SysIdRoutine.Config(
-        Volts.of(0.5).per(Seconds.of(1)), Volts.of(3.5), null,
+        Volts.of(0.5).per(Seconds), Volts.of(3.5), null,
         (state) -> Logger.recordOutput("SysIdTestState", state.toString())
       ),
       new Mechanism(
-        (Measure<Voltage> v) -> {
+        (Voltage v) -> {
           double pwr = v.in(Volts);
           drive(new ChassisSpeeds(0, 0, pwr));
         },
