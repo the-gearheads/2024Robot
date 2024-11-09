@@ -45,7 +45,6 @@ import edu.wpi.first.math.geometry.Twist3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -304,13 +303,13 @@ public class Swerve extends SubsystemBase {
   }
 
 
-  SwerveDriveWheelPositions lastPositions;
+  SwerveModulePosition[] lastPositions;
   /**
    * So gtsam actually wants pose deltas
    */
   public Twist3d getTwist3d() {
 
-    var now = new SwerveDriveWheelPositions(getModulePositions());
+    var now = getModulePositions();
     if(lastPositions == null) {
       lastPositions = now;
     }
