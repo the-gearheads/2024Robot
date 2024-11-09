@@ -11,6 +11,36 @@
       }
     },
     "Other Devices": {
+      "SPARK Flex [10] LIMIT SWITCH (FORWARD)": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK Flex [5] RELATIVE ENCODER": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK Flex [6]": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK Flex [6] RELATIVE ENCODER": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK Flex [7]": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK Flex [8]": {
+        "header": {
+          "open": true
+        }
+      },
       "SPARK MAX [9]": {
         "header": {
           "open": true
@@ -20,9 +50,6 @@
         "header": {
           "open": true
         }
-      },
-      "window": {
-        "visible": false
       }
     }
   },

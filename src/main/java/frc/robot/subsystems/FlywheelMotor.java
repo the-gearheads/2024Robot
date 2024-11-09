@@ -35,7 +35,7 @@ public class FlywheelMotor {
 
   public double targetVolts;
 
-  SparkFlexConfig config;
+  SparkFlexConfig config = new SparkFlexConfig();
 
   PIDController pid;
   SimpleMotorFeedforward ff;
@@ -74,7 +74,7 @@ public class FlywheelMotor {
     configure();
 
     if(Robot.isSimulation()) {
-      sim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(ff.getKv(), ff.getKa()), DCMotor.getNeoVortex(1), simGearRatio);
+      sim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(ff.getKv(), ff.getKa()), DCMotor.getNeoVortex(1).withReduction(simGearRatio));
     }
 
     SmartDashboard.putBoolean(name + "/manualVoltageOnly", false);

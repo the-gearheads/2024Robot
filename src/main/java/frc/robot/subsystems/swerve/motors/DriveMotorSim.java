@@ -15,7 +15,7 @@ import java.util.OptionalDouble;
 
 public class DriveMotorSim extends DriveMotor {
 
-  FlywheelSim sim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(DRIVE_FEEDFORWARD.getKv(), DRIVE_FEEDFORWARD.getKa()), DCMotor.getNeoVortex(1), DRIVE_RATIO);
+  FlywheelSim sim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(DRIVE_FEEDFORWARD.getKv(), DRIVE_FEEDFORWARD.getKa()), DCMotor.getNeoVortex(1).withReduction(DRIVE_RATIO));
   PIDController softPid = new PIDController(DRIVE_PID[0], DRIVE_PID[1], DRIVE_PID[2]);
 
   double pos = 0;
