@@ -169,7 +169,9 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.schedule();
     }
     // SparkLowLevel.enableExternalUSBControl(false); //removed??
-    m_robotContainer.setAllBrakeCoast(true);
+    if(!isBraken) {
+      m_robotContainer.setAllBrakeCoast(true);
+    }
   }
 
   /** This function is called periodically during autonomous. */
@@ -187,7 +189,9 @@ public class Robot extends LoggedRobot {
     }
 
     matchTimeStart = Timer.getFPGATimestamp();
-    m_robotContainer.setAllBrakeCoast(true);
+    if(!isBraken) {
+      m_robotContainer.setAllBrakeCoast(true);
+    }
     // SparkLowLevel.enableExternalUSBControl(false); // removed??
     rumbled = false;
   }

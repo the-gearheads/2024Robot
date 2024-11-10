@@ -126,9 +126,7 @@ public class SteerMotor {
   }
 
   public void setBrakeCoast(boolean willBrake) {
-    max.setCANTimeout(250);
     config.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
     max.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-    max.setCANTimeout(0);
   }
 }

@@ -114,9 +114,7 @@ public class DriveMotor {
   }
 
   public void setBrakeCoast(boolean willBrake) {
-    flex.setCANTimeout(250);
     config.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
     flex.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-    flex.setCANTimeout(0);
   }
 }
