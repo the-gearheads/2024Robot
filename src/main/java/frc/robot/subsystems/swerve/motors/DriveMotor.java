@@ -114,7 +114,7 @@ public class DriveMotor {
   }
 
   public void setBrakeCoast(boolean willBrake) {
-    config.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
-    flex.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    var updatedConfig = new SparkFlexConfig().idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    flex.configure(updatedConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 }

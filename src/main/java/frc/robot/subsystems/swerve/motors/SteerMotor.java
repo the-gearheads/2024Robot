@@ -16,6 +16,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.REVLibError;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -126,7 +127,7 @@ public class SteerMotor {
   }
 
   public void setBrakeCoast(boolean willBrake) {
-    config.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
-    max.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    var updatedConfig = new SparkMaxConfig().idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    max.configure(updatedConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 }

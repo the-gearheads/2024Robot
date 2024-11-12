@@ -77,7 +77,7 @@ public class Swerve extends SubsystemBase {
   Field2d vpField = new Field2d();
   boolean visionEnabled = true;
 
-  int simGyro = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[0]");
+  int simGyro = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor");
   SimDouble simGyroAngle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(simGyro, "Yaw"));
   double rotSpdSetpoint = 0;
 

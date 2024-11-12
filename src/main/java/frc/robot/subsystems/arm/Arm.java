@@ -206,10 +206,9 @@ public class Arm extends SubsystemBase {
   }
 
   public void setBrakeCoast(boolean willBrake) {
-    mainConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
-    followerConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
-    mainFlex.configure(mainConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-    followerFlex.configure(followerConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    var brakeCoastConfig = new SparkFlexConfig().idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    mainFlex.configure(brakeCoastConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    followerFlex.configure(brakeCoastConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     Logger.recordOutput("Arm/IsBraken", willBrake);
   }
 

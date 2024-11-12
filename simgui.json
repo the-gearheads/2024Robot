@@ -46,6 +46,11 @@
           "open": true
         }
       },
+      "navX-Sensor": {
+        "header": {
+          "open": true
+        }
+      },
       "navX-Sensor[0]": {
         "header": {
           "open": true
@@ -140,7 +145,8 @@
           "Swerve": {
             "Teleop": {
               "open": true
-            }
+            },
+            "open": true
           },
           "open": true
         },
