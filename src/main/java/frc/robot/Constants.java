@@ -60,13 +60,13 @@ public final class Constants {
 
     public static final double WHEEL_BASE = WHEEL_POSITIONS[0].getX() - WHEEL_POSITIONS[2].getX();
     public static final double TRACK_WIDTH = WHEEL_POSITIONS[0].getY() - WHEEL_POSITIONS[1].getY();
-    public static final double MODULE_RADIUS = WHEEL_POSITIONS[0].getNorm();
 
     public static final double[] WHEEL_OFFSETS = {90, 0, 0, 90}; // could be wrong, we get to find out {270, 0, 180, 90};
     public static final boolean[] IS_INVERTED = {true, false, true, false}; // left side inverted i think
 
     public static final double WHEEL_DIAMETER = 0.073800;
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
+    public static final double MODULE_RADIUS = WHEEL_DIAMETER / 2.0;
 
     public static final double DRIVE_PINION_TOOTH_COUNT = 14;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion

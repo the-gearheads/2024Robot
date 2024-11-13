@@ -3,6 +3,7 @@ package frc.robot.subsystems.swerve;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.SwerveConstants.DESATURATE;
+import static frc.robot.Constants.SwerveConstants.DRIVE_RATIO;
 import static frc.robot.Constants.SwerveConstants.FACING_SPEAKER_TOLERANCE;
 import static frc.robot.Constants.SwerveConstants.MAX_MOD_SPEED;
 import static frc.robot.Constants.SwerveConstants.MAX_ROBOT_ROT_SPEED;
@@ -77,7 +78,8 @@ public class Swerve extends SubsystemBase {
   Field2d vpField = new Field2d();
   boolean visionEnabled = true;
 
-  int simGyro = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor");
+  // why 4??
+  int simGyro = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[4]");
   SimDouble simGyroAngle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(simGyro, "Yaw"));
   double rotSpdSetpoint = 0;
 
@@ -155,12 +157,12 @@ public class Swerve extends SubsystemBase {
         this::getPose, // Robot pose supplier
         this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-        this::driveButNamedDifferently, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        (ChassisSpeeds speeds)->this.drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new PPHolonomicDriveController( // HolonomicPathFollowerConfig, this should likely live in your Constants class
                 new PIDConstants(5.7, 0.0, 0.0), // Translation X PID constants
                 new PIDConstants(5.7, 0.0, 0.0) // Translateion Y PID constants
         ),
-        new RobotConfig(56, 5.596, new ModuleConfig(MODULE_RADIUS, PATHPLANNER_MAX_MOD_SPEED, 1.2, DCMotor.getNeoVortex(1), 60, 1), TRACK_WIDTH, WHEEL_BASE), // STOP ASKING FOR SOME MANY THINGS PATHPLANNER
+        new RobotConfig(56, 5.596, new ModuleConfig(MODULE_RADIUS, PATHPLANNER_MAX_MOD_SPEED, 1.2, DCMotor.getNeoVortex(1).withReduction(DRIVE_RATIO), 60, 1), TRACK_WIDTH, WHEEL_BASE), // STOP ASKING FOR SOME MANY THINGS PATHPLANNER
         () -> {
             // Boolean supplier that controls when the path will be mirrored for the red alliance
             // This will flip the path being followed to the red side of the field.
@@ -260,11 +262,6 @@ public class Swerve extends SubsystemBase {
 
   public void drive(ChassisSpeeds speeds) {
     drive(speeds, null);
-  }
-
-  /* soooo we need this because of some wonky java disambiguation stuff that i dont know anything about? */
-  public void driveButNamedDifferently(ChassisSpeeds speeds) {
-    drive(speeds);
   }
 
   public void driveFieldRelative(ChassisSpeeds speeds, Double alignToAngle) {
