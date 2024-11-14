@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.subsystems.swerve.Swerve;
 
 /* Not exactly a subsystem but we do in fact need a periodic function */
@@ -91,6 +92,7 @@ public class MechanismViz extends SubsystemBase {
 
   @Override
   public void periodic() {    // This method will be called once per scheduler run
+    if(Robot.isReal()) return;
     var armPos = armAngle.get();
     arm12Mech.setAngle(armPos);
     topShooterMech.setAngle(topShooterPos.get() * 360.0); // rotations -> degrees

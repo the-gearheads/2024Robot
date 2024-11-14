@@ -44,9 +44,9 @@ public class Vision extends SubsystemBase {
       System.out.println(AprilTagFields.k2024Crescendo.m_resourceFile);
     }
 
-    frontLeft = new Camera(field, FRONT_LEFT_NAME, FRONT_LEFT_TRANSFORM, FRONT_LEFT_INTRINSICS);
-    frontRight = new Camera(field, FRONT_RIGHT_NAME, FRONT_RIGHT_TRANSFORM, FRONT_RIGHT_INTRINSICS);
-    backLeft = new Camera(field, BACK_LEFT_NAME, BACK_LEFT_TRANSFORM, BACK_LEFT_INTRINSICS);
+    frontLeft = new Camera(field, FRONT_LEFT_NAME, FRONT_LEFT_TRANSFORM, FRONT_LEFT_INTRINSICS, gtsam);
+    frontRight = new Camera(field, FRONT_RIGHT_NAME, FRONT_RIGHT_TRANSFORM, FRONT_RIGHT_INTRINSICS, gtsam);
+    backLeft = new Camera(field, BACK_LEFT_NAME, BACK_LEFT_TRANSFORM, BACK_LEFT_INTRINSICS, gtsam);
 
     sim = new VisionSim();
     sim.addCamera(frontLeft);
@@ -55,19 +55,14 @@ public class Vision extends SubsystemBase {
   }
 
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
-    boolean tfl = frontLeft.feedPoseEstimator(poseEstimator);
-    boolean tfr = frontRight.feedPoseEstimator(poseEstimator);
-    boolean tbl = backLeft.feedPoseEstimator(poseEstimator);
-
     long time = WPIUtilJNI.now();
 
     var guess = new Pose3d(swerve.getPose());
     gtsam.sendOdomUpdate(time, swerve.getTwist3d(), guess);
 
-    frontLeft.feedGtsam(gtsam, (long)(frontLeft.lastResult.getTimestampSeconds()) * (long)1e6);
-    frontRight.feedGtsam(gtsam, (long)(frontRight.lastResult.getTimestampSeconds()) * (long)1e6);
-    backLeft.feedGtsam(gtsam, (long)(backLeft.lastResult.getTimestampSeconds()) * (long)1e6);
-
+    boolean tfl = frontLeft.feedPoseEstimator(poseEstimator);
+    boolean tfr = frontRight.feedPoseEstimator(poseEstimator);
+    boolean tbl = backLeft.feedPoseEstimator(poseEstimator);
 
     Logger.recordOutput("Vision/gtsam_pose", gtsam.getLatencyCompensatedPoseEstimate());
 

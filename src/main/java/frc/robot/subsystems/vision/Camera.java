@@ -23,7 +23,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.GtsamInterface;
 import frc.robot.util.TagDetection;
 
@@ -51,19 +50,25 @@ public class Camera {
 
   private final AprilTagFieldLayout field;
 
+  private final GtsamInterface gtsam;
+  private final String memePath;
 
-  public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics) {
+
+  public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics, GtsamInterface gtsam) {
     this.name = name;
     this.transform = transform;
     this.intrinsics = intrinsics;
     this.field = field;
+    this.gtsam = gtsam;
     path = "Vision/" + name.replace("_", "");
+    memePath = "/meme/" + name + "/measured_corners";
 
     camera = new PhotonCamera(name);
 
     var strategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
     estimator = new PhotonPoseEstimator(this.field, strategy, transform);
+    gtsam.setCamIntrinsics(name, Optional.of(intrinsics.getCameraMatrix()), Optional.of(intrinsics.getDistCoeffsMatrix()));
   }
 
   public Pair<Optional<EstimatedRobotPose>, PhotonPipelineResult> getGlobalPose() {
@@ -120,9 +125,12 @@ public class Camera {
       return false;
     }
 
-    Pose2d estPose = pose.get().estimatedPose.toPose2d();
+    var estimatedRobotPose = pose.get();
+
+    Pose2d estPose = estimatedRobotPose.estimatedPose.toPose2d();
 
     var updated = result.getSecond();
+    feedGtsam(updated, gtsam, (long)lastResult.getTimestampSeconds() * (long)1e6);
     int numTargets = updated.targets.size();
     double avgDistToTarget = 0;
     for(var target: updated.targets) {
@@ -148,10 +156,8 @@ public class Camera {
 
   PhotonPipelineResult lastResult = new PhotonPipelineResult();
 
-  public void feedGtsam(GtsamInterface gtsam, long zeTime) {
+  private void feedGtsam(PhotonPipelineResult results, GtsamInterface gtsam, long zeTime) {
     List<TagDetection> dets = new ArrayList<>();
-    var results = camera.getLatestResult();
-    var tagDetTime = zeTime; // no real timesync soooooooo
     if(results.getTimestampSeconds() != lastResult.getTimestampSeconds()) {
       lastResult = results;
       for(var target: results.targets) {
@@ -159,18 +165,17 @@ public class Camera {
       }
 
       // Publish debug info to NT
-      List<Double> corns = new ArrayList<>();
-      for (var d : dets) {
-        for (var c : d.corners) {
-          corns.add(c.x);
-          corns.add(c.y);
-        }
-      }
-      SmartDashboard.putNumberArray("/meme/" + name + "/measured_corners", corns.toArray(new Double[0]));
-    }
+      // List<Double> corns = new ArrayList<>();
+      // for (var d : dets) {
+      //   for (var c : d.corners) {
+      //     corns.add(c.x);
+      //     corns.add(c.y);
+      //   }
+      // }
+      // SmartDashboard.putNumberArray(name, corns.toArray(new Double[0]));
 
-    gtsam.setCamIntrinsics(name, Optional.of(intrinsics.getCameraMatrix()), Optional.of(intrinsics.getDistCoeffsMatrix()));
-    gtsam.sendVisionUpdate(name, tagDetTime, dets, transform);
+      gtsam.sendVisionUpdate(name, zeTime, dets, transform);
+    }
   }
 
 
@@ -189,3 +194,4 @@ public class Camera {
     return properties;
   }
 }
+// 
