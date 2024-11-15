@@ -64,7 +64,8 @@ public class Vision extends SubsystemBase {
     boolean tfr = frontRight.feedPoseEstimator(poseEstimator);
     boolean tbl = backLeft.feedPoseEstimator(poseEstimator);
 
-    Logger.recordOutput("Vision/gtsam_pose", gtsam.getLatencyCompensatedPoseEstimate());
+    Logger.recordOutput("Swerve/pose_est1", gtsam.getLatencyCompensatedPoseEstimate());
+    Logger.recordOutput("Swerve/pose_est2", swerve.getPose());
 
     return tfl || tfr || tbl;
     // return tfr;

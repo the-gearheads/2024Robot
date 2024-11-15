@@ -92,20 +92,7 @@ public class MechanismViz extends SubsystemBase {
 
   @Override
   public void periodic() {    // This method will be called once per scheduler run
-    if(Robot.isReal()) return;
     var armPos = armAngle.get();
-    arm12Mech.setAngle(armPos);
-    topShooterMech.setAngle(topShooterPos.get() * 360.0); // rotations -> degrees
-    bottomShooterMech.setAngle(bottomShooterPos.get() * 360.0); // rotations -> degrees
-    intakeMech.setAngle(intakePos.get() * 360.0); // rotations -> degrees
-    feederMech.setAngle(feederPos.get() * 360.0); // rotations -> degrees
-    if(noteSwitch.get()) {
-      arm12Mech.setColor(ARM_NOTED_COLOR);
-    } else {
-      arm12Mech.setColor(ARM_COLOR);
-    }
-    Logger.recordOutput("Mechanism2d", mech);
-
 
     Logger.recordOutput("ComponentPoses", new Transform3d[] {
       new Transform3d(
@@ -128,6 +115,20 @@ public class MechanismViz extends SubsystemBase {
     } else {
       Logger.recordOutput("RobotNote", new Transform3d(new Translation3d(-100, -100, -100), new Rotation3d()));
     }
+
+    if(Robot.isReal()) return; // The mechanism2d stuff isnt rly used outside of sim
+
+    arm12Mech.setAngle(armPos);
+    topShooterMech.setAngle(topShooterPos.get() * 360.0); // rotations -> degrees
+    bottomShooterMech.setAngle(bottomShooterPos.get() * 360.0); // rotations -> degrees
+    intakeMech.setAngle(intakePos.get() * 360.0); // rotations -> degrees
+    feederMech.setAngle(feederPos.get() * 360.0); // rotations -> degrees
+    if(noteSwitch.get()) {
+      arm12Mech.setColor(ARM_NOTED_COLOR);
+    } else {
+      arm12Mech.setColor(ARM_COLOR);
+    }
+    Logger.recordOutput("Mechanism2d", mech);
   }
 
 }

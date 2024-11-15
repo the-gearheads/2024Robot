@@ -122,6 +122,7 @@ public class Camera {
       Logger.recordOutput(path + "/EstPoseUnfiltered", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
       Logger.recordOutput(path + "/EstPose", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
       Logger.recordOutput(path + "/TagPoses", new Pose3d[0]);
+      feedGtsam(false, null, gtsam, (long)lastResult.getTimestampSeconds() * (long)1e6);
       return false;
     }
 
@@ -130,7 +131,7 @@ public class Camera {
     Pose2d estPose = estimatedRobotPose.estimatedPose.toPose2d();
 
     var updated = result.getSecond();
-    feedGtsam(updated, gtsam, (long)lastResult.getTimestampSeconds() * (long)1e6);
+    feedGtsam(true, updated, gtsam, (long)lastResult.getTimestampSeconds() * (long)1e6);
     int numTargets = updated.targets.size();
     double avgDistToTarget = 0;
     for(var target: updated.targets) {
@@ -156,9 +157,9 @@ public class Camera {
 
   PhotonPipelineResult lastResult = new PhotonPipelineResult();
 
-  private void feedGtsam(PhotonPipelineResult results, GtsamInterface gtsam, long zeTime) {
+  private void feedGtsam(boolean areResults, PhotonPipelineResult results, GtsamInterface gtsam, long zeTime) {
     List<TagDetection> dets = new ArrayList<>();
-    if(results.getTimestampSeconds() != lastResult.getTimestampSeconds()) {
+    if(areResults && results.getTimestampSeconds() != lastResult.getTimestampSeconds()) {
       lastResult = results;
       for(var target: results.targets) {
         dets.add(new TagDetection(target.getFiducialId(), target.getDetectedCorners()));
@@ -173,9 +174,8 @@ public class Camera {
       //   }
       // }
       // SmartDashboard.putNumberArray(name, corns.toArray(new Double[0]));
-
-      gtsam.sendVisionUpdate(name, zeTime, dets, transform);
     }
+    gtsam.sendVisionUpdate(name, zeTime, dets, transform);
   }
 
 

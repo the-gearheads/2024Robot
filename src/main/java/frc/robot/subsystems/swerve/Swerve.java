@@ -324,6 +324,8 @@ public class Swerve extends SubsystemBase {
   @Override
   public void periodic() {
 
+    Logger.recordOutput("Swerve/navxConnected", gyro.isConnected());
+
     for (SwerveModule module : modules) {
       module.periodic();
     }
