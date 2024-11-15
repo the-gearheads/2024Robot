@@ -12,7 +12,7 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-// import org.littletonrobotics.urcl.URCL;
+import org.littletonrobotics.urcl.URCL;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -66,7 +66,7 @@ public class Robot extends LoggedRobot {
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
 
-    // Logger.registerURCL(URCL.startExternal());
+    Logger.registerURCL(URCL.startExternal());
     Logger.start();
 
     /* Log all commands running, both uniquely and by name. */
