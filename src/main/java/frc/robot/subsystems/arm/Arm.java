@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.util.DCMotorInputErrorEstimator;
 import frc.robot.util.HandledSleep;
 import frc.robot.util.ProfiledPIDControllerCustomPeriod;
 
@@ -36,6 +37,7 @@ public class Arm extends SubsystemBase {
   private SparkFlex mainFlex = new SparkFlex(MAIN_ARM_ID, MotorType.kBrushless);
   private SparkFlex followerFlex = new SparkFlex(FOLLOWER_ARM_ID, MotorType.kBrushless);
   ProfiledPIDControllerCustomPeriod pid = new ProfiledPIDControllerCustomPeriod(PID[0], PID[1], PID[2], ARM_CONSTRAINTS, 0.02);
+  DCMotorInputErrorEstimator errorEstimator = new DCMotorInputErrorEstimator(FEEDFORWARD.getKv(), FEEDFORWARD.getKa(), 0.02);
 
   SingleJointedArmSim armSim = new SingleJointedArmSim(LinearSystemId.identifyPositionSystem(SIM_FEEDFORWARD.getKv(), SIM_FEEDFORWARD.getKa()),
                                                        DCMotor.getNeoVortex(2), ARM_MOTOR_GEARING,
@@ -54,12 +56,14 @@ public class Arm extends SubsystemBase {
     }
     // hi gavin and or michael if you're reading this i'm sorry for the mess i made in the arm subsystem i'm trying to fix it now i promise i'll do better next time i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry i'm sorry
     SmartDashboard.putNumber("Arm/manualVoltage", 0);
+    SmartDashboard.putBoolean("Arm/inputErrorEstimation", false);
 
     // update arm sim once so it doesn't start at 0
     HandledSleep.sleep(Constants.THREAD_SLEEP_TIME);
     if(Robot.isSimulation()) armSim.update(0.02);
     pid.reset(getAngle().getRadians());
     pid.setGoal(getAngle().getRadians());
+    errorEstimator.reset(getAngle().getRadians(), getVelocity());
   }
 
   public void configure() {
@@ -95,27 +99,30 @@ public class Arm extends SubsystemBase {
   private double lastTimestamp = Timer.getFPGATimestamp();
   public boolean runPid = true;
 
+  private double lastInput = 0; // for input error estimation, input to the plant.
+
   @Override
   public void periodic() {
     log();
     double ff;
+    double curAngle = getAngle().getRadians();
     // experimental https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b not sure how needed this is for a trapezoidal profile
-    if(Math.abs(Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > ARM_ANGLE_LIVE_FF_THRESHOLD) {
-      ff = FEEDFORWARD.calculate(getAngle().getRadians(), pid.getSetpoint().velocity);
+    if(Math.abs(Units.radiansToDegrees(curAngle - pid.getSetpoint().position)) > ARM_ANGLE_LIVE_FF_THRESHOLD) {
+      ff = FEEDFORWARD.calculate(curAngle, pid.getSetpoint().velocity);
     } else {
       ff = FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
     }
     pid.setPeriod(Math.max(Timer.getFPGATimestamp() - lastTimestamp, 0.02)); // this probably works? i dont really have a way to test it
-    output = pid.calculate(getAngle().getRadians()) + ff;
+    output = pid.calculate(curAngle) + ff;
 
     Logger.recordOutput("Arm/attemptedOutput", output);
 
     //robot saving code
-    if(output > 0 && getAngle().getRadians() > MAX_ANGLE) {
+    if(output > 0 && curAngle > MAX_ANGLE) {
       output = 0;
     }
 
-    if(output < 0 && getAngle().getRadians() < MIN_ANGLE) {
+    if(output < 0 && curAngle < MIN_ANGLE) {
       output = 0;
     }
 
@@ -126,6 +133,14 @@ public class Arm extends SubsystemBase {
     // Might as well just get as close as we can
     if(pid.getGoal().position < MIN_ANGLE || pid.getGoal().position > MAX_ANGLE) {
       pid.setGoal(MathUtil.clamp(pid.getGoal().position, MIN_ANGLE, MAX_ANGLE));
+    }
+
+    if(SmartDashboard.getBoolean("Arm/inputErrorEstimation", false)) {
+      double error = errorEstimator.calculate(lastInput, curAngle);
+      Logger.recordOutput("Arm/EstimatedInputError", error);
+      output -= error;
+    } else {
+      errorEstimator.reset(curAngle, getVelocity());
     }
 
     output = Math.abs(output) > 0.02 ? output : 0;

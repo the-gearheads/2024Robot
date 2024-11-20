@@ -14,6 +14,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -133,6 +134,7 @@ public class RobotContainer {
 
 
     autoChooser = AutoBuilder.buildAutoChooser();
+    autoChooser.addOption("ARM WORKOUT", arm.run(()->arm.setAngle(Units.degreesToRadians(30))).withTimeout(2).andThen(arm.run(()->arm.setAngle(Units.degreesToRadians(90)))).withTimeout(2).repeatedly());
     SmartDashboard.putData("Auto Chooser", autoChooser);
     NamedCommands.registerCommand("DisableVision", new InstantCommand(() -> {
       swerve.disableVision();
